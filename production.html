@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, user-scalable=no">
+    <title>Production - Machine Status | QC System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 3px;
+            height: 3px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #22d3ee;
+            border-radius: 10px;
+        }
+        
+        /* Status badge colors */
+        .status-running {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+        
+        .status-stop {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+        
+        .status-dandori {
+            background: rgba(234, 179, 8, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+        
+        .status-trouble {
+            background: rgba(168, 85, 247, 0.15);
+            color: #c084fc;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+        
+        .machine-card {
+            transition: all 0.2s ease;
+        }
+        
+        .machine-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        /* Section header */
+        .section-header {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.05));
+            border-left: 3px solid #22d3ee;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+
+    <div class="h-screen flex flex-col p-3 gap-2 overflow-hidden">
+
+        <!-- HEADER -->
+        <div class="flex justify-between items-center bg-slate-900/50 backdrop-blur-sm rounded-xl px-4 py-2 border border-slate-800 shrink-0">
+            <div>
+                <h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">Production Monitoring</h1>
+                <p class="text-slate-500 text-[10px]">Machine Status & Performance</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="text-right">
+                    <p id="clock" class="text-cyan-400 font-bold text-sm">--:--:--</p>
+                    <p id="date-header" class="text-slate-500 text-[9px]">Loading...</p>
+                </div>
+                <div class="flex items-center gap-1 bg-green-500/10 px-2 py-1 rounded-lg">
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-green-400 text-[8px] font-bold">LIVE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOADING -->
+        <div id="loading" class="text-slate-400 text-xs flex items-center gap-2 shrink-0">
+            <div class="w-3 h-3 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+            <span>Loading machine data...</span>
+        </div>
+
+        <!-- LEGEND / SUMMARY CARDS -->
+        <div class="grid grid-cols-4 gap-2 shrink-0">
+            <div class="bg-slate-900/50 rounded-lg p-1.5 text-center border border-slate-800">
+                <div class="text-[10px] text-slate-400">Total Machines</div>
+                <div id="total-count" class="text-cyan-400 font-bold text-lg">0</div>
+            </div>
+            <div class="bg-slate-900/50 rounded-lg p-1.5 text-center border border-green-500/20">
+                <div class="text-[10px] text-slate-400">Running</div>
+                <div id="running-count" class="text-green-400 font-bold text-lg">0</div>
+            </div>
+            <div class="bg-slate-900/50 rounded-lg p-1.5 text-center border border-red-500/20">
+                <div class="text-[10px] text-slate-400">Stop</div>
+                <div id="stop-count" class="text-red-400 font-bold text-lg">0</div>
+            </div>
+            <div class="bg-slate-900/50 rounded-lg p-1.5 text-center border border-yellow-500/20">
+                <div class="text-[10px] text-slate-400">Dandori</div>
+                <div id="dandori-count" class="text-yellow-400 font-bold text-lg">0</div>
+            </div>
+        </div>
+
+        <!-- MACHINE LIST - Scrollable -->
+        <div class="flex-1 overflow-y-auto min-h-0 space-y-2">
+            
+            <!-- SECTION: Heading Machines -->
+            <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
+                <div class="section-header px-3 py-1.5">
+                    <h3 class="font-bold text-cyan-400 text-sm flex items-center gap-2">
+                        <span>🔧</span> Heading Machines
+                        <span id="heading-count" class="text-slate-400 text-[10px] ml-auto"></span>
+                    </h3>
+                </div>
+                <div id="heading-machines" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-2">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+
+            <!-- SECTION: Rolling Machines -->
+            <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
+                <div class="section-header px-3 py-1.5">
+                    <h3 class="font-bold text-cyan-400 text-sm flex items-center gap-2">
+                        <span>⚙️</span> Rolling Machines
+                        <span id="rolling-count" class="text-slate-400 text-[10px] ml-auto"></span>
+                    </h3>
+                </div>
+                <div id="rolling-machines" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-2">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+
+            <!-- SECTION: Washing -->
+            <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
+                <div class="section-header px-3 py-1.5">
+                    <h3 class="font-bold text-cyan-400 text-sm flex items-center gap-2">
+                        <span>🧼</span> Washing
+                        <span id="washing-count" class="text-slate-400 text-[10px] ml-auto"></span>
+                    </h3>
+                </div>
+                <div id="washing-machines" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-2">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+
+            <!-- SECTION: Furnace -->
+            <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
+                <div class="section-header px-3 py-1.5">
+                    <h3 class="font-bold text-cyan-400 text-sm flex items-center gap-2">
+                        <span>🔥</span> Furnace
+                        <span id="furnace-count" class="text-slate-400 text-[10px] ml-auto"></span>
+                    </h3>
+                </div>
+                <div id="furnace-machines" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-2">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+
+            <!-- SECTION: Plating -->
+            <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
+                <div class="section-header px-3 py-1.5">
+                    <h3 class="font-bold text-cyan-400 text-sm flex items-center gap-2">
+                        <span>⚡</span> Plating Lines
+                        <span id="plating-count" class="text-slate-400 text-[10px] ml-auto"></span>
+                    </h3>
+                </div>
+                <div id="plating-machines" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-2">
+                    <!-- Dynamic content -->
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // API Endpoint untuk machine data
+        const MACHINE_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/machine";
+        
+        // Clock function
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('en-US', { hour12: false });
+            const date = now.toLocaleDateString('id-ID', { 
+                weekday: 'short', 
+                day: 'numeric', 
+                month: 'short' 
+            });
+            const clockElem = document.getElementById('clock');
+            const dateHeaderElem = document.getElementById('date-header');
+            if (clockElem) clockElem.innerText = time;
+            if (dateHeaderElem) dateHeaderElem.innerText = date;
+        }
+        
+        // Get status class
+        function getStatusClass(status) {
+            const statusLower = (status || '').toLowerCase();
+            if (statusLower === 'running') return 'status-running';
+            if (statusLower === 'stop') return 'status-stop';
+            if (statusLower === 'dandori') return 'status-dandori';
+            if (statusLower === 'trouble') return 'status-trouble';
+            return 'bg-slate-700/50 text-slate-400';
+        }
+        
+        // Get status icon
+        function getStatusIcon(status) {
+            const statusLower = (status || '').toLowerCase();
+            if (statusLower === 'running') return '▶️';
+            if (statusLower === 'stop') return '⏹️';
+            if (statusLower === 'dandori') return '🔄';
+            if (statusLower === 'trouble') return '⚠️';
+            return '❓';
+        }
+        
+        // Render machine cards
+        function renderMachines(data) {
+            // Group by type
+            const groups = {
+                heading: [],
+                rolling: [],
+                washing: [],
+                furnace: [],
+                plating: []
+            };
+            
+            data.forEach(item => {
+                const type = (item.type || '').toLowerCase();
+                if (type === 'heading') groups.heading.push(item);
+                else if (type === 'rolling') groups.rolling.push(item);
+                else if (type === 'washing') groups.washing.push(item);
+                else if (type === 'furnace') groups.furnace.push(item);
+                else if (type === 'plating') groups.plating.push(item);
+            });
+            
+            // Update counts
+            document.getElementById('heading-count').innerText = `${groups.heading.length} machines`;
+            document.getElementById('rolling-count').innerText = `${groups.rolling.length} machines`;
+            document.getElementById('washing-count').innerText = `${groups.washing.length} machines`;
+            document.getElementById('furnace-count').innerText = `${groups.furnace.length} machines`;
+            document.getElementById('plating-count').innerText = `${groups.plating.length} machines`;
+            
+            // Total count
+            const total = data.length;
+            document.getElementById('total-count').innerText = total;
+            
+            // Status counts
+            const running = data.filter(m => (m.status || '').toLowerCase() === 'running').length;
+            const stop = data.filter(m => (m.status || '').toLowerCase() === 'stop').length;
+            const dandori = data.filter(m => (m.status || '').toLowerCase() === 'dandori').length;
+            const trouble = data.filter(m => (m.status || '').toLowerCase() === 'trouble').length;
+            
+            document.getElementById('running-count').innerText = running;
+            document.getElementById('stop-count').innerText = stop;
+            document.getElementById('dandori-count').innerText = dandori + trouble;
+            
+            // Render each group
+            renderGroup('heading-machines', groups.heading);
+            renderGroup('rolling-machines', groups.rolling);
+            renderGroup('washing-machines', groups.washing);
+            renderGroup('furnace-machines', groups.furnace);
+            renderGroup('plating-machines', groups.plating);
+        }
+        
+        function renderGroup(containerId, machines) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            
+            if (machines.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-slate-500 text-[10px] py-2">No data</div>';
+                return;
+            }
+            
+            container.innerHTML = machines.map(machine => {
+                const statusClass = getStatusClass(machine.status);
+                const statusIcon = getStatusIcon(machine.status);
+                const machineName = machine.machine || machine.name || '-';
+                const statusText = machine.status || 'Unknown';
+                
+                return `
+                    <div class="machine-card ${statusClass} rounded-lg p-1.5 text-center">
+                        <div class="text-[11px] font-bold truncate" title="${machineName}">${machineName}</div>
+                        <div class="flex items-center justify-center gap-1 mt-0.5">
+                            <span class="text-[9px]">${statusIcon}</span>
+                            <span class="text-[8px] uppercase">${statusText}</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        async function loadMachineData() {
+            const loadingDiv = document.getElementById('loading');
+            
+            loadingDiv.innerHTML = '<div class="w-3 h-3 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div><span> Loading machine data...</span>';
+            
+            try {
+                const response = await fetch(MACHINE_API);
+                const data = await response.json();
+                console.log('Machine Data:', data);
+                
+                if (data && Array.isArray(data) && data.length > 0) {
+                    renderMachines(data);
+                    loadingDiv.innerHTML = '<span class="text-green-400">✅</span><span class="text-[10px]"> Data loaded - ' + data.length + ' machines</span>';
+                    setTimeout(() => {
+                        if (loadingDiv.innerHTML.includes('Data loaded')) {
+                            loadingDiv.innerHTML = '';
+                        }
+                    }, 2000);
+                } else {
+                    loadingDiv.innerHTML = '<span class="text-yellow-400">⚠️</span><span class="text-[10px]"> No machine data found</span>';
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                loadingDiv.innerHTML = '<span class="text-red-400">❌</span><span class="text-[10px]"> Error: ' + error.message + '</span>';
+                
+                // Demo data if API fails
+                const demoData = [
+                    { type: "heading", machine: "YH1538", status: "Dandori" },
+                    { type: "heading", machine: "YH1030", status: "Running" },
+                    { type: "heading", machine: "H20", status: "Stop" },
+                    { type: "rolling", machine: "AS", status: "Dandori" },
+                    { type: "rolling", machine: "TS", status: "Running" },
+                    { type: "washing", machine: "Barel 1", status: "Dandori" },
+                    { type: "washing", machine: "Barel 2", status: "Running" },
+                    { type: "furnace", machine: "M300", status: "Running" },
+                    { type: "plating", machine: "Line Preatreatment", status: "Trouble" },
+                    { type: "plating", machine: "Line Zinc", status: "Running" }
+                ];
+                renderMachines(demoData);
+            }
+        }
+        
+        // Initialize
+        updateClock();
+        loadMachineData();
+        
+        // Auto refresh every 30 seconds
+        setInterval(loadMachineData, 30000);
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>

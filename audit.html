@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit Finding - QC System</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-slate-950 text-white h-screen overflow-hidden">
+
+  <div class="flex h-screen p-4 gap-4">
+
+    <!-- SIDEBAR -->
+    <aside class="w-64 bg-slate-900 border border-slate-800 rounded-3xl p-6 flex flex-col shrink-0">
+      <h1 class="text-3xl font-bold text-cyan-400 mb-10">QC System</h1>
+      <nav class="space-y-2">
+        <a href="index.html" class="block hover:bg-slate-800 px-4 py-3 rounded-xl transition text-slate-400">Dashboard</a>
+        <a href="production.html" class="block hover:bg-slate-800 px-4 py-3 rounded-xl transition text-slate-400">Production</a>
+        <a href="audit.html" class="block bg-cyan-500/20 text-cyan-400 px-4 py-3 rounded-xl font-medium">Audit Finding</a>
+      </nav>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col gap-4 overflow-hidden">
+
+      <!-- TOP BAR -->
+      <div class="flex justify-between items-center bg-slate-900/50 p-4 rounded-2xl border border-slate-800/50">
+        <div>
+          <h2 class="text-2xl font-bold">Audit Finding</h2>
+          <p class="text-slate-500 text-xs">Manage and track audit findings</p>
+        </div>
+        <div class="flex gap-4 items-center">
+          <div class="text-right">
+            <p id="clock" class="text-cyan-400 font-bold text-lg leading-none">--:--:--</p>
+            <p id="date" class="text-slate-500 text-xs mt-1">Loading...</p>
+          </div>
+          <div class="bg-red-500/10 px-3 py-1 rounded-lg border border-red-500/20">
+            <span class="text-red-400 text-xs font-bold italic">LIVE</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUDIT CONTENT -->
+      <div class="grid grid-cols-12 gap-4 flex-1 min-h-0">
+
+        <!-- ADD NEW FINDING FORM -->
+        <div class="col-span-4 bg-slate-900 rounded-3xl border border-slate-800 p-6 flex flex-col overflow-y-auto">
+          <h3 class="text-xl font-bold mb-4">➕ Add New Finding</h3>
+          
+          <div class="space-y-4">
+            <div>
+              <label class="block text-slate-400 text-sm mb-2">Area *</label>
+              <select id="area" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-cyan-500">
+                <option value="">Select Area</option>
+                <option value="Production">Production</option>
+                <option value="Warehouse">Warehouse</option>
+                <option value="QC">QC</option>
+                <option value="Packaging">Packaging</option>
+                <option value="Maintenance">Maintenance</option>
+              </select>
+            </div>
+            
+            <div>
+              <label class="block text-slate-400 text-sm mb-2">Finding Description *</label>
+              <textarea id="finding" rows="3" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-cyan-500" placeholder="Describe the finding..."></textarea>
+            </div>
+            
+            <div>
+              <label class="block text-slate-400 text-sm mb-2">PIC (Person In Charge)</label>
+              <input type="text" id="pic" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-cyan-500" placeholder="Name of responsible person">
+            </div>
+            
+            <div>
+              <label class="block text-slate-400 text-sm mb-2">Status</label>
+              <select id="status" class="w-full bg-slate-800 border border-slate-700 rounded-xl px-4 py-2 text-white focus:outline-none focus:border-cyan-500">
+                <option value="OPEN">🔴 OPEN</option>
+                <option value="IN PROGRESS">🟡 IN PROGRESS</option>
+                <option value="CLOSE">🟢 CLOSE</option>
+              </select>
+            </div>
+            
+            <button onclick="submitAudit()" class="w-full bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 rounded-xl transition mt-4">
+              Submit Finding
+            </button>
+          </div>
+          
+          <!-- Summary Stats -->
+          <div class="mt-6 pt-4 border-t border-slate-800">
+            <h4 class="text-sm font-bold text-slate-400 mb-3">Summary</h4>
+            <div class="grid grid-cols-3 gap-2 text-center">
+              <div class="bg-red-500/10 rounded-xl p-2">
+                <div class="text-red-400 font-bold text-xl" id="open-count">0</div>
+                <div class="text-xs text-slate-500">OPEN</div>
+              </div>
+              <div class="bg-yellow-500/10 rounded-xl p-2">
+                <div class="text-yellow-400 font-bold text-xl" id="inprogress-count">0</div>
+                <div class="text-xs text-slate-500">IN PROG</div>
+              </div>
+              <div class="bg-green-500/10 rounded-xl p-2">
+                <div class="text-green-400 font-bold text-xl" id="close-count">0</div>
+                <div class="text-xs text-slate-500">CLOSE</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FINDINGS LIST -->
+        <div class="col-span-8 bg-slate-900 rounded-3xl border border-slate-800 p-6 flex flex-col overflow-hidden">
+          <div class="flex justify-between items-center mb-4 shrink-0">
+            <h3 class="text-xl font-bold">📋 All Findings</h3>
+            <div class="flex gap-2">
+              <span class="px-2 py-1 bg-red-500/10 text-red-400 rounded-lg text-xs">OPEN</span>
+              <span class="px-2 py-1 bg-yellow-500/10 text-yellow-400 rounded-lg text-xs">IN PROGRESS</span>
+              <span class="px-2 py-1 bg-green-500/10 text-green-400 rounded-lg text-xs">CLOSE</span>
+            </div>
+          </div>
+          
+          <div id="audit-container" class="space-y-3 overflow-y-auto flex-1 pr-2">
+            <p class="text-slate-500 text-center py-8">Loading findings...</p>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <style>
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #1e293b;
+      border-radius: 10px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #22d3ee;
+      border-radius: 10px;
+    }
+  </style>
+
+  <script src="main.js"></script>
+</body>
+</html>
