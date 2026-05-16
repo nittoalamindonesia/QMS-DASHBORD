@@ -1,4 +1,20 @@
 // ==========================
+// CHECK LOGIN STATUS
+// ==========================
+function checkAuth() {
+    const userJson = sessionStorage.getItem('currentUser');
+    if (!userJson) {
+        // Jika tidak login, redirect ke login.html
+        window.location.href = 'login.html';
+        return null;
+    }
+    return JSON.parse(userJson);
+}
+
+// Panggil cek login di awal
+const currentUser = checkAuth();
+
+// ==========================
 // API ENDPOINTS
 // ==========================
 const AUDIT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/audit";
@@ -9,7 +25,7 @@ const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx1gdt2s3PRAgG3
 let chart;
 
 // ==========================
-// LOAD CALENDAR (dari dashboard-full.html)
+// LOAD CALENDAR
 // ==========================
 async function loadCalendar() {
     const calendar = document.getElementById("calendar");
@@ -22,7 +38,6 @@ async function loadCalendar() {
     }
     
     try {
-        // Fetch events
         const response = await fetch(EVENT_API);
         const events = await response.json();
         console.log("Events loaded:", events);
@@ -38,18 +53,15 @@ async function loadCalendar() {
         const firstDay = new Date(year, month, 1).getDay();
         const lastDate = new Date(year, month + 1, 0).getDate();
         
-        // Clear calendar
         calendar.innerHTML = "";
         if (todayEvent) todayEvent.innerHTML = "";
         
-        // Empty cells for days before month starts
         for (let i = 0; i < firstDay; i++) {
             calendar.innerHTML += `<div class="bg-slate-800/40 rounded-xl p-2 min-h-[100px] border border-slate-700/50"></div>`;
         }
         
         let hasTodayEvent = false;
         
-        // Date cells with events
         for (let day = 1; day <= lastDate; day++) {
             const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
             const event = events.find(e => e.date === fullDate);
@@ -64,7 +76,6 @@ async function loadCalendar() {
                 
                 eventHTML = `<div class="text-[10px] mt-1 text-cyan-400">${icon} ${event.title}</div>`;
                 
-                // Add to today's events
                 if (isToday && todayEvent) {
                     hasTodayEvent = true;
                     todayEvent.innerHTML += `
@@ -96,7 +107,7 @@ async function loadCalendar() {
         console.log("Calendar loaded");
     } catch (error) {
         console.error("Calendar Error:", error);
-        calendar.innerHTML = '<div class="col-span-7 text-center text-red-400">Error loading calendar</div>';
+        if (calendar) calendar.innerHTML = '<div class="col-span-7 text-center text-red-400">Error loading calendar</div>';
     }
 }
 
@@ -127,17 +138,14 @@ async function getAuditData() {
             });
         }
         
-        // Update KPI
         const openFindingElem = document.getElementById("open-finding");
         if (openFindingElem) openFindingElem.innerText = openCount;
         
-        // Update running alert
         const alertElem = document.getElementById("running-alert");
         if (alertElem) {
             alertElem.innerHTML = `<marquee behavior="scroll" direction="left" class="text-red-400 text-sm font-medium">${alertText || "✅ No Open Finding Today"}</marquee>`;
         }
         
-        // Update audit container (untuk halaman audit.html)
         const auditContainer = document.getElementById("audit-container");
         if (auditContainer) {
             auditContainer.innerHTML = "";
@@ -177,7 +185,6 @@ async function getAuditData() {
             }
         }
         
-        // Update stats on audit page
         const openCountElem = document.getElementById("open-count");
         if (openCountElem) openCountElem.innerText = openCount;
         
@@ -243,7 +250,6 @@ async function loadChart() {
             }
         });
         
-        // Update KPI production
         const totalOutput = values.reduce((a, b) => a + b, 0);
         const avgOutput = (totalOutput / values.length).toFixed(0);
         
@@ -262,6 +268,12 @@ async function loadChart() {
 // SUBMIT AUDIT
 // ==========================
 async function submitAudit() {
+    // Cek role untuk submit audit
+    if (currentUser && currentUser.role !== 'admin') {
+        alert("You don't have permission to add findings");
+        return;
+    }
+    
     const area = document.getElementById("area")?.value;
     const finding = document.getElementById("finding")?.value;
     const status = document.getElementById("status")?.value;
@@ -312,6 +324,14 @@ function updateClock() {
     
     if (clockElem) clockElem.innerText = time;
     if (dateElem) dateElem.innerText = date;
+}
+
+// ==========================
+// LOGOUT FUNCTION
+// ==========================
+function logout() {
+    sessionStorage.removeItem('currentUser');
+    window.location.href = 'login.html';
 }
 
 // ==========================

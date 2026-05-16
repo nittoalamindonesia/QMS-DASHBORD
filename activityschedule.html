@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, user-scalable=no">
+    <title>Activity Schedule - NITTO SEIKO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #22d3ee;
+            border-radius: 10px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8));
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+        
+        .today-event-card {
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.08), rgba(6, 182, 212, 0.03));
+            border-left: 2px solid #22d3ee;
+        }
+        
+        .empty-today {
+            background: rgba(15, 23, 42, 0.3);
+        }
+        
+        .calendar-cell {
+            transition: all 0.15s ease;
+        }
+        
+        .calendar-cell:hover {
+            transform: translateY(-1px);
+            border-color: #22d3ee !important;
+        }
+        
+        /* Navigation Menu */
+        .nav-item {
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item:hover {
+            transform: translateX(5px);
+            background: rgba(34, 211, 238, 0.1);
+        }
+        
+        .logout-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateX(3px);
+        }
+        
+        .refresh-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            transform: rotate(180deg);
+            background: rgba(34, 211, 238, 0.2);
+        }
+    </style>
+</head>
+<body class="text-white">
+
+    <div class="flex h-screen p-4 gap-4">
+
+        <!-- SIDEBAR MENU (SAMA DENGAN production.html) -->
+        <aside class="w-72 bg-gradient-to-b from-slate-900/95 to-slate-900/80 backdrop-blur-sm border border-slate-800/50 rounded-3xl p-6 flex flex-col shrink-0">
+            <div class="flex items-center gap-3 mb-8 pb-6 border-b border-slate-800/50">
+                <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                    <span class="text-white text-xl font-bold">NS</span>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-xs">Plant 2</p>
+                </div>
+            </div>
+            
+            <!-- User Info -->
+            <div class="bg-slate-800/50 rounded-xl p-3 mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center">
+                        <span class="text-xl">👤</span>
+                    </div>
+                    <div>
+                        <p class="text-white text-sm font-medium" id="user-name">Loading...</p>
+                        <p class="text-xs" id="user-role">Loading...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="space-y-2 flex-1">
+                <a href="maindashboard.html" class="nav-item flex items-center gap-3 hover:bg-slate-800/50 px-4 py-3 rounded-xl transition-all text-slate-400">
+                    <span class="text-xl">📊</span>
+                    <span>Main Dashboard</span>
+                </a>
+                <a href="activityschedule.html" class="nav-item flex items-center gap-3 bg-gradient-to-r from-cyan-500/20 to-transparent text-cyan-400 px-4 py-3 rounded-xl font-medium">
+                    <span class="text-xl">📅</span>
+                    <span>Activity Schedule</span>
+                </a>
+                <a href="production.html" class="nav-item flex items-center gap-3 hover:bg-slate-800/50 px-4 py-3 rounded-xl transition-all text-slate-400">
+                    <span class="text-xl">🏭</span>
+                    <span>Production</span>
+                </a>
+                <a href="audit.html" class="nav-item flex items-center gap-3 hover:bg-slate-800/50 px-4 py-3 rounded-xl transition-all text-slate-400">
+                    <span class="text-xl">🔍</span>
+                    <span>Audit Finding</span>
+                </a>
+            </nav>
+            
+            <div class="pt-6 mt-auto border-t border-slate-800/50 space-y-3">
+                <div class="flex items-center gap-2 text-slate-500 text-xs">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span>System Online</span>
+                </div>
+                <button onclick="logout()" class="logout-btn w-full flex items-center gap-2 text-slate-400 hover:text-red-400 text-sm px-3 py-2 rounded-lg transition">
+                    <span>🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 flex flex-col gap-4 overflow-y-auto">
+            
+            <!-- HEADER -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent flex items-center gap-2">
+                        <span>📅</span> Activity Schedule
+                    </h1>
+                    <p class="text-slate-400 text-sm mt-1">Company calendar & events schedule</p>
+                </div>
+                <div class="flex items-center gap-3 flex-wrap">
+                    <div class="text-right">
+                        <p id="clock" class="text-cyan-400 font-bold text-lg">--:--:--</p>
+                        <p id="date-header" class="text-slate-500 text-xs">Loading...</p>
+                    </div>
+                    <button onclick="manualRefresh()" class="refresh-btn bg-slate-800 hover:bg-slate-700 p-2.5 rounded-xl transition-all">
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </button>
+                    <div class="flex items-center gap-2 bg-green-500/10 px-3 py-2 rounded-xl border border-green-500/20">
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-green-400 text-xs font-bold uppercase">Live</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RUNNING TEXT MOTTO -->
+            <div class="bg-cyan-500/10 rounded-lg px-3 py-2 border border-cyan-500/20 shrink-0">
+                <marquee behavior="scroll" direction="left" class="text-cyan-400 text-xs font-medium">
+                    🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | COMMITMENT TO QUALITY & EXCELLENCE | TARGET: WORLD CLASS MANUFACTURING
+                </marquee>
+            </div>
+
+            <!-- MAIN GRID -->
+            <div class="grid grid-cols-12 gap-4 flex-1 min-h-0">
+
+                <!-- CALENDAR SECTION -->
+                <div class="col-span-8 bg-slate-900/50 rounded-xl border border-slate-800 p-4 flex flex-col overflow-hidden">
+                    <div class="flex justify-between items-center mb-3 shrink-0">
+                        <div class="flex items-center gap-2">
+                            <span class="text-lg">📅</span>
+                            <h2 id="calendar-month" class="text-cyan-400 font-bold text-sm">Loading...</h2>
+                        </div>
+                        <div class="text-slate-500 text-[10px] flex items-center gap-1">
+                            <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                            <span>Live Calendar</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Days Header -->
+                    <div class="grid grid-cols-7 gap-1 mb-2 text-center text-[10px] font-bold">
+                        <div class="text-red-400 py-1">Sun</div>
+                        <div class="text-slate-500 py-1">Mon</div>
+                        <div class="text-slate-500 py-1">Tue</div>
+                        <div class="text-slate-500 py-1">Wed</div>
+                        <div class="text-slate-500 py-1">Thu</div>
+                        <div class="text-slate-500 py-1">Fri</div>
+                        <div class="text-cyan-400 py-1">Sat</div>
+                    </div>
+                    
+                    <!-- Calendar Grid -->
+                    <div id="calendar-grid" class="grid grid-cols-7 gap-1 flex-1 overflow-y-auto min-h-0">
+                        <div class="col-span-full text-center text-slate-500 py-8">Loading calendar...</div>
+                    </div>
+                </div>
+
+                <!-- RIGHT PANEL -->
+                <div class="col-span-4 flex flex-col gap-4">
+
+                    <!-- TODAY'S EVENTS -->
+                    <div class="bg-slate-900/50 rounded-xl border border-slate-800 p-4 flex-1 overflow-hidden flex flex-col">
+                        <div class="flex items-center gap-2 mb-2 shrink-0">
+                            <span class="text-base">📌</span>
+                            <h3 class="font-bold text-cyan-400 text-sm">Today's Events</h3>
+                            <span id="today-date" class="text-slate-500 text-[10px] ml-auto"></span>
+                        </div>
+                        <div id="today-events-list" class="overflow-y-auto flex-1 space-y-2 pr-1">
+                            <div class="text-center text-slate-500 py-4 text-xs">Loading events...</div>
+                        </div>
+                    </div>
+
+                    <!-- UPCOMING EVENTS PREVIEW -->
+                    <div class="bg-slate-900/50 rounded-xl border border-slate-800 p-4 shrink-0">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-base">⏰</span>
+                            <h3 class="font-bold text-cyan-400 text-sm">Upcoming Events</h3>
+                        </div>
+                        <div id="upcoming-events" class="space-y-1 max-h-32 overflow-y-auto">
+                            <div class="text-center text-slate-500 py-2 text-xs">Loading...</div>
+                        </div>
+                    </div>
+
+                    <!-- AUDIT SUMMARY -->
+                    <div class="bg-slate-900/50 rounded-xl border border-slate-800 p-4 shrink-0">
+                        <div class="flex items-center gap-2 mb-2">
+                            <span class="text-base">🔍</span>
+                            <h3 class="font-bold text-cyan-400 text-sm">Audit Summary</h3>
+                        </div>
+                        <div id="audit-list" class="text-xs space-y-1">
+                            Loading...
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <!-- LAST UPDATE INFO -->
+            <div class="text-center mt-2 pb-2">
+                <p id="last-update" class="text-slate-500 text-[10px]">Last update: --:--:--</p>
+                <p class="text-slate-600 text-[8px] mt-1">Auto refresh every 10 seconds</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ==================== AUTHENTICATION ====================
+        
+        function checkAuth() {
+            const userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            return JSON.parse(userJson);
+        }
+        
+        const currentUser = checkAuth();
+        
+        if (currentUser) {
+            document.getElementById('user-name').innerText = currentUser.username;
+            const roleHtml = currentUser.role === 'admin' ? 
+                '<span class="text-cyan-400 text-xs">👑 Administrator</span>' : 
+                '<span class="text-slate-400 text-xs">👤 User</span>';
+            document.getElementById('user-role').innerHTML = roleHtml;
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+        
+        // ==================== DATA FUNCTIONS ====================
+        
+        const EVENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/event";
+        const AUDIT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/audit";
+        let autoRefreshInterval;
+        
+        function updateClock() {
+            const now = new Date();
+            const time = now.toLocaleTimeString('id-ID', { hour12: false });
+            const date = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('clock').innerText = time;
+            document.getElementById('date-header').innerText = date;
+        }
+        
+        function updateLastUpdate() {
+            const now = new Date();
+            document.getElementById('last-update').innerText = `Last update: ${now.toLocaleTimeString('id-ID', { hour12: false })}`;
+        }
+        
+        function getTodayDate() {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, '0');
+            const day = String(today.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+        
+        function formatDisplayDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
+        }
+        
+        async function loadData() {
+            try {
+                const [eventResponse, auditResponse] = await Promise.all([
+                    fetch(EVENT_API),
+                    fetch(AUDIT_API)
+                ]);
+                
+                const events = await eventResponse.json();
+                const audits = await auditResponse.json();
+                
+                // Update calendar
+                renderCalendar(events);
+                
+                // Update today's events
+                const todayDate = getTodayDate();
+                const todayEvents = events.filter(event => event.date === todayDate);
+                const todayEventsDiv = document.getElementById('today-events-list');
+                const todayDateSpan = document.getElementById('today-date');
+                
+                todayDateSpan.innerHTML = formatDisplayDate(todayDate);
+                
+                if (todayEvents.length > 0) {
+                    todayEventsDiv.innerHTML = todayEvents.map(event => {
+                        let icon = '📌';
+                        if (event.type === 'audit') icon = '🔍';
+                        else if (event.type === 'visit') icon = '👥';
+                        else if (event.type === 'training') icon = '📚';
+                        return `
+                            <div class="today-event-card rounded-lg p-2">
+                                <div class="flex items-start gap-2">
+                                    <div class="text-sm">${icon}</div>
+                                    <div class="flex-1">
+                                        <div class="font-bold text-white text-xs">${event.title}</div>
+                                        <p class="text-slate-400 text-[10px]">${event.type}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    todayEventsDiv.innerHTML = '<div class="text-center text-slate-500 py-4 text-xs">📭 No events today</div>';
+                }
+                
+                // Update upcoming events (next 7 days)
+                const upcomingEvents = events.filter(e => new Date(e.date) > new Date()).slice(0, 5);
+                const upcomingDiv = document.getElementById('upcoming-events');
+                if (upcomingEvents.length > 0) {
+                    upcomingDiv.innerHTML = upcomingEvents.map(event => {
+                        const eventDate = new Date(event.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                        return `
+                            <div class="flex items-center justify-between py-1 border-b border-slate-800 last:border-0">
+                                <span class="text-cyan-400 text-[10px]">📅 ${eventDate}</span>
+                                <span class="text-white text-[10px]">${event.title}</span>
+                            </div>
+                        `;
+                    }).join('');
+                } else {
+                    upcomingDiv.innerHTML = '<div class="text-center text-slate-500 py-2 text-xs">No upcoming events</div>';
+                }
+                
+                // Update audit summary
+                const openAudits = audits.filter(a => a.status === 'OPEN');
+                const closedAudits = audits.filter(a => a.status === 'CLOSE');
+                const inProgressAudits = audits.filter(a => a.status === 'IN PROGRESS');
+                
+                document.getElementById('audit-list').innerHTML = `
+                    <div class="grid grid-cols-3 gap-2 mb-2">
+                        <div class="bg-red-500/10 rounded p-1 text-center">
+                            <div class="text-red-400 font-bold text-xs">${openAudits.length}</div>
+                            <div class="text-slate-500 text-[8px]">OPEN</div>
+                        </div>
+                        <div class="bg-yellow-500/10 rounded p-1 text-center">
+                            <div class="text-yellow-400 font-bold text-xs">${inProgressAudits.length}</div>
+                            <div class="text-slate-500 text-[8px]">PROG</div>
+                        </div>
+                        <div class="bg-green-500/10 rounded p-1 text-center">
+                            <div class="text-green-400 font-bold text-xs">${closedAudits.length}</div>
+                            <div class="text-slate-500 text-[8px]">CLOSED</div>
+                        </div>
+                    </div>
+                    ${openAudits.length > 0 ? `<div class="text-red-400 text-[9px] truncate">⚠ ${openAudits[0]?.finding?.substring(0, 30)}</div>` : '<div class="text-green-400 text-[9px] text-center">✅ No open findings</div>'}
+                `;
+                
+                updateLastUpdate();
+                
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+        
+        function renderCalendar(events) {
+            const calendarGrid = document.getElementById('calendar-grid');
+            const calendarMonthSpan = document.getElementById('calendar-month');
+            
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const today = now.getDate();
+            const monthName = now.toLocaleString('default', { month: 'long' });
+            
+            calendarMonthSpan.innerText = `${monthName} ${year}`;
+            
+            const firstDay = new Date(year, month, 1).getDay();
+            const lastDate = new Date(year, month + 1, 0).getDate();
+            
+            let html = '';
+            
+            for (let i = 0; i < firstDay; i++) {
+                html += `<div class="bg-slate-800/20 rounded p-1 min-h-[60px] border border-slate-700/20"></div>`;
+            }
+            
+            for (let day = 1; day <= lastDate; day++) {
+                const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                const event = events.find(e => e.date === fullDate);
+                const isToday = day === today;
+                
+                let eventHtml = '';
+                if (event) {
+                    let icon = '📌';
+                    if (event.type === 'audit') icon = '🔍';
+                    else if (event.type === 'visit') icon = '👥';
+                    else if (event.type === 'training') icon = '📚';
+                    eventHtml = `<div class="text-[7px] mt-0.5 text-cyan-400 truncate">${icon} ${event.title}</div>`;
+                }
+                
+                html += `
+                    <div class="calendar-cell rounded p-1 min-h-[60px] border ${isToday ? 'bg-cyan-500/10 border-cyan-500' : 'bg-slate-800/30 border-slate-700/30'}">
+                        <span class="text-[10px] font-bold ${isToday ? 'text-cyan-400' : 'text-white'}">${day}</span>
+                        ${eventHtml}
+                    </div>
+                `;
+            }
+            
+            calendarGrid.innerHTML = html;
+        }
+        
+        function manualRefresh() { loadData(); }
+        
+        function startAutoRefresh() {
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            autoRefreshInterval = setInterval(loadData, 10000);
+        }
+        
+        updateClock();
+        loadData();
+        startAutoRefresh();
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>

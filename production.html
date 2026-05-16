@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, user-scalable=no">
-    <title>Production - Machine Status | QC System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production - Machine Status | NITTO SEIKO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         * {
@@ -13,13 +13,13 @@
         }
         
         body {
-            height: 100vh;
-            overflow: hidden;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
         }
         
         ::-webkit-scrollbar {
-            width: 3px;
-            height: 3px;
+            width: 6px;
+            height: 6px;
         }
         
         ::-webkit-scrollbar-track {
@@ -32,331 +32,782 @@
             border-radius: 10px;
         }
         
-        /* Status badge colors */
-        .status-running {
-            background: rgba(34, 197, 94, 0.15);
-            color: #4ade80;
-            border: 1px solid rgba(34, 197, 94, 0.3);
+        /* Stat Card */
+        .stat-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8));
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(51, 65, 85, 0.5);
         }
         
-        .status-stop {
-            background: rgba(239, 68, 68, 0.15);
-            color: #f87171;
-            border: 1px solid rgba(239, 68, 68, 0.3);
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
         
-        .status-dandori {
-            background: rgba(234, 179, 8, 0.15);
-            color: #fbbf24;
-            border: 1px solid rgba(234, 179, 8, 0.3);
-        }
-        
-        .status-trouble {
-            background: rgba(168, 85, 247, 0.15);
-            color: #c084fc;
-            border: 1px solid rgba(168, 85, 247, 0.3);
-        }
-        
+        /* Machine Card - Grid View */
         .machine-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(5px);
             transition: all 0.2s ease;
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
         }
         
         .machine-card:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            transform: translateY(-3px);
+            background: rgba(15, 23, 42, 0.95);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
         
-        /* Section header */
+        .machine-card:active {
+            transform: translateY(-1px);
+        }
+        
+        /* Status Border */
+        .card-running {
+            border-top: 3px solid #22c55e;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.02));
+        }
+        
+        .card-stop {
+            border-top: 3px solid #ef4444;
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.02));
+        }
+        
+        .card-dandori {
+            border-top: 3px solid #eab308;
+            background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(234, 179, 8, 0.02));
+        }
+        
+        .card-trouble {
+            border-top: 3px solid #a855f7;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.02));
+        }
+        
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .badge-running {
+            background: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+        
+        .badge-stop {
+            background: rgba(239, 68, 68, 0.2);
+            color: #f87171;
+        }
+        
+        .badge-dandori {
+            background: rgba(234, 179, 8, 0.2);
+            color: #fbbf24;
+        }
+        
+        .badge-trouble {
+            background: rgba(168, 85, 247, 0.2);
+            color: #c084fc;
+        }
+        
         .section-header {
-            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.05));
-            border-left: 3px solid #22d3ee;
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.02));
+            border-bottom: 1px solid rgba(34, 211, 238, 0.2);
+        }
+        
+        .refresh-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .refresh-btn:hover {
+            transform: rotate(180deg);
+            background: rgba(34, 211, 238, 0.2);
+        }
+        
+        .count-badge {
+            background: rgba(34, 211, 238, 0.15);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        /* Modal/Popup for Part Info */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 24px;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .close-modal {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .close-modal:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Search box */
+        .search-box {
+            transition: all 0.3s ease;
+        }
+        
+        .search-box:focus {
+            border-color: #22d3ee;
+            box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.2);
+        }
+        
+        /* Section collapse */
+        .section-collapse {
+            cursor: pointer;
+            user-select: none;
+        }
+        
+        .section-collapse:hover {
+            background: rgba(34, 211, 238, 0.05);
+        }
+        
+        .rotate-icon {
+            transition: transform 0.2s ease;
+        }
+        
+        .rotate-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+        
+        /* Part code styling */
+        .part-code {
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            letter-spacing: 1px;
+        }
+        
+        /* Tooltip */
+        .machine-card {
+            position: relative;
+        }
+        
+        .machine-card .part-tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e293b;
+            color: #22d3ee;
+            padding: 4px 8px;
+            border-radius: 8px;
+            font-size: 9px;
+            white-space: nowrap;
+            z-index: 10;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+            margin-bottom: 5px;
+        }
+        
+        .machine-card:hover .part-tooltip {
+            opacity: 1;
+        }
+        
+        /* Navigation Menu */
+        .nav-item {
+            transition: all 0.3s ease;
+        }
+        
+        .nav-item:hover {
+            transform: translateX(5px);
+            background: rgba(34, 211, 238, 0.1);
+        }
+        
+        .logout-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateX(3px);
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-white">
+<body class="text-white">
 
-    <div class="h-screen flex flex-col p-3 gap-2 overflow-hidden">
+    <div class="flex h-screen p-4 gap-4">
 
-        <!-- HEADER -->
-        <div class="flex justify-between items-center bg-slate-900/50 backdrop-blur-sm rounded-xl px-4 py-2 border border-slate-800 shrink-0">
-            <div>
-                <h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">Production Monitoring</h1>
-                <p class="text-slate-500 text-[10px]">Machine Status & Performance</p>
-            </div>
-            <div class="flex items-center gap-3">
-                <div class="text-right">
-                    <p id="clock" class="text-cyan-400 font-bold text-sm">--:--:--</p>
-                    <p id="date-header" class="text-slate-500 text-[9px]">Loading...</p>
+        <!-- SIDEBAR MENU -->
+        <aside class="w-72 bg-gradient-to-b from-slate-900/95 to-slate-900/80 backdrop-blur-sm border border-slate-800/50 rounded-3xl p-6 flex flex-col shrink-0">
+            <div class="flex items-center gap-3 mb-8 pb-6 border-b border-slate-800/50">
+                <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                    <span class="text-white text-xl font-bold">NS</span>
                 </div>
-                <div class="flex items-center gap-1 bg-green-500/10 px-2 py-1 rounded-lg">
-                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                    <span class="text-green-400 text-[8px] font-bold">LIVE</span>
+                <div>
+                    <h1 class="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-xs">Plant 2</p>
                 </div>
             </div>
-        </div>
-
-        <!-- LOADING -->
-        <div id="loading" class="text-slate-400 text-xs flex items-center gap-2 shrink-0">
-            <div class="w-3 h-3 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
-            <span>Loading machine data...</span>
-        </div>
-
-        <!-- LEGEND / SUMMARY CARDS -->
-        <div class="grid grid-cols-4 gap-2 shrink-0">
-            <div class="bg-slate-900/50 rounded-lg p-1.5 text-center border border-slate-800">
-                <div class="text-[10px] text-slate-400">Total Machines</div>
-                <div id="total-count" class="text-cyan-400 font-bold text-lg">0</div>
-            </div>
-            <div class="bg-slate-900/50 rounded-lg p-1.5 text-center border border-green-500/20">
-                <div class="text-[10px] text-slate-400">Running</div>
-                <div id="running-count" class="text-green-400 font-bold text-lg">0</div>
-            </div>
-            <div class="bg-slate-900/50 rounded-lg p-1.5 text-center border border-red-500/20">
-                <div class="text-[10px] text-slate-400">Stop</div>
-                <div id="stop-count" class="text-red-400 font-bold text-lg">0</div>
-            </div>
-            <div class="bg-slate-900/50 rounded-lg p-1.5 text-center border border-yellow-500/20">
-                <div class="text-[10px] text-slate-400">Dandori</div>
-                <div id="dandori-count" class="text-yellow-400 font-bold text-lg">0</div>
-            </div>
-        </div>
-
-        <!-- MACHINE LIST - Scrollable -->
-        <div class="flex-1 overflow-y-auto min-h-0 space-y-2">
             
-            <!-- SECTION: Heading Machines -->
-            <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
-                <div class="section-header px-3 py-1.5">
-                    <h3 class="font-bold text-cyan-400 text-sm flex items-center gap-2">
-                        <span>🔧</span> Heading Machines
-                        <span id="heading-count" class="text-slate-400 text-[10px] ml-auto"></span>
-                    </h3>
+            <!-- User Info -->
+            <div class="bg-slate-800/50 rounded-xl p-3 mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center">
+                        <span class="text-xl">👤</span>
+                    </div>
+                    <div>
+                        <p class="text-white text-sm font-medium" id="user-name">Loading...</p>
+                        <p class="text-xs" id="user-role">Loading...</p>
+                    </div>
                 </div>
-                <div id="heading-machines" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-2">
-                    <!-- Dynamic content -->
+            </div>
+            
+            <nav class="space-y-2 flex-1">
+                <a href="maindashboard.html" class="nav-item flex items-center gap-3 hover:bg-slate-800/50 px-4 py-3 rounded-xl transition-all text-slate-400">
+                    <span class="text-xl">📊</span>
+                    <span>Main Dashboard</span>
+                </a>
+                <a href="activityschedule.html" class="nav-item flex items-center gap-3 hover:bg-slate-800/50 px-4 py-3 rounded-xl transition-all text-slate-400">
+                    <span class="text-xl">📅</span>
+                    <span>Activity Schedule</span>
+                </a>
+                <a href="production.html" class="nav-item flex items-center gap-3 bg-gradient-to-r from-cyan-500/20 to-transparent text-cyan-400 px-4 py-3 rounded-xl font-medium">
+                    <span class="text-xl">🏭</span>
+                    <span>Production</span>
+                </a>
+                <a href="audit.html" class="nav-item flex items-center gap-3 hover:bg-slate-800/50 px-4 py-3 rounded-xl transition-all text-slate-400">
+                    <span class="text-xl">🔍</span>
+                    <span>Audit Finding</span>
+                </a>
+            </nav>
+            
+            <div class="pt-6 mt-auto border-t border-slate-800/50 space-y-3">
+                <div class="flex items-center gap-2 text-slate-500 text-xs">
+                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span>System Online</span>
+                </div>
+                <button onclick="logout()" class="logout-btn w-full flex items-center gap-2 text-slate-400 hover:text-red-400 text-sm px-3 py-2 rounded-lg transition">
+                    <span>🚪</span>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="flex-1 flex flex-col gap-4 overflow-y-auto">
+            
+            <!-- HEADER -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent flex items-center gap-2">
+                        <span>🏭</span> Production Monitoring
+                    </h1>
+                    <p class="text-slate-400 text-sm mt-1">Click on any machine to see the part being produced</p>
+                </div>
+                <div class="flex items-center gap-3 flex-wrap">
+                    <div class="relative">
+                        <input type="text" id="search-input" placeholder="🔍 Search machine..." 
+                               class="search-box bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-2 text-sm w-48 focus:outline-none">
+                    </div>
+                    <div class="text-right">
+                        <p id="clock" class="text-cyan-400 font-bold text-lg">--:--:--</p>
+                        <p id="date-header" class="text-slate-500 text-xs">Loading...</p>
+                    </div>
+                    <button onclick="manualRefresh()" class="refresh-btn bg-slate-800 hover:bg-slate-700 p-2.5 rounded-xl transition-all">
+                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                        </svg>
+                    </button>
+                    <div class="flex items-center gap-2 bg-green-500/10 px-3 py-2 rounded-xl border border-green-500/20">
+                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                        <span class="text-green-400 text-xs font-bold uppercase">Live</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- SECTION: Rolling Machines -->
-            <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
-                <div class="section-header px-3 py-1.5">
-                    <h3 class="font-bold text-cyan-400 text-sm flex items-center gap-2">
-                        <span>⚙️</span> Rolling Machines
-                        <span id="rolling-count" class="text-slate-400 text-[10px] ml-auto"></span>
-                    </h3>
+            <!-- RUNNING TEXT MOTTO -->
+            <div class="bg-cyan-500/10 rounded-lg px-3 py-2 border border-cyan-500/20 shrink-0">
+                <marquee behavior="scroll" direction="left" class="text-cyan-400 text-xs font-medium">
+                    🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | COMMITMENT TO QUALITY & EXCELLENCE | TARGET: WORLD CLASS MANUFACTURING
+                </marquee>
+            </div>
+
+            <!-- FILTER / LEGEND -->
+            <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex flex-wrap gap-2">
+                    <span class="text-xs text-slate-400 mr-1">Filter:</span>
+                    <button onclick="filterStatus('all')" id="filter-all" class="filter-btn px-3 py-1 rounded-full text-xs bg-cyan-500/20 text-cyan-400">All</button>
+                    <button onclick="filterStatus('running')" id="filter-running" class="filter-btn px-3 py-1 rounded-full text-xs bg-slate-800 text-slate-400 hover:bg-green-500/20 hover:text-green-400">▶️ Running</button>
+                    <button onclick="filterStatus('stop')" id="filter-stop" class="filter-btn px-3 py-1 rounded-full text-xs bg-slate-800 text-slate-400 hover:bg-red-500/20 hover:text-red-400">⏹️ Stop</button>
+                    <button onclick="filterStatus('dandori')" id="filter-dandori" class="filter-btn px-3 py-1 rounded-full text-xs bg-slate-800 text-slate-400 hover:bg-yellow-500/20 hover:text-yellow-400">🔄 Dandori</button>
+                    <button onclick="filterStatus('trouble')" id="filter-trouble" class="filter-btn px-3 py-1 rounded-full text-xs bg-slate-800 text-slate-400 hover:bg-purple-500/20 hover:text-purple-400">⚠️ Trouble</button>
                 </div>
-                <div id="rolling-machines" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-2">
-                    <!-- Dynamic content -->
+                <div class="text-xs text-slate-500">
+                    <span id="filtered-count">0</span> machines shown
                 </div>
             </div>
 
-            <!-- SECTION: Washing -->
-            <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
-                <div class="section-header px-3 py-1.5">
-                    <h3 class="font-bold text-cyan-400 text-sm flex items-center gap-2">
-                        <span>🧼</span> Washing
-                        <span id="washing-count" class="text-slate-400 text-[10px] ml-auto"></span>
-                    </h3>
+            <!-- STATISTICS CARDS -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div class="stat-card rounded-xl p-3 text-center">
+                    <div class="text-slate-400 text-xs mb-1">Total Mesin</div>
+                    <div id="total-count" class="text-2xl md:text-3xl font-bold text-cyan-400">0</div>
+                    <div class="text-slate-500 text-[10px] mt-1">All Units</div>
                 </div>
-                <div id="washing-machines" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-2">
-                    <!-- Dynamic content -->
+                <div class="stat-card rounded-xl p-3 text-center">
+                    <div class="text-slate-400 text-xs mb-1">Running</div>
+                    <div id="running-count" class="text-2xl md:text-3xl font-bold text-green-400">0</div>
+                    <div class="text-slate-500 text-[10px] mt-1">Operational</div>
                 </div>
-            </div>
-
-            <!-- SECTION: Furnace -->
-            <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
-                <div class="section-header px-3 py-1.5">
-                    <h3 class="font-bold text-cyan-400 text-sm flex items-center gap-2">
-                        <span>🔥</span> Furnace
-                        <span id="furnace-count" class="text-slate-400 text-[10px] ml-auto"></span>
-                    </h3>
+                <div class="stat-card rounded-xl p-3 text-center">
+                    <div class="text-slate-400 text-xs mb-1">Stop</div>
+                    <div id="stop-count" class="text-2xl md:text-3xl font-bold text-red-400">0</div>
+                    <div class="text-slate-500 text-[10px] mt-1">Down / Idle</div>
                 </div>
-                <div id="furnace-machines" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-2">
-                    <!-- Dynamic content -->
+                <div class="stat-card rounded-xl p-3 text-center">
+                    <div class="text-slate-400 text-xs mb-1">Dandori / Trouble</div>
+                    <div id="dandori-count" class="text-2xl md:text-3xl font-bold text-yellow-400">0</div>
+                    <div class="text-slate-500 text-[10px] mt-1">Setup / Issue</div>
                 </div>
             </div>
 
-            <!-- SECTION: Plating -->
-            <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
-                <div class="section-header px-3 py-1.5">
-                    <h3 class="font-bold text-cyan-400 text-sm flex items-center gap-2">
-                        <span>⚡</span> Plating Lines
-                        <span id="plating-count" class="text-slate-400 text-[10px] ml-auto"></span>
-                    </h3>
-                </div>
-                <div id="plating-machines" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-1 p-2">
-                    <!-- Dynamic content -->
+            <!-- LOADING INDICATOR -->
+            <div id="loading" class="fixed bottom-4 right-4 bg-slate-800/90 rounded-lg px-3 py-1.5 text-xs hidden z-50">
+                <div class="flex items-center gap-2">
+                    <div class="w-3 h-3 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+                    <span class="text-slate-300">Refreshing...</span>
                 </div>
             </div>
 
+            <!-- MACHINE SECTIONS - GRID VIEW -->
+            <div class="space-y-5" id="machine-container">
+                
+                <!-- HEADING MACHINES -->
+                <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
+                    <div class="section-header px-4 py-3 section-collapse" onclick="toggleSection('heading-section')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">🔧</span>
+                                <h3 class="font-bold text-cyan-400 text-base">Heading Machines</h3>
+                                <span id="heading-total" class="count-badge text-cyan-400 ml-2">0 units</span>
+                            </div>
+                            <svg id="heading-icon" class="rotate-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="heading-machines" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-4">
+                        <div class="col-span-full text-center text-slate-500 py-6 text-sm">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- ROLLING MACHINES -->
+                <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
+                    <div class="section-header px-4 py-3 section-collapse" onclick="toggleSection('rolling-section')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">⚙️</span>
+                                <h3 class="font-bold text-cyan-400 text-base">Rolling Machines</h3>
+                                <span id="rolling-total" class="count-badge text-cyan-400 ml-2">0 units</span>
+                            </div>
+                            <svg id="rolling-icon" class="rotate-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="rolling-machines" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-4">
+                        <div class="col-span-full text-center text-slate-500 py-6 text-sm">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- WASHING -->
+                <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
+                    <div class="section-header px-4 py-3 section-collapse" onclick="toggleSection('washing-section')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">🧼</span>
+                                <h3 class="font-bold text-cyan-400 text-base">Washing</h3>
+                                <span id="washing-total" class="count-badge text-cyan-400 ml-2">0 units</span>
+                            </div>
+                            <svg id="washing-icon" class="rotate-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="washing-machines" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-4">
+                        <div class="col-span-full text-center text-slate-500 py-6 text-sm">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- FURNACE -->
+                <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
+                    <div class="section-header px-4 py-3 section-collapse" onclick="toggleSection('furnace-section')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">🔥</span>
+                                <h3 class="font-bold text-cyan-400 text-base">Furnace</h3>
+                                <span id="furnace-total" class="count-badge text-cyan-400 ml-2">0 units</span>
+                            </div>
+                            <svg id="furnace-icon" class="rotate-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="furnace-machines" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-4">
+                        <div class="col-span-full text-center text-slate-500 py-6 text-sm">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- PLATING -->
+                <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
+                    <div class="section-header px-4 py-3 section-collapse" onclick="toggleSection('plating-section')">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xl">⚡</span>
+                                <h3 class="font-bold text-cyan-400 text-base">Plating Lines</h3>
+                                <span id="plating-total" class="count-badge text-cyan-400 ml-2">0 units</span>
+                            </div>
+                            <svg id="plating-icon" class="rotate-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div id="plating-machines" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-4">
+                        <div class="col-span-full text-center text-slate-500 py-6 text-sm">Loading...</div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <!-- LAST UPDATE INFO -->
+            <div class="text-center mt-4 pb-4">
+                <p id="last-update" class="text-slate-500 text-[10px]">Last update: --:--:--</p>
+                <p class="text-slate-600 text-[8px] mt-1">Auto refresh every 5 seconds</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL for Part Info -->
+    <div id="partModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center p-4 border-b border-slate-700">
+                <h3 class="text-lg font-bold text-cyan-400 flex items-center gap-2">
+                    <span>🔧</span> Machine Detail
+                </h3>
+                <button onclick="closeModal()" class="close-modal text-slate-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <div class="p-5">
+                <div class="mb-4">
+                    <label class="text-slate-400 text-xs block mb-1">Machine Name</label>
+                    <div id="modal-machine" class="text-white font-bold text-lg">-</div>
+                </div>
+                <div class="mb-4">
+                    <label class="text-slate-400 text-xs block mb-1">Status</label>
+                    <div id="modal-status" class="inline-flex">-</div>
+                </div>
+                <div class="mb-4">
+                    <label class="text-slate-400 text-xs block mb-1">Part / Material</label>
+                    <div id="modal-part" class="part-code bg-slate-800/50 p-3 rounded-xl text-cyan-400 font-mono text-sm break-all">-</div>
+                </div>
+                <div class="mt-4 pt-3 border-t border-slate-700">
+                    <p class="text-slate-500 text-[10px] text-center">Click outside to close</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // API Endpoint untuk machine data
-        const MACHINE_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/machine";
+        // ==================== AUTHENTICATION ====================
         
-        // Clock function
+        function checkAuth() {
+            const userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            return JSON.parse(userJson);
+        }
+        
+        const currentUser = checkAuth();
+        
+        if (currentUser) {
+            document.getElementById('user-name').innerText = currentUser.username;
+            const roleHtml = currentUser.role === 'admin' ? 
+                '<span class="text-cyan-400 text-xs">👑 Administrator</span>' : 
+                '<span class="text-slate-400 text-xs">👤 User</span>';
+            document.getElementById('user-role').innerHTML = roleHtml;
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+        
+        // ==================== MACHINE DATA ====================
+        
+        let allMachines = [];
+        let currentFilter = 'all';
+        let currentSearch = '';
+        
+        const MACHINE_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/machine";
+        let autoRefreshInterval;
+        
+        let sectionState = {
+            heading: true,
+            rolling: true,
+            washing: true,
+            furnace: true,
+            plating: true
+        };
+        
+        function toggleSection(section) {
+            const container = document.getElementById(`${section}-machines`);
+            const icon = document.getElementById(`${section}-icon`);
+            
+            if (sectionState[section.replace('-section', '')]) {
+                container.classList.add('hidden');
+                icon.classList.add('collapsed');
+                sectionState[section.replace('-section', '')] = false;
+            } else {
+                container.classList.remove('hidden');
+                icon.classList.remove('collapsed');
+                sectionState[section.replace('-section', '')] = true;
+            }
+        }
+        
+        function showPartModal(machine, status, part) {
+            const modal = document.getElementById('partModal');
+            const modalMachine = document.getElementById('modal-machine');
+            const modalStatus = document.getElementById('modal-status');
+            const modalPart = document.getElementById('modal-part');
+            
+            modalMachine.innerText = machine;
+            
+            const statusLower = (status || '').toLowerCase();
+            let statusHtml = '';
+            if (statusLower === 'running') statusHtml = '<span class="status-badge badge-running">▶️ Running</span>';
+            else if (statusLower === 'stop') statusHtml = '<span class="status-badge badge-stop">⏹️ Stop</span>';
+            else if (statusLower === 'dandori') statusHtml = '<span class="status-badge badge-dandori">🔄 Dandori</span>';
+            else if (statusLower === 'trouble') statusHtml = '<span class="status-badge badge-trouble">⚠️ Trouble</span>';
+            else statusHtml = '<span class="status-badge">❓ Unknown</span>';
+            
+            modalStatus.innerHTML = statusHtml;
+            modalPart.innerText = part || 'No part information available';
+            modal.classList.add('active');
+        }
+        
+        function closeModal() {
+            document.getElementById('partModal').classList.remove('active');
+        }
+        
         function updateClock() {
             const now = new Date();
-            const time = now.toLocaleTimeString('en-US', { hour12: false });
-            const date = now.toLocaleDateString('id-ID', { 
-                weekday: 'short', 
-                day: 'numeric', 
-                month: 'short' 
-            });
-            const clockElem = document.getElementById('clock');
-            const dateHeaderElem = document.getElementById('date-header');
-            if (clockElem) clockElem.innerText = time;
-            if (dateHeaderElem) dateHeaderElem.innerText = date;
+            const time = now.toLocaleTimeString('id-ID', { hour12: false });
+            const date = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('clock').innerText = time;
+            document.getElementById('date-header').innerText = date;
         }
         
-        // Get status class
-        function getStatusClass(status) {
-            const statusLower = (status || '').toLowerCase();
-            if (statusLower === 'running') return 'status-running';
-            if (statusLower === 'stop') return 'status-stop';
-            if (statusLower === 'dandori') return 'status-dandori';
-            if (statusLower === 'trouble') return 'status-trouble';
-            return 'bg-slate-700/50 text-slate-400';
+        function updateLastUpdate() {
+            const now = new Date();
+            document.getElementById('last-update').innerText = `Last update: ${now.toLocaleTimeString('id-ID', { hour12: false })}`;
         }
         
-        // Get status icon
+        function getCardClass(status) {
+            const s = (status || '').toLowerCase();
+            if (s === 'running') return 'card-running';
+            if (s === 'stop') return 'card-stop';
+            if (s === 'dandori') return 'card-dandori';
+            if (s === 'trouble') return 'card-trouble';
+            return '';
+        }
+        
+        function getBadgeClass(status) {
+            const s = (status || '').toLowerCase();
+            if (s === 'running') return 'badge-running';
+            if (s === 'stop') return 'badge-stop';
+            if (s === 'dandori') return 'badge-dandori';
+            if (s === 'trouble') return 'badge-trouble';
+            return '';
+        }
+        
         function getStatusIcon(status) {
-            const statusLower = (status || '').toLowerCase();
-            if (statusLower === 'running') return '▶️';
-            if (statusLower === 'stop') return '⏹️';
-            if (statusLower === 'dandori') return '🔄';
-            if (statusLower === 'trouble') return '⚠️';
+            const s = (status || '').toLowerCase();
+            if (s === 'running') return '▶️';
+            if (s === 'stop') return '⏹️';
+            if (s === 'dandori') return '🔄';
+            if (s === 'trouble') return '⚠️';
             return '❓';
         }
         
-        // Render machine cards
-        function renderMachines(data) {
-            // Group by type
-            const groups = {
-                heading: [],
-                rolling: [],
-                washing: [],
-                furnace: [],
-                plating: []
-            };
+        function filterStatus(status) {
+            currentFilter = status;
             
-            data.forEach(item => {
-                const type = (item.type || '').toLowerCase();
-                if (type === 'heading') groups.heading.push(item);
-                else if (type === 'rolling') groups.rolling.push(item);
-                else if (type === 'washing') groups.washing.push(item);
-                else if (type === 'furnace') groups.furnace.push(item);
-                else if (type === 'plating') groups.plating.push(item);
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('bg-cyan-500/20', 'text-cyan-400');
+                btn.classList.add('bg-slate-800', 'text-slate-400');
             });
             
-            // Update counts
-            document.getElementById('heading-count').innerText = `${groups.heading.length} machines`;
-            document.getElementById('rolling-count').innerText = `${groups.rolling.length} machines`;
-            document.getElementById('washing-count').innerText = `${groups.washing.length} machines`;
-            document.getElementById('furnace-count').innerText = `${groups.furnace.length} machines`;
-            document.getElementById('plating-count').innerText = `${groups.plating.length} machines`;
+            const activeBtn = document.getElementById(`filter-${status}`);
+            if (activeBtn) activeBtn.classList.add('bg-cyan-500/20', 'text-cyan-400');
+            if (status === 'all') document.getElementById('filter-all').classList.add('bg-cyan-500/20', 'text-cyan-400');
             
-            // Total count
-            const total = data.length;
-            document.getElementById('total-count').innerText = total;
-            
-            // Status counts
-            const running = data.filter(m => (m.status || '').toLowerCase() === 'running').length;
-            const stop = data.filter(m => (m.status || '').toLowerCase() === 'stop').length;
-            const dandori = data.filter(m => (m.status || '').toLowerCase() === 'dandori').length;
-            const trouble = data.filter(m => (m.status || '').toLowerCase() === 'trouble').length;
-            
-            document.getElementById('running-count').innerText = running;
-            document.getElementById('stop-count').innerText = stop;
-            document.getElementById('dandori-count').innerText = dandori + trouble;
-            
-            // Render each group
-            renderGroup('heading-machines', groups.heading);
-            renderGroup('rolling-machines', groups.rolling);
-            renderGroup('washing-machines', groups.washing);
-            renderGroup('furnace-machines', groups.furnace);
-            renderGroup('plating-machines', groups.plating);
+            applyFilters();
         }
         
-        function renderGroup(containerId, machines) {
+        function searchMachines() {
+            currentSearch = document.getElementById('search-input').value.toLowerCase();
+            applyFilters();
+        }
+        
+        function applyFilters() {
+            const groups = { heading: [], rolling: [], washing: [], furnace: [], plating: [] };
+            let filteredCount = 0;
+            
+            allMachines.forEach(item => {
+                const type = (item.type || '').toLowerCase();
+                const status = (item.status || '').toLowerCase();
+                const machineName = (item.machine || '').toLowerCase();
+                
+                let passFilter = currentFilter === 'all' || status === currentFilter;
+                let passSearch = !currentSearch || machineName.includes(currentSearch);
+                
+                if (passFilter && passSearch && groups[type]) {
+                    groups[type].push(item);
+                    filteredCount++;
+                }
+            });
+            
+            document.getElementById('filtered-count').innerText = filteredCount;
+            renderGroup('heading-machines', groups.heading, 'heading-total');
+            renderGroup('rolling-machines', groups.rolling, 'rolling-total');
+            renderGroup('washing-machines', groups.washing, 'washing-total');
+            renderGroup('furnace-machines', groups.furnace, 'furnace-total');
+            renderGroup('plating-machines', groups.plating, 'plating-total');
+        }
+        
+        function renderGroup(containerId, machines, totalId) {
             const container = document.getElementById(containerId);
             if (!container) return;
             
-            if (machines.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center text-slate-500 text-[10px] py-2">No data</div>';
+            if (!machines || machines.length === 0) {
+                container.innerHTML = '<div class="col-span-full text-center text-slate-500 py-6 text-sm">No machines found</div>';
+                if (totalId) document.getElementById(totalId).innerHTML = '0 units';
                 return;
             }
             
+            if (totalId) document.getElementById(totalId).innerHTML = `${machines.length} units`;
+            
             container.innerHTML = machines.map(machine => {
-                const statusClass = getStatusClass(machine.status);
+                const cardClass = getCardClass(machine.status);
+                const badgeClass = getBadgeClass(machine.status);
                 const statusIcon = getStatusIcon(machine.status);
-                const machineName = machine.machine || machine.name || '-';
+                const machineName = machine.machine || '-';
                 const statusText = machine.status || 'Unknown';
+                const part = machine['part on machine'] || machine.part || 'No part info';
+                const shortPart = part.length > 25 ? part.substring(0, 22) + '...' : part;
                 
                 return `
-                    <div class="machine-card ${statusClass} rounded-lg p-1.5 text-center">
-                        <div class="text-[11px] font-bold truncate" title="${machineName}">${machineName}</div>
-                        <div class="flex items-center justify-center gap-1 mt-0.5">
-                            <span class="text-[9px]">${statusIcon}</span>
-                            <span class="text-[8px] uppercase">${statusText}</span>
+                    <div class="machine-card ${cardClass}" onclick="showPartModal('${machineName.replace(/'/g, "\\'")}', '${machine.status}', '${part.replace(/'/g, "\\'")}')">
+                        <div class="text-sm font-bold text-white truncate mb-2" title="${machineName}">${machineName}</div>
+                        <div class="flex items-center justify-center gap-1">
+                            <span class="status-badge ${badgeClass}">${statusIcon} ${statusText}</span>
                         </div>
+                        <div class="part-tooltip">📦 ${shortPart}</div>
                     </div>
                 `;
             }).join('');
         }
         
-        async function loadMachineData() {
+        function renderStatistics(data) {
+            const total = data.length;
+            const running = data.filter(m => (m.status || '').toLowerCase() === 'running').length;
+            const stop = data.filter(m => (m.status || '').toLowerCase() === 'stop').length;
+            const dandori = data.filter(m => (m.status || '').toLowerCase() === 'dandori').length;
+            const trouble = data.filter(m => (m.status || '').toLowerCase() === 'trouble').length;
+            
+            document.getElementById('total-count').innerText = total;
+            document.getElementById('running-count').innerText = running;
+            document.getElementById('stop-count').innerText = stop;
+            document.getElementById('dandori-count').innerText = dandori + trouble;
+        }
+        
+        function showLoading(show) {
             const loadingDiv = document.getElementById('loading');
-            
-            loadingDiv.innerHTML = '<div class="w-3 h-3 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div><span> Loading machine data...</span>';
-            
+            loadingDiv.classList.toggle('hidden', !show);
+        }
+        
+        async function loadMachineData() {
+            showLoading(true);
             try {
                 const response = await fetch(MACHINE_API);
                 const data = await response.json();
-                console.log('Machine Data:', data);
-                
                 if (data && Array.isArray(data) && data.length > 0) {
-                    renderMachines(data);
-                    loadingDiv.innerHTML = '<span class="text-green-400">✅</span><span class="text-[10px]"> Data loaded - ' + data.length + ' machines</span>';
-                    setTimeout(() => {
-                        if (loadingDiv.innerHTML.includes('Data loaded')) {
-                            loadingDiv.innerHTML = '';
-                        }
-                    }, 2000);
-                } else {
-                    loadingDiv.innerHTML = '<span class="text-yellow-400">⚠️</span><span class="text-[10px]"> No machine data found</span>';
+                    allMachines = data;
+                    renderStatistics(allMachines);
+                    applyFilters();
                 }
-                
             } catch (error) {
-                console.error('Error:', error);
-                loadingDiv.innerHTML = '<span class="text-red-400">❌</span><span class="text-[10px]"> Error: ' + error.message + '</span>';
-                
-                // Demo data if API fails
-                const demoData = [
-                    { type: "heading", machine: "YH1538", status: "Dandori" },
-                    { type: "heading", machine: "YH1030", status: "Running" },
-                    { type: "heading", machine: "H20", status: "Stop" },
-                    { type: "rolling", machine: "AS", status: "Dandori" },
-                    { type: "rolling", machine: "TS", status: "Running" },
-                    { type: "washing", machine: "Barel 1", status: "Dandori" },
-                    { type: "washing", machine: "Barel 2", status: "Running" },
-                    { type: "furnace", machine: "M300", status: "Running" },
-                    { type: "plating", machine: "Line Preatreatment", status: "Trouble" },
-                    { type: "plating", machine: "Line Zinc", status: "Running" }
-                ];
-                renderMachines(demoData);
+                console.log('API Error:', error);
             }
+            updateLastUpdate();
+            showLoading(false);
         }
         
-        // Initialize
-        updateClock();
-        loadMachineData();
+        function manualRefresh() { loadMachineData(); }
         
-        // Auto refresh every 30 seconds
-        setInterval(loadMachineData, 30000);
+        function startAutoRefresh() {
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            autoRefreshInterval = setInterval(loadMachineData, 5000);
+        }
+        
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+        document.getElementById('search-input').addEventListener('input', searchMachines);
+        
+        loadMachineData();
+        startAutoRefresh();
         setInterval(updateClock, 1000);
+        updateClock();
     </script>
 </body>
 </html>
