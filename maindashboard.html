@@ -6,613 +6,262 @@
     <title>Main Dashboard - PT NITTO ALAM INDONESIA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            min-height: 100vh;
-            font-family: 'Inter', system-ui, sans-serif;
-        }
-        
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #22d3ee;
-            border-radius: 10px;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8));
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(51, 65, 85, 0.5);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(34, 211, 238, 0.3);
-        }
-        
-        .scoreboard {
-            background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
-            border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1);
-            border: 1px solid rgba(34, 211, 238, 0.3);
-        }
-        
-        .score-header {
-            background: linear-gradient(135deg, #2d2d44, #1a1a2e);
-            border-bottom: 2px solid #22d3ee;
-            border-radius: 20px 20px 0 0;
-        }
-        
-        .score-number {
-            font-family: 'Courier New', 'Monaco', monospace;
-            font-size: 8rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #22d3ee, #0891b2);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 20px rgba(34, 211, 238, 0.3);
-            letter-spacing: 10px;
-        }
-        
-        .score-label {
-            font-family: 'Courier New', monospace;
-            letter-spacing: 4px;
-            font-weight: 600;
-            color: #22d3ee;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-        }
-        
-        .score-sub {
-            background: rgba(0, 0, 0, 0.5);
-            border-radius: 10px;
-            font-family: monospace;
-        }
-        
-        .digital-clock {
-            font-family: 'Courier New', 'Monaco', monospace;
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: #0a0a0f;
-            padding: 10px 25px;
-            border-radius: 15px;
-            letter-spacing: 5px;
-            border: 1px solid #22d3ee;
-            box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
-            color: #22d3ee;
-        }
-        
-        .date-display {
-            font-family: monospace;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
-        
-        .score-inner {
-            background: rgba(0, 0, 0, 0.4);
-            border-radius: 15px;
-            padding: 30px;
-        }
-        
-        .score-digit {
-            font-family: 'Courier New', monospace;
-            font-size: 7rem;
-            font-weight: 800;
-            color: #22d3ee;
-            text-shadow: 0 0 10px rgba(34, 211, 238, 0.5);
-            background: #00000040;
-            padding: 10px 30px;
-            border-radius: 20px;
-            display: inline-block;
-            min-width: 200px;
-        }
-        
-        .nav-item {
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        
-        .nav-item:hover {
-            transform: translateX(8px);
-            background: rgba(34, 211, 238, 0.15);
-        }
-        
-        .nav-item.active {
-            background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(6, 182, 212, 0.05));
-            border-left: 3px solid #22d3ee;
-        }
-        
-        .running-text {
-            background: linear-gradient(90deg, #1e293b, #0f172a, #1e293b);
-            border-top: 1px solid rgba(34, 211, 238, 0.3);
-            border-bottom: 1px solid rgba(34, 211, 238, 0.3);
-        }
-        
-        .running-text marquee {
-            font-size: 0.85rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            color: #22d3ee;
-        }
-        
-        .welcome-card {
-            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.02));
-            border: 1px solid rgba(34, 211, 238, 0.2);
-        }
-        
-        .logout-btn {
-            transition: all 0.3s ease;
-        }
-        
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.2);
-            transform: translateX(3px);
-        }
-        
-        .accident-table {
-            border-collapse: collapse;
-        }
-        
-        .accident-table th,
-        .accident-table td {
-            padding: 10px;
-            text-align: left;
-            border-bottom: 1px solid rgba(51, 65, 85, 0.5);
-        }
-        
-        .accident-table th {
-            color: #22d3ee;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .accident-table td {
-            color: #cbd5e1;
-            font-size: 12px;
-        }
-        
-        .accident-table tr:hover td {
-            background: rgba(34, 211, 238, 0.05);
-        }
-        
-        @keyframes pulse-green {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.6; }
-        }
-        
-        .last-accident-alert {
-            animation: pulse-green 1s ease-in-out infinite;
-        }
+        /* --- your existing CSS styles (unchanged) --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; font-family: 'Inter', system-ui, sans-serif; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #22d3ee; border-radius: 10px; }
+        .stat-card { background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8)); backdrop-filter: blur(10px); transition: all 0.3s ease; border: 1px solid rgba(51, 65, 85, 0.5); }
+        .stat-card:hover { transform: translateY(-3px); border-color: rgba(34, 211, 238, 0.3); }
+        .scoreboard { background: linear-gradient(145deg, #1a1a2e, #0f0f1a); border-radius: 20px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1); border: 1px solid rgba(34, 211, 238, 0.3); }
+        .score-header { background: linear-gradient(135deg, #2d2d44, #1a1a2e); border-bottom: 2px solid #22d3ee; border-radius: 20px 20px 0 0; }
+        .score-number { font-family: 'Courier New', 'Monaco', monospace; font-size: 8rem; font-weight: 800; background: linear-gradient(135deg, #22d3ee, #0891b2); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 20px rgba(34, 211, 238, 0.3); letter-spacing: 10px; }
+        .score-label { font-family: 'Courier New', monospace; letter-spacing: 4px; font-weight: 600; color: #22d3ee; text-transform: uppercase; font-size: 0.8rem; }
+        .score-sub { background: rgba(0, 0, 0, 0.5); border-radius: 10px; font-family: monospace; }
+        .digital-clock { font-family: 'Courier New', 'Monaco', monospace; font-size: 2.5rem; font-weight: 700; background: #0a0a0f; padding: 10px 25px; border-radius: 15px; letter-spacing: 5px; border: 1px solid #22d3ee; box-shadow: 0 0 15px rgba(34, 211, 238, 0.2); color: #22d3ee; }
+        .date-display { font-family: monospace; font-size: 0.8rem; letter-spacing: 1px; }
+        .score-inner { background: rgba(0, 0, 0, 0.4); border-radius: 15px; padding: 30px; }
+        .score-digit { font-family: 'Courier New', monospace; font-size: 7rem; font-weight: 800; color: #22d3ee; text-shadow: 0 0 10px rgba(34, 211, 238, 0.5); background: #00000040; padding: 10px 30px; border-radius: 20px; display: inline-block; min-width: 200px; }
+        .nav-item { transition: all 0.3s ease; position: relative; }
+        .nav-item:hover { transform: translateX(8px); background: rgba(34, 211, 238, 0.15); }
+        .nav-item.active { background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(6, 182, 212, 0.05)); border-left: 3px solid #22d3ee; }
+        .running-text { background: linear-gradient(90deg, #1e293b, #0f172a, #1e293b); border-top: 1px solid rgba(34, 211, 238, 0.3); border-bottom: 1px solid rgba(34, 211, 238, 0.3); }
+        .running-text marquee { font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; color: #22d3ee; }
+        .welcome-card { background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.02)); border: 1px solid rgba(34, 211, 238, 0.2); }
+        .logout-btn { transition: all 0.3s ease; }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.2); transform: translateX(3px); }
+        .accident-table { border-collapse: collapse; }
+        .accident-table th, .accident-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(51, 65, 85, 0.5); }
+        .accident-table th { color: #22d3ee; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+        .accident-table td { color: #cbd5e1; font-size: 12px; }
+        .accident-table tr:hover td { background: rgba(34, 211, 238, 0.05); }
+        @keyframes pulse-green { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .last-accident-alert { animation: pulse-green 1s ease-in-out infinite; }
     </style>
 </head>
 <body class="text-white">
-
+    <!-- --- YOUR EXISTING HTML STRUCTURE (unchanged) --- -->
     <div class="min-h-screen">
-        
-        <!-- TOP BAR -->
         <div class="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 px-6 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
-                    <span class="text-white text-xl font-bold">NS</span>
-                </div>
-                <div>
-                    <h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">PT NITTO ALAM INDONESIA</h1>
-                    <p class="text-slate-500 text-[10px]">Plant 2 - Quality Control System</p>
-                </div>
+                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg"><span class="text-white text-xl font-bold">NS</span></div>
+                <div><h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">PT NITTO ALAM INDONESIA</h1><p class="text-slate-500 text-[10px]">Plant 2 - Quality Control System</p></div>
             </div>
             <div class="flex items-center gap-4">
                 <div class="digital-clock" id="clock">00:00:00</div>
-                <div class="flex items-center gap-2 bg-green-500/10 px-3 py-1.5 rounded-xl border border-green-500/20">
-                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                    <span class="text-green-400 text-[9px] font-bold uppercase">LIVE</span>
-                </div>
+                <div class="flex items-center gap-2 bg-green-500/10 px-3 py-1.5 rounded-xl border border-green-500/20"><div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div><span class="text-green-400 text-[9px] font-bold uppercase">LIVE</span></div>
             </div>
         </div>
-
-        <!-- RUNNING TEXT -->
-        <div class="running-text py-2">
-            <marquee behavior="scroll" direction="left" scrollamount="4">
-                🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | 
-                ✨ ZERO ACCIDENT TARGET ✨ | 
-                🎯 SAFETY FIRST, QUALITY ALWAYS 🎯
-            </marquee>
-        </div>
-
-        <!-- MAIN CONTENT -->
+        <div class="running-text py-2"><marquee behavior="scroll" direction="left" scrollamount="4">🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | ✨ ZERO ACCIDENT TARGET ✨ | 🎯 SAFETY FIRST, QUALITY ALWAYS 🎯</marquee></div>
         <div class="flex">
-            
-            <!-- SIDEBAR MENU -->
             <aside class="w-72 min-h-screen bg-slate-900/50 backdrop-blur-sm border-r border-slate-800 p-5">
-                <div class="welcome-card rounded-xl p-4 mb-6">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center shadow-lg">
-                            <span class="text-white text-xl">👤</span>
-                        </div>
-                        <div>
-                            <p class="text-white font-bold text-sm" id="user-name">Loading...</p>
-                            <p class="text-xs" id="user-role">Loading...</p>
-                        </div>
-                    </div>
-                </div>
-                
+                <div class="welcome-card rounded-xl p-4 mb-6"><div class="flex items-center gap-3"><div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center shadow-lg"><span class="text-white text-xl">👤</span></div><div><p class="text-white font-bold text-sm" id="user-name">Loading...</p><p class="text-xs" id="user-role">Loading...</p></div></div></div>
                 <nav class="space-y-1">
                     <p class="text-slate-500 text-[10px] uppercase tracking-wider px-3 mb-2">Menu Utama</p>
-                    
-                    <a href="maindashboard.html" class="nav-item active flex items-center gap-3 px-4 py-3 rounded-xl text-cyan-400 font-medium">
-                        <span class="text-xl">📊</span>
-                        <span>Main Dashboard</span>
-                    </a>
-                    
-                    <a href="activityschedule.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-cyan-400 transition">
-                        <span class="text-xl">📅</span>
-                        <span>Activity Schedule</span>
-                    </a>
-                    
-                    <a href="production.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-cyan-400 transition">
-                        <span class="text-xl">🏭</span>
-                        <span>Production Monitoring</span>
-                    </a>
-                    
-                    <a href="audit.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-cyan-400 transition">
-                        <span class="text-xl">🔍</span>
-                        <span>Audit Finding</span>
-                    </a>
+                    <a href="maindashboard.html" class="nav-item active flex items-center gap-3 px-4 py-3 rounded-xl text-cyan-400 font-medium"><span class="text-xl">📊</span><span>Main Dashboard</span></a>
+                    <a href="activityschedule.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-cyan-400 transition"><span class="text-xl">📅</span><span>Activity Schedule</span></a>
+                    <a href="production.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-cyan-400 transition"><span class="text-xl">🏭</span><span>Production Monitoring</span></a>
+                    <a href="audit.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-cyan-400 transition"><span class="text-xl">🔍</span><span>Audit Finding</span></a>
                 </nav>
-                
-                <div class="mt-8 pt-6 border-t border-slate-800">
-                    <div class="flex items-center gap-2 mb-3">
-                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span class="text-slate-500 text-xs">System Online</span>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <div class="w-2 h-2 bg-cyan-500 rounded-full"></div>
-                        <span class="text-slate-500 text-xs">Zero Accident Target</span>
-                    </div>
-                </div>
-                
-                <button onclick="logout()" class="logout-btn w-full flex items-center gap-2 text-slate-400 hover:text-red-400 text-sm px-3 py-2 rounded-lg transition mt-6">
-                    <span>🚪</span>
-                    <span>Logout</span>
-                </button>
+                <div class="mt-8 pt-6 border-t border-slate-800"><div class="flex items-center gap-2 mb-3"><div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div><span class="text-slate-500 text-xs">System Online</span></div><div class="flex items-center gap-2"><div class="w-2 h-2 bg-cyan-500 rounded-full"></div><span class="text-slate-500 text-xs">Zero Accident Target</span></div></div>
+                <button onclick="logout()" class="logout-btn w-full flex items-center gap-2 text-slate-400 hover:text-red-400 text-sm px-3 py-2 rounded-lg transition mt-6"><span>🚪</span><span>Logout</span></button>
             </aside>
-
-            <!-- MAIN DASHBOARD CONTENT -->
             <main class="flex-1 p-6 overflow-y-auto">
-                
-                <div class="mb-6">
-                    <h2 class="text-2xl font-bold text-white">
-                        Welcome back, <span class="text-cyan-400" id="welcome-name">User</span>!
-                    </h2>
-                    <p class="text-slate-400 text-sm mt-1">Zero Accident Board - Track our safety performance</p>
-                </div>
-
-                <!-- SCOREBOARD -->
-                <div class="scoreboard mb-8">
-                    <div class="score-header px-6 py-3">
-                        <div class="flex justify-between items-center">
-                            <div class="score-label">🏆 ZERO ACCIDENT</div>
-                            <div class="score-label">DAYS COUNT</div>
-                        </div>
-                    </div>
-                    <div class="score-inner">
-                        <div class="text-center">
-                            <div class="text-slate-400 text-sm mb-4 date-display" id="date-display">Loading date...</div>
-                            
-                            <div class="score-digit mx-auto" id="accident-counter">0</div>
-                            
-                            <div class="score-label mt-4 text-sm">DAYS WITHOUT ACCIDENT</div>
-                            
-                            <div class="score-sub inline-block mt-4 px-4 py-2">
-                                <span class="text-slate-400 text-xs">Last accident: </span>
-                                <span class="text-cyan-400 text-xs font-bold" id="last-accident-date">Never</span>
-                            </div>
-                            <div class="text-slate-500 text-[9px] mt-2" id="next-increment-info"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- STATISTICS ROW -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-                    <div class="stat-card rounded-2xl p-5 text-center">
-                        <div class="text-3xl mb-2">📋</div>
-                        <div class="text-slate-400 text-xs mb-1">Total Incidents</div>
-                        <div class="text-3xl font-bold text-cyan-400" id="total-incidents">0</div>
-                        <div class="text-slate-500 text-[10px] mt-1">Recorded</div>
-                    </div>
-                    <div class="stat-card rounded-2xl p-5 text-center">
-                        <div class="text-3xl mb-2">⚡</div>
-                        <div class="text-slate-400 text-xs mb-1">Current Streak</div>
-                        <div class="text-3xl font-bold text-green-400" id="current-streak">0</div>
-                        <div class="text-slate-500 text-[10px] mt-1">Days Safe</div>
-                    </div>
-                    <div class="stat-card rounded-2xl p-5 text-center">
-                        <div class="text-3xl mb-2">🎯</div>
-                        <div class="text-slate-400 text-xs mb-1">Target</div>
-                        <div class="text-3xl font-bold text-cyan-400">365</div>
-                        <div class="text-slate-500 text-[10px] mt-1">Days Zero Accident</div>
-                    </div>
-                </div>
-
-                <!-- RECENT ACCIDENT HISTORY -->
-                <div class="stat-card rounded-2xl p-6">
-                    <div class="flex items-center gap-2 mb-4">
-                        <span class="text-xl">📋</span>
-                        <h3 class="text-lg font-bold text-cyan-400">Accident History</h3>
-                        <span class="text-xs text-slate-500 ml-auto">Last 5 records</span>
-                    </div>
-                    <div class="overflow-x-auto">
-                        <table class="accident-table w-full">
-                            <thead>
-                                <tr>
-                                    <th>No</th>
-                                    <th>Date</th>
-                                    <th>Accident Description</th>
-                                </tr>
-                            </thead>
-                            <tbody id="accident-table-body">
-                                <tr>
-                                    <td colspan="3" class="text-center text-slate-500 py-4">Loading records...</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <!-- MISSION & VISION -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
-                    <div class="stat-card rounded-2xl p-6">
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="text-2xl">🎯</span>
-                            <h3 class="text-lg font-bold text-cyan-400">Our Vision</h3>
-                        </div>
-                        <p class="text-slate-300 text-sm leading-relaxed">
-                            Menjadi perusahaan terdepan dalam industri manufaktur dengan standar kualitas global dan inovasi berkelanjutan, serta zero accident.
-                        </p>
-                    </div>
-                    <div class="stat-card rounded-2xl p-6">
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="text-2xl">⭐</span>
-                            <h3 class="text-lg font-bold text-cyan-400">Our Mission</h3>
-                        </div>
-                        <p class="text-slate-300 text-sm leading-relaxed">
-                            Menghasilkan produk berkualitas tinggi, memastikan keselamatan kerja zero accident, dan terus meningkatkan sistem manajemen mutu.
-                        </p>
-                    </div>
-                </div>
-                
+                <div class="mb-6"><h2 class="text-2xl font-bold text-white">Welcome back, <span class="text-cyan-400" id="welcome-name">User</span>!</h2><p class="text-slate-400 text-sm mt-1">Zero Accident Board - Track our safety performance</p></div>
+                <div class="scoreboard mb-8"><div class="score-header px-6 py-3"><div class="flex justify-between items-center"><div class="score-label">🏆 ZERO ACCIDENT</div><div class="score-label">DAYS COUNT</div></div></div><div class="score-inner"><div class="text-center"><div class="text-slate-400 text-sm mb-4 date-display" id="date-display">Loading date...</div><div class="score-digit mx-auto" id="accident-counter">0</div><div class="score-label mt-4 text-sm">DAYS WITHOUT ACCIDENT</div><div class="score-sub inline-block mt-4 px-4 py-2"><span class="text-slate-400 text-xs">Last accident: </span><span class="text-cyan-400 text-xs font-bold" id="last-accident-date">Never</span></div><div class="text-slate-500 text-[9px] mt-2" id="next-increment-info"></div></div></div></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8"><div class="stat-card rounded-2xl p-5 text-center"><div class="text-3xl mb-2">📋</div><div class="text-slate-400 text-xs mb-1">Total Incidents</div><div class="text-3xl font-bold text-cyan-400" id="total-incidents">0</div><div class="text-slate-500 text-[10px] mt-1">Recorded</div></div><div class="stat-card rounded-2xl p-5 text-center"><div class="text-3xl mb-2">⚡</div><div class="text-slate-400 text-xs mb-1">Current Streak</div><div class="text-3xl font-bold text-green-400" id="current-streak">0</div><div class="text-slate-500 text-[10px] mt-1">Days Safe</div></div><div class="stat-card rounded-2xl p-5 text-center"><div class="text-3xl mb-2">🎯</div><div class="text-slate-400 text-xs mb-1">Target</div><div class="text-3xl font-bold text-cyan-400">365</div><div class="text-slate-500 text-[10px] mt-1">Days Zero Accident</div></div></div>
+                <div class="stat-card rounded-2xl p-6"><div class="flex items-center gap-2 mb-4"><span class="text-xl">📋</span><h3 class="text-lg font-bold text-cyan-400">Accident History</h3><span class="text-xs text-slate-500 ml-auto">Last 5 records</span></div><div class="overflow-x-auto"><table class="accident-table w-full"><thead><tr><th>No</th><th>Date</th><th>Accident Description</th></tr></thead><tbody id="accident-table-body"><tr><td colspan="3" class="text-center text-slate-500 py-4">Loading records...</td></tr></tbody></table></div></div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8"><div class="stat-card rounded-2xl p-6"><div class="flex items-center gap-3 mb-4"><span class="text-2xl">🎯</span><h3 class="text-lg font-bold text-cyan-400">Our Vision</h3></div><p class="text-slate-300 text-sm leading-relaxed">Menjadi perusahaan terdepan dalam industri manufaktur dengan standar kualitas global dan inovasi berkelanjutan, serta zero accident.</p></div><div class="stat-card rounded-2xl p-6"><div class="flex items-center gap-3 mb-4"><span class="text-2xl">⭐</span><h3 class="text-lg font-bold text-cyan-400">Our Mission</h3></div><p class="text-slate-300 text-sm leading-relaxed">Menghasilkan produk berkualitas tinggi, memastikan keselamatan kerja zero accident, dan terus meningkatkan sistem manajemen mutu.</p></div></div>
             </main>
         </div>
     </div>
 
     <script>
-        // ==================== CONFIGURATION ====================
+        // ==================== UPDATED & ROBUST SCRIPT ====================
         const ZERO_ACCIDENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/Zero%20Accident%20Board";
         
-        // Store last accident date for counter calculation
         let lastAccidentDate = null;
         let currentCounter = 0;
         let accidentHistory = [];
-        
-        // ==================== HELPER FUNCTIONS ====================
-        
-        function checkAuth() {
+        let lastCheckedDate = null;
+
+        // --- Helper Functions ---
+        function checkAuth() { /* ... unchanged ... */ 
             const userJson = sessionStorage.getItem('currentUser');
-            if (!userJson) {
-                window.location.href = 'login.html';
-                return null;
-            }
+            if (!userJson) { window.location.href = 'login.html'; return null; }
             return JSON.parse(userJson);
         }
-        
-        // Calculate days between two dates (ignoring time)
+
+        // Robust date parser for various formats (dd-mm-yyyy, yyyy-mm-dd, etc.)
+        function parseDate(dateString) {
+            if (!dateString) return null;
+            // Try parsing as ISO (yyyy-mm-dd)
+            let date = new Date(dateString);
+            if (!isNaN(date.getTime())) return date;
+            
+            // Try parsing as dd-mm-yyyy or dd/mm/yyyy
+            let parts = dateString.match(/(\d+)[-/](\d+)[-/](\d+)/);
+            if (parts) {
+                let day = parseInt(parts[1], 10);
+                let month = parseInt(parts[2], 10) - 1;
+                let year = parseInt(parts[3], 10);
+                if (year < 100) year += 2000; // Handle 2-digit year
+                date = new Date(year, month, day);
+                if (!isNaN(date.getTime())) return date;
+            }
+            console.warn(`Could not parse date: ${dateString}`);
+            return null;
+        }
+
         function daysBetween(date1, date2) {
-            const d1 = new Date(date1);
-            const d2 = new Date(date2);
-            d1.setHours(0, 0, 0, 0);
-            d2.setHours(0, 0, 0, 0);
+            const d1 = new Date(date1); d1.setHours(0,0,0,0);
+            const d2 = new Date(date2); d2.setHours(0,0,0,0);
             const diffTime = Math.abs(d2 - d1);
             return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         }
-        
-        // Calculate current counter based on last accident date
+
         function calculateCurrentCounter(lastDate) {
             if (!lastDate) return 0;
-            const today = new Date();
-            const lastAccident = new Date(lastDate);
-            lastAccident.setHours(0, 0, 0, 0);
-            today.setHours(0, 0, 0, 0);
-            
+            const today = new Date(); today.setHours(0,0,0,0);
+            const lastAccident = parseDate(lastDate);
+            if (!lastAccident) return 0;
+            lastAccident.setHours(0,0,0,0);
             const diffDays = Math.floor((today - lastAccident) / (1000 * 60 * 60 * 24));
-            return diffDays;
+            return diffDays >= 0 ? diffDays : 0;
         }
-        
-        // Get next increment time info
+
         function getNextIncrementInfo() {
             const now = new Date();
-            const nextMidnight = new Date(now);
-            nextMidnight.setDate(now.getDate() + 1);
-            nextMidnight.setHours(0, 0, 0, 0);
-            
+            const nextMidnight = new Date(now); nextMidnight.setDate(now.getDate() + 1); nextMidnight.setHours(0,0,0,0);
             const hoursLeft = Math.floor((nextMidnight - now) / (1000 * 60 * 60));
             const minutesLeft = Math.floor(((nextMidnight - now) % (1000 * 60 * 60)) / (1000 * 60));
-            
             return `Next increment at 00:00 (in ${hoursLeft}h ${minutesLeft}m)`;
         }
-        
-        // Update clock and check for day change
-        let lastCheckedDate = null;
-        
+
         function updateClockAndCounter() {
             const now = new Date();
-            const hours = String(now.getHours()).padStart(2, '0');
-            const minutes = String(now.getMinutes()).padStart(2, '0');
-            const seconds = String(now.getSeconds()).padStart(2, '0');
-            const timeString = `${hours}:${minutes}:${seconds}`;
-            
-            const dateString = now.toLocaleDateString('id-ID', { 
-                weekday: 'long', 
-                day: 'numeric', 
-                month: 'long', 
-                year: 'numeric' 
-            });
-            
+            const timeString = now.toLocaleTimeString('id-ID', { hour12: false });
+            const dateString = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             document.getElementById('clock').innerText = timeString;
             document.getElementById('date-display').innerHTML = dateString;
             
-            // Check if day has changed (for counter increment)
             const todayDate = now.toDateString();
-            if (lastCheckedDate !== todayDate && lastCheckedDate !== null) {
-                // Day changed, recalculate counter
-                if (lastAccidentDate) {
-                    currentCounter = calculateCurrentCounter(lastAccidentDate);
-                    document.getElementById('accident-counter').innerText = currentCounter;
-                    document.getElementById('current-streak').innerText = currentCounter;
-                }
-            }
-            lastCheckedDate = todayDate;
-            
-            // Update next increment info
-            const infoElem = document.getElementById('next-increment-info');
-            if (infoElem) {
-                infoElem.innerText = getNextIncrementInfo();
-            }
-        }
-        
-        // Load Zero Accident data from Google Sheet
-        async function loadZeroAccidentData() {
-            try {
-                const response = await fetch(ZERO_ACCIDENT_API);
-                const data = await response.json();
-                console.log('Zero Accident Data:', data);
-                
-                if (data && Array.isArray(data) && data.length > 0) {
-                    // Filter valid accidents (have date and description)
-                    const validAccidents = data.filter(item => item.date && item.Accident);
-                    
-                    // Sort by date (newest first)
-                    validAccidents.sort((a, b) => new Date(b.date) - new Date(a.date));
-                    
-                    // Store history
-                    accidentHistory = validAccidents;
-                    
-                    // Get latest accident date
-                    if (validAccidents.length > 0) {
-                        lastAccidentDate = validAccidents[0].date;
-                    } else {
-                        lastAccidentDate = null;
-                    }
-                    
-                    // Calculate days without accident
-                    currentCounter = calculateCurrentCounter(lastAccidentDate);
-                    
-                    // Update UI
-                    document.getElementById('accident-counter').innerText = currentCounter;
-                    document.getElementById('current-streak').innerText = currentCounter;
-                    document.getElementById('total-incidents').innerText = validAccidents.length;
-                    
-                    if (lastAccidentDate) {
-                        const formattedDate = new Date(lastAccidentDate).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'long',
-                            year: 'numeric'
-                        });
-                        document.getElementById('last-accident-date').innerText = formattedDate;
-                    } else {
-                        document.getElementById('last-accident-date').innerText = 'Never';
-                    }
-                    
-                    // Render accident table (all history, show last 5)
-                    renderAccidentTable(validAccidents.slice(0, 5));
-                    
-                } else {
-                    // No data - reset everything
-                    lastAccidentDate = null;
-                    currentCounter = 0;
-                    accidentHistory = [];
-                    
-                    document.getElementById('accident-counter').innerText = '0';
-                    document.getElementById('current-streak').innerText = '0';
-                    document.getElementById('total-incidents').innerText = '0';
-                    document.getElementById('last-accident-date').innerText = 'Never';
-                    renderAccidentTable([]);
-                }
-            } catch (error) {
-                console.error('Error loading zero accident data:', error);
+            if (lastCheckedDate !== todayDate && lastCheckedDate !== null && lastAccidentDate) {
+                currentCounter = calculateCurrentCounter(lastAccidentDate);
                 document.getElementById('accident-counter').innerText = currentCounter;
                 document.getElementById('current-streak').innerText = currentCounter;
             }
+            lastCheckedDate = todayDate;
+            const infoElem = document.getElementById('next-increment-info');
+            if (infoElem) infoElem.innerText = getNextIncrementInfo();
+        }
+
+        // --- Core Data Loading Function (UPDATED) ---
+        async function loadZeroAccidentData() {
+            try {
+                const response = await fetch(ZERO_ACCIDENT_API);
+                const rawData = await response.json();
+                console.log("Raw data from API:", rawData); // <-- LIHAT INI DI KONSOLE BROWSER
+
+                if (!rawData || !Array.isArray(rawData)) {
+                    console.warn("API did not return an array.");
+                    resetUI();
+                    return;
+                }
+
+                // --- INI PERBAIKAN UTAMA: Mapping kolom secara fleksibel ---
+                const validAccidents = rawData
+                    .map(row => {
+                        // Cari kolom yang berisi tanggal dan deskripsi kecelakaan
+                        let dateValue = row.date || row.Date || row.tanggal || null;
+                        let accidentValue = row.Accident || row.acident || row.description || row.kejadian || null;
+                        
+                        // Jika masih belum ketemu, cari properti apa pun yang mirip tanggal/deskripsi
+                        if (!dateValue) {
+                            const possibleDateKey = Object.keys(row).find(key => key.toLowerCase().includes('date'));
+                            if (possibleDateKey) dateValue = row[possibleDateKey];
+                        }
+                        if (!accidentValue) {
+                            const possibleAccKey = Object.keys(row).find(key => key.toLowerCase().includes('accident') || key.toLowerCase().includes('desk'));
+                            if (possibleAccKey) accidentValue = row[possibleAccKey];
+                        }
+
+                        return { date: dateValue, Accident: accidentValue, original: row };
+                    })
+                    .filter(item => item.date && item.Accident); // Hanya ambil yang lengkap
+                
+                console.log("Processed Accidents:", validAccidents); // <-- LIHAT HASIL PEMETAAN
+
+                if (validAccidents.length > 0) {
+                    // Urutkan berdasarkan tanggal (terbaru di atas)
+                    validAccidents.sort((a, b) => {
+                        const dateA = parseDate(a.date);
+                        const dateB = parseDate(b.date);
+                        return dateB - dateA;
+                    });
+                    
+                    accidentHistory = validAccidents;
+                    const latest = accidentHistory[0];
+                    lastAccidentDate = latest.date;
+                    currentCounter = calculateCurrentCounter(lastAccidentDate);
+                    
+                    document.getElementById('accident-counter').innerText = currentCounter;
+                    document.getElementById('current-streak').innerText = currentCounter;
+                    document.getElementById('total-incidents').innerText = accidentHistory.length;
+                    
+                    const formattedLastDate = parseDate(lastAccidentDate)?.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) || lastAccidentDate;
+                    document.getElementById('last-accident-date').innerText = formattedLastDate;
+                    
+                    renderAccidentTable(accidentHistory.slice(0, 5));
+                } else {
+                    console.log("No valid accident records found after processing.");
+                    resetUI();
+                }
+            } catch (error) {
+                console.error('Error loading zero accident data:', error);
+                resetUI();
+            }
         }
         
-        // Render accident table
+        function resetUI() {
+            lastAccidentDate = null;
+            currentCounter = 0;
+            accidentHistory = [];
+            document.getElementById('accident-counter').innerText = '0';
+            document.getElementById('current-streak').innerText = '0';
+            document.getElementById('total-incidents').innerText = '0';
+            document.getElementById('last-accident-date').innerText = 'Never';
+            renderAccidentTable([]);
+        }
+        
         function renderAccidentTable(accidents) {
             const tableBody = document.getElementById('accident-table-body');
-            
             if (!accidents || accidents.length === 0) {
                 tableBody.innerHTML = '<tr><td colspan="3" class="text-center text-green-400 py-4">✅ No accident records - Keep up the good work!</td></tr>';
                 return;
             }
-            
             tableBody.innerHTML = accidents.map((item, index) => {
-                const date = new Date(item.date).toLocaleDateString('id-ID', {
-                    day: 'numeric',
-                    month: 'long',
-                    year: 'numeric'
-                });
-                return `
-                    <tr>
-                        <td class="text-slate-400">${index + 1}</td>
-                        <td class="text-slate-300">${date}</td>
-                        <td class="text-slate-300">${item.Accident || '-'}</td>
-                    </tr>
-                `;
+                const parsedDate = parseDate(item.date);
+                const displayDate = parsedDate ? parsedDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : item.date;
+                return `<tr><td class="text-slate-400">${index + 1}</td><td class="text-slate-300">${displayDate}</td><td class="text-slate-300">${item.Accident || '-'}</td></tr>`;
             }).join('');
         }
         
-        // Logout function
-        function logout() {
-            sessionStorage.removeItem('currentUser');
-            window.location.href = 'login.html';
-        }
+        function logout() { sessionStorage.removeItem('currentUser'); window.location.href = 'login.html'; }
         
-        // ==================== INITIALIZATION ====================
-        
+        // --- INITIALIZATION ---
         const user = checkAuth();
         if (user) {
             document.getElementById('user-name').innerText = user.username;
             document.getElementById('welcome-name').innerText = user.username;
-            const roleHtml = user.role === 'admin' ? 
-                '<span class="text-cyan-400 text-xs">👑 Administrator</span>' : 
-                '<span class="text-slate-400 text-xs">👤 User</span>';
-            document.getElementById('user-role').innerHTML = roleHtml;
+            document.getElementById('user-role').innerHTML = user.role === 'admin' ? '<span class="text-cyan-400 text-xs">👑 Administrator</span>' : '<span class="text-slate-400 text-xs">👤 User</span>';
         }
         
-        // Initial load
         loadZeroAccidentData();
-        
-        // Clock update every second (also checks for day change)
         setInterval(updateClockAndCounter, 1000);
+        setInterval(loadZeroAccidentData, 15000); // Refresh setiap 15 detik
         updateClockAndCounter();
-        
-        // Auto refresh data every 10 seconds (for new accidents)
-        setInterval(loadZeroAccidentData, 10000);
     </script>
 </body>
 </html>
