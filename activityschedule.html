@@ -2,293 +2,559 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Activity Schedule - PT NITTO ALAM INDONESIA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
         }
         
-        body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            min-height: 100vh;
+        /* Responsif Font Size */
+        html { font-size: 16px; }
+        @media (min-width: 1920px) { html { font-size: 18px; } }
+        @media (max-width: 1366px) { html { font-size: 15px; } }
+        @media (max-width: 1024px) { html { font-size: 14px; } }
+        @media (max-width: 768px) { html { font-size: 12px; } }
+        
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #22d3ee; border-radius: 10px; }
+        
+        /* Stat Card */
+        .stat-card { 
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9)); 
+            backdrop-filter: blur(10px); 
+            transition: all 0.3s ease; 
+            border: 1px solid rgba(51, 65, 85, 0.5); 
+            border-radius: 0.8rem;
         }
         
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #22d3ee;
-            border-radius: 10px;
-        }
-        
-        .stat-card {
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8));
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-            border: 1px solid rgba(51, 65, 85, 0.5);
-        }
-        
-        .stat-card:hover {
-            transform: translateY(-3px);
-        }
-        
+        /* Today Event Card */
         .today-event-card {
             background: linear-gradient(135deg, rgba(34, 211, 238, 0.08), rgba(6, 182, 212, 0.03));
-            border-left: 2px solid #22d3ee;
+            border-left: 3px solid #22d3ee;
+            border-radius: 0.6rem;
+            padding: 0.6rem;
+            margin-bottom: 0.5rem;
         }
         
-        .empty-today {
-            background: rgba(15, 23, 42, 0.3);
-        }
-        
+        /* Calendar Cell - Ukuran fixed dan padat */
         .calendar-cell {
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(51, 65, 85, 0.4);
+            border-radius: 0.5rem;
+            padding: 0.4rem;
             transition: all 0.15s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 80px;
+            width: 100%;
         }
         
         .calendar-cell:hover {
-            transform: translateY(-1px);
-            border-color: #22d3ee !important;
+            transform: translateY(-2px);
+            border-color: #22d3ee;
         }
         
-        /* Navigation Menu */
-        .nav-item {
-            transition: all 0.3s ease;
+        /* Tanggal Center */
+        .date-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
         }
         
-        .nav-item:hover {
-            transform: translateX(5px);
-            background: rgba(34, 211, 238, 0.1);
+        .calendar-date {
+            font-size: 0.85rem;
+            font-weight: bold;
+            text-align: center;
         }
+        
+        .calendar-event {
+            font-size: 0.55rem;
+            margin-top: 0.2rem;
+            line-height: 1.2;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            text-align: center;
+        }
+        
+        /* Warna Merah untuk Sabtu, Minggu, dan Libur */
+        .weekend-date {
+            color: #f87171 !important;
+        }
+        .holiday-bg {
+            background: rgba(239, 68, 68, 0.15);
+            border-color: rgba(239, 68, 68, 0.3);
+        }
+        
+        /* POP UP SIDEBAR MENU */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+            display: none;
+        }
+        .menu-overlay.active { display: block; }
+        
+        .popup-sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(34, 211, 238, 0.3);
+            z-index: 999;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
+        }
+        .popup-sidebar.active { left: 0; }
+        
+        .logo-section { padding: 1rem; border-bottom: 1px solid rgba(34, 211, 238, 0.2); margin-bottom: 0.8rem; }
+        .menu-item { margin: 0.2rem 0.6rem; }
+        .menu-button {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #94a3b8;
+            background: transparent;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+        .menu-button:hover { background: rgba(34, 211, 238, 0.1); color: #22d3ee; transform: translateX(5px); }
+        .menu-button.active { background: rgba(34, 211, 238, 0.2); color: #22d3ee; border-left: 3px solid #22d3ee; }
+        .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
         
         .logout-btn {
+            margin-top: auto;
+            margin-bottom: 1rem;
+            margin-left: 0.6rem;
+            margin-right: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #94a3b8;
+            border-top: 1px solid rgba(51, 65, 85, 0.5);
+            font-size: 0.85rem;
+        }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.2); color: #f87171; transform: translateX(5px); }
+        .status-online { text-align: center; padding: 0.8rem; border-top: 1px solid rgba(51, 65, 85, 0.3); font-size: 0.65rem; }
+        
+        /* Tombol Hamburger */
+        .hamburger-btn {
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 0.6rem;
+            padding: 0.4rem 0.6rem;
+            cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .hamburger-btn:hover { background: rgba(34, 211, 238, 0.2); transform: scale(1.02); }
+        
+        /* Running Text */
+        .running-text { background: linear-gradient(90deg, #1e293b, #0f172a, #1e293b); border-top: 1px solid rgba(34, 211, 238, 0.3); border-bottom: 1px solid rgba(34, 211, 238, 0.3); }
+        .running-text marquee { font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; color: #22d3ee; padding: 0.25rem 0; }
+        
+        .digital-clock { 
+            font-family: 'Courier New', monospace; 
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            background: #0a0a0f; 
+            padding: 0.3rem 0.8rem; 
+            border-radius: 0.6rem; 
+            letter-spacing: 2px; 
+            border: 1px solid #22d3ee; 
+            color: #22d3ee;
         }
         
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.2);
-            transform: translateX(3px);
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
         }
         
-        .refresh-btn {
-            transition: all 0.3s ease;
+        .main-layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
         }
         
-        .refresh-btn:hover {
-            transform: rotate(180deg);
-            background: rgba(34, 211, 238, 0.2);
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 0.8rem;
+        }
+        
+        /* Grid 2 kolom */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 0.8rem;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        /* Card container */
+        .card-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            flex-shrink: 0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+        }
+        
+        .card-body {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            padding-right: 0.3rem;
+        }
+        
+        /* Grid Calendar - 7 kolom tetap */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.3rem;
+        }
+        
+        .days-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.3rem;
+            margin-bottom: 0.3rem;
+            flex-shrink: 0;
+        }
+        
+        .day-header {
+            text-align: center;
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 0.2rem;
+        }
+        
+        /* Upcoming events */
+        .upcoming-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+        }
+        .upcoming-date {
+            font-size: 0.75rem;
+            color: #22d3ee;
+            font-weight: 500;
+        }
+        .upcoming-title {
+            font-size: 0.75rem;
+            color: white;
+            font-weight: 500;
+            max-width: 60%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* Empty cell styling - biar padat */
+        .empty-cell {
+            background: rgba(30, 41, 59, 0.2);
+            border: 1px solid rgba(51, 65, 85, 0.2);
+            border-radius: 0.5rem;
+            min-height: 80px;
+        }
+        
+        /* TV Large */
+        @media (min-width: 1920px) {
+            .calendar-date { font-size: 1rem; }
+            .calendar-event { font-size: 0.7rem; }
+            .upcoming-date { font-size: 0.85rem; }
+            .upcoming-title { font-size: 0.85rem; }
+            .calendar-cell { min-height: 95px; }
+            .empty-cell { min-height: 95px; }
+        }
+        
+        /* Mobile - jadi 1 kolom */
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+            .calendar-date { font-size: 0.75rem; }
+            .calendar-event { font-size: 0.5rem; }
+            .calendar-cell { min-height: 65px; }
+            .empty-cell { min-height: 65px; }
         }
     </style>
 </head>
-<body class="text-white">
+<body>
 
-    <div class="flex h-screen p-4 gap-4">
-
-        <!-- SIDEBAR MENU (SAMA DENGAN production.html) -->
-        <aside class="w-72 bg-gradient-to-b from-slate-900/95 to-slate-900/80 backdrop-blur-sm border border-slate-800/50 rounded-3xl p-6 flex flex-col shrink-0">
-            <div class="flex items-center gap-3 mb-8 pb-6 border-b border-slate-800/50">
-                <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
-                    <span class="text-white text-xl font-bold">NS</span>
+    <!-- OVERLAY -->
+    <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+    
+    <!-- POP UP SIDEBAR MENU -->
+    <div id="popupSidebar" class="popup-sidebar">
+        <div class="logo-section">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white text-sm font-bold">NS</span>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">PT NITTO ALAM INDONESIA
+                    <h1 class="text-xs font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-[7px]">Plant 2</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="menu-item">
+            <a href="maindashboard.html" class="menu-button">
+                <span class="menu-icon">📊</span>
+                <span>Main Dashboard</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="activityschedule.html" class="menu-button active">
+                <span class="menu-icon">📅</span>
+                <span>Activity Schedule</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="production.html" class="menu-button">
+                <span class="menu-icon">🏭</span>
+                <span>Production</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="audit.html" class="menu-button">
+                <span class="menu-icon">🔍</span>
+                <span>Audit Finding</span>
+            </a>
+        </div>
+        
+        <div class="logout-btn" onclick="logout()">
+            <span class="menu-icon">🚪</span>
+            <span>Logout</span>
+        </div>
+        
+        <div class="status-online">
+            <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mx-auto"></div>
+            <span>System Online</span>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="dashboard-container">
+        
+        <!-- TOP BAR -->
+        <div class="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 px-3 py-1.5 flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-2">
+                <div class="hamburger-btn" onclick="toggleMenu()">
+                    <span>☰</span>
+                </div>
+                <div>
+                    <h1 class="text-xs md:text-sm font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">PT NITTO ALAM INDONESIA</h1>
+                    <p class="text-slate-500 text-[7px]">Plant 2 - Quality Control System</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="digital-clock" id="clock">00:00:00</div>
+                <div class="flex items-center gap-1 bg-green-500/10 px-1.5 py-0.5 rounded-lg border border-green-500/20">
+                    <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-green-400 text-[6px] font-bold uppercase">LIVE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RUNNING TEXT -->
+        <div class="running-text shrink-0">
+            <marquee behavior="scroll" direction="left" scrollamount="3">
+                🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | COMMITMENT TO QUALITY & EXCELLENCE | TARGET: WORLD CLASS MANUFACTURING
+            </marquee>
+        </div>
+
+        <!-- MAIN LAYOUT -->
+        <div class="main-layout">
+            <div class="content-area">
+                
+                <!-- DASHBOARD GRID -->
+                <div class="dashboard-grid">
+                    
+                    <!-- LEFT: CALENDAR SECTION -->
+                    <div class="stat-card card-container p-2">
+                        <div class="card-header flex justify-between items-center">
+                            <div class="flex items-center gap-1">
+                                <span class="text-sm">📅</span>
+                                <h2 id="calendar-month" class="text-cyan-400 font-bold text-xs">Loading...</h2>
+                            </div>
+                            <div class="text-slate-500 text-[7px] flex items-center gap-1">
+                                <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
+                                <span>Live</span>
+                            </div>
+                        </div>
                         
-                    </h1>
-                    <p class="text-slate-500 text-xs">Plant 2</p>
-                </div>
-            </div>
-            
-            <!-- User Info -->
-            <div class="bg-slate-800/50 rounded-xl p-3 mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center">
-                        <span class="text-xl">👤</span>
+                        <!-- Days Header (Sabtu Minggu Merah) -->
+                        <div class="days-header">
+                            <div class="day-header text-red-400">Sun</div>
+                            <div class="day-header text-slate-500">Mon</div>
+                            <div class="day-header text-slate-500">Tue</div>
+                            <div class="day-header text-slate-500">Wed</div>
+                            <div class="day-header text-slate-500">Thu</div>
+                            <div class="day-header text-slate-500">Fri</div>
+                            <div class="day-header text-red-400">Sat</div>
+                        </div>
+                        
+                        <!-- Calendar Grid -->
+                        <div class="card-body">
+                            <div id="calendar-grid" class="calendar-grid">
+                                <div class="col-span-full text-center text-slate-500 text-xs py-4">Loading calendar...</div>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-white text-sm font-medium" id="user-name">Loading...</p>
-                        <p class="text-xs" id="user-role">Loading...</p>
-                    </div>
-                </div>
-            </div>
-            
-            <nav class="space-y-2 flex-1">
-                <a href="maindashboard.html" class="nav-item flex items-center gap-3 hover:bg-slate-800/50 px-4 py-3 rounded-xl transition-all text-slate-400">
-                    <span class="text-xl">📊</span>
-                    <span>Main Dashboard</span>
-                </a>
-                <a href="activityschedule.html" class="nav-item flex items-center gap-3 bg-gradient-to-r from-cyan-500/20 to-transparent text-cyan-400 px-4 py-3 rounded-xl font-medium">
-                    <span class="text-xl">📅</span>
-                    <span>Activity Schedule</span>
-                </a>
-                <a href="production.html" class="nav-item flex items-center gap-3 hover:bg-slate-800/50 px-4 py-3 rounded-xl transition-all text-slate-400">
-                    <span class="text-xl">🏭</span>
-                    <span>Production</span>
-                </a>
-                <a href="audit.html" class="nav-item flex items-center gap-3 hover:bg-slate-800/50 px-4 py-3 rounded-xl transition-all text-slate-400">
-                    <span class="text-xl">🔍</span>
-                    <span>Audit Finding</span>
-                </a>
-            </nav>
-            
-            <div class="pt-6 mt-auto border-t border-slate-800/50 space-y-3">
-                <div class="flex items-center gap-2 text-slate-500 text-xs">
-                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span>System Online</span>
-                </div>
-                <button onclick="logout()" class="logout-btn w-full flex items-center gap-2 text-slate-400 hover:text-red-400 text-sm px-3 py-2 rounded-lg transition">
-                    <span>🚪</span>
-                    <span>Logout</span>
-                </button>
-            </div>
-        </aside>
 
-        <!-- MAIN CONTENT -->
-        <main class="flex-1 flex flex-col gap-4 overflow-y-auto">
-            
-            <!-- HEADER -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent flex items-center gap-2">
-                        <span>📅</span> Activity Schedule
-                    </h1>
-                    <p class="text-slate-400 text-sm mt-1">Company calendar & events schedule</p>
-                </div>
-                <div class="flex items-center gap-3 flex-wrap">
-                    <div class="text-right">
-                        <p id="clock" class="text-cyan-400 font-bold text-lg">--:--:--</p>
-                        <p id="date-header" class="text-slate-500 text-xs">Loading...</p>
-                    </div>
-                    <button onclick="manualRefresh()" class="refresh-btn bg-slate-800 hover:bg-slate-700 p-2.5 rounded-xl transition-all">
-                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                    </button>
-                    <div class="flex items-center gap-2 bg-green-500/10 px-3 py-2 rounded-xl border border-green-500/20">
-                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span class="text-green-400 text-xs font-bold uppercase">Live</span>
+                    <!-- RIGHT: TODAY'S EVENTS + UPCOMING -->
+                    <div class="stat-card card-container p-2">
+                        <div class="card-header">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-1">
+                                    <span class="text-sm">📌</span>
+                                    <h3 class="font-bold text-cyan-400 text-xs">Today's Events</h3>
+                                </div>
+                                <span id="today-date" class="text-slate-500 text-[8px]">-</span>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div id="today-events-list">
+                                <div class="text-center text-slate-500 text-xs py-4">Loading events...</div>
+                            </div>
+                        </div>
+                        
+                        <!-- UPCOMING EVENTS -->
+                        <div class="mt-2 pt-2 border-t border-slate-800 shrink-0">
+                            <div class="flex items-center gap-1 mb-2">
+                                <span class="text-sm">⏰</span>
+                                <h3 class="font-bold text-cyan-400 text-xs uppercase tracking-wide">Upcoming Events</h3>
+                            </div>
+                            <div id="upcoming-events" class="space-y-1 max-h-32 overflow-y-auto">
+                                <div class="text-center text-slate-500 py-2 text-xs">Loading...</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <!-- RUNNING TEXT MOTTO -->
-            <div class="bg-cyan-500/10 rounded-lg px-3 py-2 border border-cyan-500/20 shrink-0">
-                <marquee behavior="scroll" direction="left" class="text-cyan-400 text-xs font-medium">
-                    🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | COMMITMENT TO QUALITY & EXCELLENCE | TARGET: WORLD CLASS MANUFACTURING
-                </marquee>
-            </div>
-
-            <!-- MAIN GRID -->
-            <div class="grid grid-cols-12 gap-4 flex-1 min-h-0">
-
-                <!-- CALENDAR SECTION -->
-                <div class="col-span-8 bg-slate-900/50 rounded-xl border border-slate-800 p-4 flex flex-col overflow-hidden">
-                    <div class="flex justify-between items-center mb-3 shrink-0">
-                        <div class="flex items-center gap-2">
-                            <span class="text-lg">📅</span>
-                            <h2 id="calendar-month" class="text-cyan-400 font-bold text-sm">Loading...</h2>
-                        </div>
-                        <div class="text-slate-500 text-[10px] flex items-center gap-1">
-                            <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                            <span>Live Calendar</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Days Header -->
-                    <div class="grid grid-cols-7 gap-1 mb-2 text-center text-[10px] font-bold">
-                        <div class="text-red-400 py-1">Sun</div>
-                        <div class="text-slate-500 py-1">Mon</div>
-                        <div class="text-slate-500 py-1">Tue</div>
-                        <div class="text-slate-500 py-1">Wed</div>
-                        <div class="text-slate-500 py-1">Thu</div>
-                        <div class="text-slate-500 py-1">Fri</div>
-                        <div class="text-cyan-400 py-1">Sat</div>
-                    </div>
-                    
-                    <!-- Calendar Grid -->
-                    <div id="calendar-grid" class="grid grid-cols-7 gap-1 flex-1 overflow-y-auto min-h-0">
-                        <div class="col-span-full text-center text-slate-500 py-8">Loading calendar...</div>
-                    </div>
-                </div>
-
-                <!-- RIGHT PANEL -->
-                <div class="col-span-4 flex flex-col gap-4">
-
-                    <!-- TODAY'S EVENTS -->
-                    <div class="bg-slate-900/50 rounded-xl border border-slate-800 p-4 flex-1 overflow-hidden flex flex-col">
-                        <div class="flex items-center gap-2 mb-2 shrink-0">
-                            <span class="text-base">📌</span>
-                            <h3 class="font-bold text-cyan-400 text-sm">Today's Events</h3>
-                            <span id="today-date" class="text-slate-500 text-[10px] ml-auto"></span>
-                        </div>
-                        <div id="today-events-list" class="overflow-y-auto flex-1 space-y-2 pr-1">
-                            <div class="text-center text-slate-500 py-4 text-xs">Loading events...</div>
-                        </div>
-                    </div>
-
-                    <!-- UPCOMING EVENTS PREVIEW -->
-                    <div class="bg-slate-900/50 rounded-xl border border-slate-800 p-4 shrink-0">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-base">⏰</span>
-                            <h3 class="font-bold text-cyan-400 text-sm">Upcoming Events</h3>
-                        </div>
-                        <div id="upcoming-events" class="space-y-1 max-h-32 overflow-y-auto">
-                            <div class="text-center text-slate-500 py-2 text-xs">Loading...</div>
-                        </div>
-                    </div>
-
-                    <!-- AUDIT SUMMARY -->
-                    <div class="bg-slate-900/50 rounded-xl border border-slate-800 p-4 shrink-0">
-                        <div class="flex items-center gap-2 mb-2">
-                            <span class="text-base">🔍</span>
-                            <h3 class="font-bold text-cyan-400 text-sm">Audit Summary</h3>
-                        </div>
-                        <div id="audit-list" class="text-xs space-y-1">
-                            Loading...
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            
-            <!-- LAST UPDATE INFO -->
-            <div class="text-center mt-2 pb-2">
-                <p id="last-update" class="text-slate-500 text-[10px]">Last update: --:--:--</p>
-                <p class="text-slate-600 text-[8px] mt-1">Auto refresh every 10 seconds</p>
-            </div>
-        </main>
+        </div>
     </div>
 
     <script>
-        // ==================== AUTHENTICATION ====================
+        // ==================== KALENDER NASIONAL INDONESIA 2026 ====================
+        const NATIONAL_HOLIDAYS_2026 = [
+            { month: 0, day: 1, name: "Tahun Baru 2026" },
+            { month: 1, day: 16, name: "Isra Miraj" },
+            { month: 2, day: 19, name: "Nyepi" },
+            { month: 3, day: 1, name: "Wafat Isa" },
+            { month: 3, day: 2, name: "Idul Fitri" },
+            { month: 3, day: 3, name: "Idul Fitri" },
+            { month: 4, day: 1, name: "Hari Buruh" },
+            { month: 4, day: 14, name: "Kenaikan Isa" },
+            { month: 5, day: 1, name: "Pancasila" },
+            { month: 5, day: 25, name: "Idul Adha" },
+            { month: 6, day: 16, name: "Tahun Baru Islam" },
+            { month: 7, day: 17, name: "Kemerdekaan RI" },
+            { month: 8, day: 4, name: "Maulid Nabi" },
+            { month: 11, day: 25, name: "Natal" }
+        ];
         
+        const COLLECTIVE_LEAVE_2026 = [
+            { month: 3, day: 4, name: "Cuti Idul Fitri" },
+            { month: 3, day: 5, name: "Cuti Idul Fitri" },
+            { month: 3, day: 6, name: "Cuti Idul Fitri" },
+            { month: 5, day: 26, name: "Cuti Idul Adha" },
+            { month: 7, day: 18, name: "Cuti Tahun Baru Islam" },
+            { month: 11, day: 24, name: "Cuti Natal" },
+            { month: 11, day: 26, name: "Cuti Natal" }
+        ];
+        
+        function isNationalHoliday(year, month, day) {
+            if (year !== 2026) return { isHoliday: false, name: null };
+            for (const h of NATIONAL_HOLIDAYS_2026) {
+                if (h.month === month && h.day === day) return { isHoliday: true, name: h.name };
+            }
+            for (const l of COLLECTIVE_LEAVE_2026) {
+                if (l.month === month && l.day === day) return { isHoliday: true, name: l.name };
+            }
+            return { isHoliday: false, name: null };
+        }
+        
+        // Cek apakah hari Sabtu (6) atau Minggu (0)
+        function isWeekend(dayIndex) { 
+            return dayIndex === 0 || dayIndex === 6; 
+        }
+        
+        // ==================== MENU FUNCTIONS ====================
+        function toggleMenu() {
+            const sidebar = document.getElementById('popupSidebar');
+            const overlay = document.getElementById('menuOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const sidebar = document.getElementById('popupSidebar');
+                const overlay = document.getElementById('menuOverlay');
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            }
+        });
+        
+        // ==================== AUTHENTICATION ====================
         function checkAuth() {
             const userJson = sessionStorage.getItem('currentUser');
-            if (!userJson) {
-                window.location.href = 'login.html';
-                return null;
-            }
+            if (!userJson) { window.location.href = 'login.html'; return null; }
             return JSON.parse(userJson);
         }
         
         const currentUser = checkAuth();
-        
-        if (currentUser) {
-            document.getElementById('user-name').innerText = currentUser.username;
-            const roleHtml = currentUser.role === 'admin' ? 
-                '<span class="text-cyan-400 text-xs">👑 Administrator</span>' : 
-                '<span class="text-slate-400 text-xs">👤 User</span>';
-            document.getElementById('user-role').innerHTML = roleHtml;
-        }
         
         function logout() {
             sessionStorage.removeItem('currentUser');
@@ -296,22 +562,12 @@
         }
         
         // ==================== DATA FUNCTIONS ====================
-        
         const EVENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/event";
-        const AUDIT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/audit";
         let autoRefreshInterval;
         
         function updateClock() {
             const now = new Date();
-            const time = now.toLocaleTimeString('id-ID', { hour12: false });
-            const date = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('clock').innerText = time;
-            document.getElementById('date-header').innerText = date;
-        }
-        
-        function updateLastUpdate() {
-            const now = new Date();
-            document.getElementById('last-update').innerText = `Last update: ${now.toLocaleTimeString('id-ID', { hour12: false })}`;
+            document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', { hour12: false });
         }
         
         function getTodayDate() {
@@ -329,20 +585,13 @@
         
         async function loadData() {
             try {
-                const [eventResponse, auditResponse] = await Promise.all([
-                    fetch(EVENT_API),
-                    fetch(AUDIT_API)
-                ]);
-                
+                const eventResponse = await fetch(EVENT_API);
                 const events = await eventResponse.json();
-                const audits = await auditResponse.json();
                 
-                // Update calendar
                 renderCalendar(events);
                 
-                // Update today's events
                 const todayDate = getTodayDate();
-                const todayEvents = events.filter(event => event.date === todayDate);
+                const todayEvents = events.filter(e => e.date === todayDate);
                 const todayEventsDiv = document.getElementById('today-events-list');
                 const todayDateSpan = document.getElementById('today-date');
                 
@@ -354,32 +603,35 @@
                         if (event.type === 'audit') icon = '🔍';
                         else if (event.type === 'visit') icon = '👥';
                         else if (event.type === 'training') icon = '📚';
+                        else if (event.type === 'holiday') icon = '🎉';
                         return `
-                            <div class="today-event-card rounded-lg p-2">
-                                <div class="flex items-start gap-2">
+                            <div class="today-event-card">
+                                <div class="flex items-start gap-1.5">
                                     <div class="text-sm">${icon}</div>
                                     <div class="flex-1">
-                                        <div class="font-bold text-white text-xs">${event.title}</div>
-                                        <p class="text-slate-400 text-[10px]">${event.type}</p>
+                                        <div class="font-bold text-white text-[10px]">${event.title}</div>
+                                        <p class="text-slate-400 text-[8px]">${event.type}</p>
                                     </div>
                                 </div>
                             </div>
                         `;
                     }).join('');
                 } else {
-                    todayEventsDiv.innerHTML = '<div class="text-center text-slate-500 py-4 text-xs">📭 No events today</div>';
+                    todayEventsDiv.innerHTML = '<div class="text-center text-slate-500 py-2 text-xs">📭 No events today</div>';
                 }
                 
-                // Update upcoming events (next 7 days)
+                // Update upcoming events
                 const upcomingEvents = events.filter(e => new Date(e.date) > new Date()).slice(0, 5);
                 const upcomingDiv = document.getElementById('upcoming-events');
                 if (upcomingEvents.length > 0) {
                     upcomingDiv.innerHTML = upcomingEvents.map(event => {
                         const eventDate = new Date(event.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                        let icon = '📌';
+                        if (event.type === 'holiday') icon = '🎉';
                         return `
-                            <div class="flex items-center justify-between py-1 border-b border-slate-800 last:border-0">
-                                <span class="text-cyan-400 text-[10px]">📅 ${eventDate}</span>
-                                <span class="text-white text-[10px]">${event.title}</span>
+                            <div class="upcoming-item">
+                                <span class="upcoming-date">${icon} ${eventDate}</span>
+                                <span class="upcoming-title" title="${event.title}">${event.title}</span>
                             </div>
                         `;
                     }).join('');
@@ -387,33 +639,8 @@
                     upcomingDiv.innerHTML = '<div class="text-center text-slate-500 py-2 text-xs">No upcoming events</div>';
                 }
                 
-                // Update audit summary
-                const openAudits = audits.filter(a => a.status === 'OPEN');
-                const closedAudits = audits.filter(a => a.status === 'CLOSE');
-                const inProgressAudits = audits.filter(a => a.status === 'IN PROGRESS');
-                
-                document.getElementById('audit-list').innerHTML = `
-                    <div class="grid grid-cols-3 gap-2 mb-2">
-                        <div class="bg-red-500/10 rounded p-1 text-center">
-                            <div class="text-red-400 font-bold text-xs">${openAudits.length}</div>
-                            <div class="text-slate-500 text-[8px]">OPEN</div>
-                        </div>
-                        <div class="bg-yellow-500/10 rounded p-1 text-center">
-                            <div class="text-yellow-400 font-bold text-xs">${inProgressAudits.length}</div>
-                            <div class="text-slate-500 text-[8px]">PROG</div>
-                        </div>
-                        <div class="bg-green-500/10 rounded p-1 text-center">
-                            <div class="text-green-400 font-bold text-xs">${closedAudits.length}</div>
-                            <div class="text-slate-500 text-[8px]">CLOSED</div>
-                        </div>
-                    </div>
-                    ${openAudits.length > 0 ? `<div class="text-red-400 text-[9px] truncate">⚠ ${openAudits[0]?.finding?.substring(0, 30)}</div>` : '<div class="text-green-400 text-[9px] text-center">✅ No open findings</div>'}
-                `;
-                
-                updateLastUpdate();
-                
             } catch (error) {
-                console.error('Error loading data:', error);
+                console.error('Error:', error);
             }
         }
         
@@ -432,32 +659,64 @@
             const firstDay = new Date(year, month, 1).getDay();
             const lastDate = new Date(year, month + 1, 0).getDate();
             
+            // Hitung total cell yang dibutuhkan (harus kelipatan 7, minimal 35/42)
+            const totalDays = lastDate;
+            const startOffset = firstDay;
+            const totalCells = Math.ceil((startOffset + totalDays) / 7) * 7;
+            
             let html = '';
             
-            for (let i = 0; i < firstDay; i++) {
-                html += `<div class="bg-slate-800/20 rounded p-1 min-h-[60px] border border-slate-700/20"></div>`;
-            }
-            
-            for (let day = 1; day <= lastDate; day++) {
-                const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-                const event = events.find(e => e.date === fullDate);
-                const isToday = day === today;
+            // Render semua cell dari 0 hingga totalCells-1
+            for (let i = 0; i < totalCells; i++) {
+                const dayNumber = i - startOffset + 1;
+                const isValidDay = dayNumber >= 1 && dayNumber <= lastDate;
                 
-                let eventHtml = '';
-                if (event) {
-                    let icon = '📌';
-                    if (event.type === 'audit') icon = '🔍';
-                    else if (event.type === 'visit') icon = '👥';
-                    else if (event.type === 'training') icon = '📚';
-                    eventHtml = `<div class="text-[7px] mt-0.5 text-cyan-400 truncate">${icon} ${event.title}</div>`;
+                if (isValidDay) {
+                    const day = dayNumber;
+                    const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                    const event = events.find(e => e.date === fullDate);
+                    const isToday = day === today;
+                    const dayOfWeek = new Date(year, month, day).getDay();
+                    const isWeekendDay = isWeekend(dayOfWeek);
+                    const nationalHoliday = isNationalHoliday(year, month, day);
+                    const isHoliday = (event && event.type === 'holiday') || nationalHoliday.isHoliday;
+                    
+                    // Warna teks
+                    let dateColor = 'text-white';
+                    if (isWeekendDay || isHoliday) dateColor = 'text-red-400';
+                    if (isToday) dateColor = 'text-cyan-400';
+                    
+                    // Background
+                    let bgClass = '';
+                    if (isToday) bgClass = 'bg-cyan-500/10 border-cyan-500';
+                    else if (isHoliday) bgClass = 'holiday-bg';
+                    else bgClass = 'bg-slate-800/30 border-slate-700/30';
+                    
+                    let eventHtml = '';
+                    if (nationalHoliday.isHoliday) {
+                        eventHtml = `<div class="calendar-event text-red-400">🎉 ${nationalHoliday.name}</div>`;
+                    } else if (event) {
+                        let icon = '📌';
+                        if (event.type === 'audit') icon = '🔍';
+                        else if (event.type === 'visit') icon = '👥';
+                        else if (event.type === 'training') icon = '📚';
+                        else if (event.type === 'holiday') icon = '🎉';
+                        let eventColor = (event.type === 'holiday' || isWeekendDay) ? 'text-red-400' : 'text-cyan-400';
+                        eventHtml = `<div class="calendar-event ${eventColor}">${icon} ${event.title}</div>`;
+                    }
+                    
+                    html += `
+                        <div class="calendar-cell ${bgClass}">
+                            <div class="date-center">
+                                <span class="calendar-date ${dateColor}">${day}</span>
+                            </div>
+                            ${eventHtml}
+                        </div>
+                    `;
+                } else {
+                    // Empty cell - tetap tampilkan biar grid padat
+                    html += `<div class="empty-cell"></div>`;
                 }
-                
-                html += `
-                    <div class="calendar-cell rounded p-1 min-h-[60px] border ${isToday ? 'bg-cyan-500/10 border-cyan-500' : 'bg-slate-800/30 border-slate-700/30'}">
-                        <span class="text-[10px] font-bold ${isToday ? 'text-cyan-400' : 'text-white'}">${day}</span>
-                        ${eventHtml}
-                    </div>
-                `;
             }
             
             calendarGrid.innerHTML = html;

@@ -2,123 +2,462 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Main Dashboard - PT NITTO ALAM INDONESIA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* --- your existing CSS styles (unchanged) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); min-height: 100vh; font-family: 'Inter', system-ui, sans-serif; }
+        body { 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
+            min-height: 100vh; 
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+        }
+        
+        /* Responsif Font Size */
+        html { font-size: 16px; }
+        @media (min-width: 1920px) { html { font-size: 18px; } }
+        @media (max-width: 1366px) { html { font-size: 15px; } }
+        @media (max-width: 1024px) { html { font-size: 14px; } }
+        @media (max-width: 768px) { html { font-size: 12px; } }
+        
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #22d3ee; border-radius: 10px; }
-        .stat-card { background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8)); backdrop-filter: blur(10px); transition: all 0.3s ease; border: 1px solid rgba(51, 65, 85, 0.5); }
-        .stat-card:hover { transform: translateY(-3px); border-color: rgba(34, 211, 238, 0.3); }
-        .scoreboard { background: linear-gradient(145deg, #1a1a2e, #0f0f1a); border-radius: 20px; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.1); border: 1px solid rgba(34, 211, 238, 0.3); }
-        .score-header { background: linear-gradient(135deg, #2d2d44, #1a1a2e); border-bottom: 2px solid #22d3ee; border-radius: 20px 20px 0 0; }
-        .score-number { font-family: 'Courier New', 'Monaco', monospace; font-size: 8rem; font-weight: 800; background: linear-gradient(135deg, #22d3ee, #0891b2); -webkit-background-clip: text; background-clip: text; color: transparent; text-shadow: 0 0 20px rgba(34, 211, 238, 0.3); letter-spacing: 10px; }
-        .score-label { font-family: 'Courier New', monospace; letter-spacing: 4px; font-weight: 600; color: #22d3ee; text-transform: uppercase; font-size: 0.8rem; }
-        .score-sub { background: rgba(0, 0, 0, 0.5); border-radius: 10px; font-family: monospace; }
-        .digital-clock { font-family: 'Courier New', 'Monaco', monospace; font-size: 2.5rem; font-weight: 700; background: #0a0a0f; padding: 10px 25px; border-radius: 15px; letter-spacing: 5px; border: 1px solid #22d3ee; box-shadow: 0 0 15px rgba(34, 211, 238, 0.2); color: #22d3ee; }
-        .date-display { font-family: monospace; font-size: 0.8rem; letter-spacing: 1px; }
-        .score-inner { background: rgba(0, 0, 0, 0.4); border-radius: 15px; padding: 30px; }
-        .score-digit { font-family: 'Courier New', monospace; font-size: 7rem; font-weight: 800; color: #22d3ee; text-shadow: 0 0 10px rgba(34, 211, 238, 0.5); background: #00000040; padding: 10px 30px; border-radius: 20px; display: inline-block; min-width: 200px; }
-        .nav-item { transition: all 0.3s ease; position: relative; }
-        .nav-item:hover { transform: translateX(8px); background: rgba(34, 211, 238, 0.15); }
-        .nav-item.active { background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(6, 182, 212, 0.05)); border-left: 3px solid #22d3ee; }
+        
+        /* Stat Card */
+        .stat-card { 
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9)); 
+            backdrop-filter: blur(10px); 
+            transition: all 0.3s ease; 
+            border: 1px solid rgba(51, 65, 85, 0.5); 
+            border-radius: 1rem;
+        }
+        .stat-card:hover { transform: translateY(-3px); border-color: rgba(34, 211, 238, 0.4); }
+        
+        /* Zero Accident Card */
+        .zero-accident-card {
+            background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
+            border-radius: 1rem;
+            border: 2px solid rgba(34, 211, 238, 0.4);
+        }
+        .zero-header {
+            background: linear-gradient(135deg, #2d2d44, #1a1a2e);
+            border-bottom: 2px solid #22d3ee;
+            border-radius: 1rem 1rem 0 0;
+            padding: 0.8rem 1.2rem;
+        }
+        .zero-digit {
+            font-family: 'Courier New', monospace;
+            font-size: 4rem;
+            font-weight: 800;
+            color: #22d3ee;
+            text-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+            background: #00000040;
+            padding: 0.5rem 1rem;
+            border-radius: 1rem;
+            display: inline-block;
+            min-width: 150px;
+        }
+        @media (min-width: 1920px) { .zero-digit { font-size: 5rem; min-width: 180px; } }
+        .zero-label {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            font-weight: 600;
+            color: #22d3ee;
+        }
+        
+        /* Event Card */
+        .event-card {
+            background: rgba(15, 23, 42, 0.7);
+            backdrop-filter: blur(5px);
+            border-radius: 0.75rem;
+            border-left: 4px solid #22d3ee;
+            transition: all 0.2s ease;
+            padding: 0.8rem 1rem;
+            margin-bottom: 0.6rem;
+        }
+        .event-card:hover { transform: translateX(5px); background: rgba(34, 211, 238, 0.15); }
+        
+        /* ========== POP UP SIDEBAR MENU ========== */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+            display: none;
+        }
+        .menu-overlay.active { display: block; }
+        
+        .popup-sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(34, 211, 238, 0.3);
+            z-index: 999;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
+        }
+        .popup-sidebar.active { left: 0; }
+        
+        .logo-section { padding: 1.5rem 1rem; border-bottom: 1px solid rgba(34, 211, 238, 0.2); margin-bottom: 1rem; }
+        .menu-item { margin: 0.25rem 0.75rem; }
+        .menu-button {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #94a3b8;
+            background: transparent;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        .menu-button:hover { background: rgba(34, 211, 238, 0.1); color: #22d3ee; transform: translateX(5px); }
+        .menu-button.active { background: rgba(34, 211, 238, 0.2); color: #22d3ee; border-left: 3px solid #22d3ee; }
+        .menu-icon { font-size: 1.3rem; min-width: 2rem; }
+        
+        .logout-btn {
+            margin-top: auto;
+            margin-bottom: 1.5rem;
+            margin-left: 0.75rem;
+            margin-right: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #94a3b8;
+            border-top: 1px solid rgba(51, 65, 85, 0.5);
+        }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.2); color: #f87171; transform: translateX(5px); }
+        .status-online { text-align: center; padding: 1rem; border-top: 1px solid rgba(51, 65, 85, 0.3); }
+        
+        /* Tombol Hamburger */
+        .hamburger-btn {
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 0.75rem;
+            padding: 0.5rem 0.8rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .hamburger-btn:hover { background: rgba(34, 211, 238, 0.2); transform: scale(1.02); }
+        
+        /* Running Text */
         .running-text { background: linear-gradient(90deg, #1e293b, #0f172a, #1e293b); border-top: 1px solid rgba(34, 211, 238, 0.3); border-bottom: 1px solid rgba(34, 211, 238, 0.3); }
-        .running-text marquee { font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; color: #22d3ee; }
-        .welcome-card { background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.02)); border: 1px solid rgba(34, 211, 238, 0.2); }
-        .logout-btn { transition: all 0.3s ease; }
-        .logout-btn:hover { background: rgba(239, 68, 68, 0.2); transform: translateX(3px); }
-        .accident-table { border-collapse: collapse; }
-        .accident-table th, .accident-table td { padding: 10px; text-align: left; border-bottom: 1px solid rgba(51, 65, 85, 0.5); }
-        .accident-table th { color: #22d3ee; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .accident-table td { color: #cbd5e1; font-size: 12px; }
-        .accident-table tr:hover td { background: rgba(34, 211, 238, 0.05); }
-        @keyframes pulse-green { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-        .last-accident-alert { animation: pulse-green 1s ease-in-out infinite; }
+        .running-text marquee { font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; color: #22d3ee; padding: 0.3rem 0; }
+        
+        .digital-clock { 
+            font-family: 'Courier New', monospace; 
+            font-size: 1.6rem; 
+            font-weight: 700; 
+            background: #0a0a0f; 
+            padding: 0.4rem 1rem; 
+            border-radius: 0.75rem; 
+            letter-spacing: 3px; 
+            border: 1px solid #22d3ee; 
+            color: #22d3ee;
+        }
+        @media (max-width: 1024px) { .digital-clock { font-size: 1.3rem; padding: 0.3rem 0.8rem; } }
+        
+        /* Dashboard Grid - RAPI */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+            padding: 1.2rem;
+            height: calc(100% - 85px);
+        }
+        
+        .card-full {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        
+        /* Typography - Mudah Dibaca */
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .card-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        .card-label {
+            font-size: 0.8rem;
+            color: #94a3b8;
+        }
+        .event-title {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .event-type {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        .history-text {
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+        
+        @media (min-width: 1920px) {
+            .card-title { font-size: 1.2rem; }
+            .card-value { font-size: 1.8rem; }
+            .card-label { font-size: 0.9rem; }
+            .event-title { font-size: 1rem; }
+            .history-text { font-size: 0.9rem; }
+        }
+        
+        /* Warna Status */
+        .text-open { color: #f87171; }
+        .text-progress { color: #fbbf24; }
+        .text-active { color: #22d3ee; }
+        
+        /* Spacing yang konsisten */
+        .p-consistent { padding: 0.8rem; }
+        .gap-consistent { gap: 0.8rem; }
+        .mb-consistent { margin-bottom: 0.8rem; }
     </style>
 </head>
-<body class="text-white">
-    <!-- --- YOUR EXISTING HTML STRUCTURE (unchanged) --- -->
-    <div class="min-h-screen">
-        <div class="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 px-6 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg"><span class="text-white text-xl font-bold">NS</span></div>
-                <div><h1 class="text-xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">PT NITTO ALAM INDONESIA</h1><p class="text-slate-500 text-[10px]">Plant 2 - Quality Control System</p></div>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="digital-clock" id="clock">00:00:00</div>
-                <div class="flex items-center gap-2 bg-green-500/10 px-3 py-1.5 rounded-xl border border-green-500/20"><div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div><span class="text-green-400 text-[9px] font-bold uppercase">LIVE</span></div>
+<body>
+
+    <!-- OVERLAY -->
+    <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+    
+    <!-- POP UP SIDEBAR MENU -->
+    <div id="popupSidebar" class="popup-sidebar">
+        <div class="logo-section">
+            <div class="flex items-center gap-2">
+                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                    <span class="text-white text-lg font-bold">NS</span>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-[9px]">Plant 2</p>
+                </div>
             </div>
         </div>
-        <div class="running-text py-2"><marquee behavior="scroll" direction="left" scrollamount="4">🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | ✨ ZERO ACCIDENT TARGET ✨ | 🎯 SAFETY FIRST, QUALITY ALWAYS 🎯</marquee></div>
-        <div class="flex">
-            <aside class="w-72 min-h-screen bg-slate-900/50 backdrop-blur-sm border-r border-slate-800 p-5">
-                <div class="welcome-card rounded-xl p-4 mb-6"><div class="flex items-center gap-3"><div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-full flex items-center justify-center shadow-lg"><span class="text-white text-xl">👤</span></div><div><p class="text-white font-bold text-sm" id="user-name">Loading...</p><p class="text-xs" id="user-role">Loading...</p></div></div></div>
-                <nav class="space-y-1">
-                    <p class="text-slate-500 text-[10px] uppercase tracking-wider px-3 mb-2">Menu Utama</p>
-                    <a href="maindashboard.html" class="nav-item active flex items-center gap-3 px-4 py-3 rounded-xl text-cyan-400 font-medium"><span class="text-xl">📊</span><span>Main Dashboard</span></a>
-                    <a href="activityschedule.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-cyan-400 transition"><span class="text-xl">📅</span><span>Activity Schedule</span></a>
-                    <a href="production.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-cyan-400 transition"><span class="text-xl">🏭</span><span>Production Monitoring</span></a>
-                    <a href="audit.html" class="nav-item flex items-center gap-3 px-4 py-3 rounded-xl text-slate-400 hover:text-cyan-400 transition"><span class="text-xl">🔍</span><span>Audit Finding</span></a>
-                </nav>
-                <div class="mt-8 pt-6 border-t border-slate-800"><div class="flex items-center gap-2 mb-3"><div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div><span class="text-slate-500 text-xs">System Online</span></div><div class="flex items-center gap-2"><div class="w-2 h-2 bg-cyan-500 rounded-full"></div><span class="text-slate-500 text-xs">Zero Accident Target</span></div></div>
-                <button onclick="logout()" class="logout-btn w-full flex items-center gap-2 text-slate-400 hover:text-red-400 text-sm px-3 py-2 rounded-lg transition mt-6"><span>🚪</span><span>Logout</span></button>
-            </aside>
-            <main class="flex-1 p-6 overflow-y-auto">
-                <div class="mb-6"><h2 class="text-2xl font-bold text-white">Welcome back, <span class="text-cyan-400" id="welcome-name">User</span>!</h2><p class="text-slate-400 text-sm mt-1">Zero Accident Board - Track our safety performance</p></div>
-                <div class="scoreboard mb-8"><div class="score-header px-6 py-3"><div class="flex justify-between items-center"><div class="score-label">🏆 ZERO ACCIDENT</div><div class="score-label">DAYS COUNT</div></div></div><div class="score-inner"><div class="text-center"><div class="text-slate-400 text-sm mb-4 date-display" id="date-display">Loading date...</div><div class="score-digit mx-auto" id="accident-counter">0</div><div class="score-label mt-4 text-sm">DAYS WITHOUT ACCIDENT</div><div class="score-sub inline-block mt-4 px-4 py-2"><span class="text-slate-400 text-xs">Last accident: </span><span class="text-cyan-400 text-xs font-bold" id="last-accident-date">Never</span></div><div class="text-slate-500 text-[9px] mt-2" id="next-increment-info"></div></div></div></div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8"><div class="stat-card rounded-2xl p-5 text-center"><div class="text-3xl mb-2">📋</div><div class="text-slate-400 text-xs mb-1">Total Incidents</div><div class="text-3xl font-bold text-cyan-400" id="total-incidents">0</div><div class="text-slate-500 text-[10px] mt-1">Recorded</div></div><div class="stat-card rounded-2xl p-5 text-center"><div class="text-3xl mb-2">⚡</div><div class="text-slate-400 text-xs mb-1">Current Streak</div><div class="text-3xl font-bold text-green-400" id="current-streak">0</div><div class="text-slate-500 text-[10px] mt-1">Days Safe</div></div><div class="stat-card rounded-2xl p-5 text-center"><div class="text-3xl mb-2">🎯</div><div class="text-slate-400 text-xs mb-1">Target</div><div class="text-3xl font-bold text-cyan-400">365</div><div class="text-slate-500 text-[10px] mt-1">Days Zero Accident</div></div></div>
-                <div class="stat-card rounded-2xl p-6"><div class="flex items-center gap-2 mb-4"><span class="text-xl">📋</span><h3 class="text-lg font-bold text-cyan-400">Accident History</h3><span class="text-xs text-slate-500 ml-auto">Last 5 records</span></div><div class="overflow-x-auto"><table class="accident-table w-full"><thead><tr><th>No</th><th>Date</th><th>Accident Description</th></tr></thead><tbody id="accident-table-body"><tr><td colspan="3" class="text-center text-slate-500 py-4">Loading records...</td></tr></tbody></table></div></div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8"><div class="stat-card rounded-2xl p-6"><div class="flex items-center gap-3 mb-4"><span class="text-2xl">🎯</span><h3 class="text-lg font-bold text-cyan-400">Our Vision</h3></div><p class="text-slate-300 text-sm leading-relaxed">Menjadi perusahaan terdepan dalam industri manufaktur dengan standar kualitas global dan inovasi berkelanjutan, serta zero accident.</p></div><div class="stat-card rounded-2xl p-6"><div class="flex items-center gap-3 mb-4"><span class="text-2xl">⭐</span><h3 class="text-lg font-bold text-cyan-400">Our Mission</h3></div><p class="text-slate-300 text-sm leading-relaxed">Menghasilkan produk berkualitas tinggi, memastikan keselamatan kerja zero accident, dan terus meningkatkan sistem manajemen mutu.</p></div></div>
-            </main>
+        
+        <div class="menu-item">
+            <a href="maindashboard.html" class="menu-button active">
+                <span class="menu-icon">📊</span>
+                <span>Main Dashboard</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="activityschedule.html" class="menu-button">
+                <span class="menu-icon">📅</span>
+                <span>Activity Schedule</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="production.html" class="menu-button">
+                <span class="menu-icon">🏭</span>
+                <span>Production</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="audit.html" class="menu-button">
+                <span class="menu-icon">🔍</span>
+                <span>Audit Finding</span>
+            </a>
+        </div>
+        
+        <div class="logout-btn" onclick="logout()">
+            <span class="menu-icon">🚪</span>
+            <span>Logout</span>
+        </div>
+        
+        <div class="status-online">
+            <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mx-auto"></div>
+            <span class="text-slate-500 text-[8px]">System Online</span>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content" style="margin-left: 0;">
+        
+        <!-- TOP BAR -->
+        <div class="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 px-4 py-2 flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="hamburger-btn" onclick="toggleMenu()">
+                    <span class="text-xl">☰</span>
+                    <span class="text-sm hidden md:inline">Menu</span>
+                </div>
+                <div>
+                    <h1 class="text-base md:text-lg font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">PT NITTO ALAM INDONESIA</h1>
+                    <p class="text-slate-500 text-[9px] md:text-[10px]">Plant 2 - Quality Control System</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="digital-clock" id="clock">00:00:00</div>
+                <div class="flex items-center gap-1 bg-green-500/10 px-2 py-1 rounded-lg border border-green-500/20">
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-green-400 text-[8px] md:text-[9px] font-bold uppercase">LIVE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RUNNING TEXT -->
+        <div class="running-text py-1 shrink-0">
+            <marquee behavior="scroll" direction="left" scrollamount="4">
+                🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | ✨ ZERO ACCIDENT TARGET ✨ | 🎯 SAFETY FIRST, QUALITY ALWAYS 🎯
+            </marquee>
+        </div>
+
+        <!-- DASHBOARD CARDS - RAPI -->
+        <div class="dashboard-grid">
+            
+            <!-- CARD 1: ZERO ACCIDENT -->
+            <div class="zero-accident-card card-full">
+                <div class="zero-header flex justify-between items-center">
+                    <span class="zero-label">🏆 ZERO ACCIDENT</span>
+                    <span class="zero-label">DAYS COUNT</span>
+                </div>
+                <div class="flex-1 flex flex-col justify-center p-4 text-center">
+                    <div class="text-slate-400 text-xs mb-2" id="date-display">Loading...</div>
+                    <div class="zero-digit mx-auto" id="accident-counter">0</div>
+                    <div class="zero-label text-[10px] mt-3">DAYS WITHOUT ACCIDENT</div>
+                    <div class="bg-black/30 rounded-lg mt-3 px-3 py-2">
+                        <span class="text-slate-400 text-[10px]">Last accident: </span>
+                        <span class="text-cyan-400 text-[10px] font-bold" id="last-accident-date">Never</span>
+                    </div>
+                    <div class="text-slate-500 text-[9px] mt-2" id="next-increment-info"></div>
+                </div>
+            </div>
+
+            <!-- CARD 2: TODAY'S EVENTS -->
+            <div class="bg-slate-900/50 rounded-xl border border-slate-800 p-4 flex flex-col card-full">
+                <div class="flex items-center justify-between mb-3 shrink-0">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">📅</span>
+                        <h3 class="font-semibold text-cyan-400 card-title">Today's Events</h3>
+                    </div>
+                    <span class="text-slate-500 text-[10px]" id="today-date">-</span>
+                </div>
+                <div id="today-events-list" class="scrollable-content space-y-2">
+                    <div class="text-center text-slate-500 py-4">Loading events...</div>
+                </div>
+            </div>
+
+            <!-- CARD 3: AUDIT FINDING SUMMARY -->
+            <div class="stat-card p-4 card-full">
+                <div class="flex items-center gap-2 mb-3 shrink-0">
+                    <span class="text-xl">🔍</span>
+                    <h3 class="font-semibold text-cyan-400 card-title">Audit Finding</h3>
+                </div>
+                <div id="audit-summary" class="space-y-3 flex-1">
+                    <div class="flex justify-between items-center py-2 border-b border-slate-800">
+                        <span class="card-label">OPEN</span>
+                        <span class="card-value text-open font-bold" id="open-findings">0</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-slate-800">
+                        <span class="card-label">IN PROGRESS</span>
+                        <span class="card-value text-progress font-bold" id="progress-findings">0</span>
+                    </div>
+                    <div class="flex justify-between items-center pt-2">
+                        <span class="card-label font-semibold">Total Active</span>
+                        <span class="card-value text-active font-bold" id="total-active">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 4: ACCIDENT HISTORY -->
+            <div class="stat-card p-4 card-full">
+                <div class="flex items-center justify-between mb-3 shrink-0">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xl">📋</span>
+                        <h3 class="font-semibold text-cyan-400 card-title">Accident History</h3>
+                    </div>
+                    <span class="text-slate-500 text-[9px]">Last 3 records</span>
+                </div>
+                <div id="accident-history-list" class="scrollable-content space-y-2">
+                    <div class="text-center text-slate-500 py-4">No records</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // ==================== UPDATED & ROBUST SCRIPT ====================
+        // ==================== MENU FUNCTIONS ====================
+        function toggleMenu() {
+            const sidebar = document.getElementById('popupSidebar');
+            const overlay = document.getElementById('menuOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const sidebar = document.getElementById('popupSidebar');
+                const overlay = document.getElementById('menuOverlay');
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            }
+        });
+        
+        // ==================== API ENDPOINTS ====================
         const ZERO_ACCIDENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/Zero%20Accident%20Board";
+        const EVENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/event";
+        const AUDIT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/audit";
         
         let lastAccidentDate = null;
         let currentCounter = 0;
         let accidentHistory = [];
         let lastCheckedDate = null;
 
-        // --- Helper Functions ---
-        function checkAuth() { /* ... unchanged ... */ 
+        // ==================== HELPER FUNCTIONS ====================
+        function checkAuth() {
             const userJson = sessionStorage.getItem('currentUser');
             if (!userJson) { window.location.href = 'login.html'; return null; }
             return JSON.parse(userJson);
         }
 
-        // Robust date parser for various formats (dd-mm-yyyy, yyyy-mm-dd, etc.)
         function parseDate(dateString) {
             if (!dateString) return null;
-            // Try parsing as ISO (yyyy-mm-dd)
             let date = new Date(dateString);
             if (!isNaN(date.getTime())) return date;
-            
-            // Try parsing as dd-mm-yyyy or dd/mm/yyyy
             let parts = dateString.match(/(\d+)[-/](\d+)[-/](\d+)/);
             if (parts) {
                 let day = parseInt(parts[1], 10);
                 let month = parseInt(parts[2], 10) - 1;
                 let year = parseInt(parts[3], 10);
-                if (year < 100) year += 2000; // Handle 2-digit year
+                if (year < 100) year += 2000;
                 date = new Date(year, month, day);
                 if (!isNaN(date.getTime())) return date;
             }
-            console.warn(`Could not parse date: ${dateString}`);
             return null;
-        }
-
-        function daysBetween(date1, date2) {
-            const d1 = new Date(date1); d1.setHours(0,0,0,0);
-            const d2 = new Date(date2); d2.setHours(0,0,0,0);
-            const diffTime = Math.abs(d2 - d1);
-            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         }
 
         function calculateCurrentCounter(lastDate) {
@@ -133,13 +472,15 @@
 
         function getNextIncrementInfo() {
             const now = new Date();
-            const nextMidnight = new Date(now); nextMidnight.setDate(now.getDate() + 1); nextMidnight.setHours(0,0,0,0);
+            const nextMidnight = new Date(now);
+            nextMidnight.setDate(now.getDate() + 1);
+            nextMidnight.setHours(0,0,0,0);
             const hoursLeft = Math.floor((nextMidnight - now) / (1000 * 60 * 60));
             const minutesLeft = Math.floor(((nextMidnight - now) % (1000 * 60 * 60)) / (1000 * 60));
-            return `Next increment at 00:00 (in ${hoursLeft}h ${minutesLeft}m)`;
+            return `+1 day at 00:00 (${hoursLeft}h ${minutesLeft}m)`;
         }
 
-        function updateClockAndCounter() {
+        function updateClock() {
             const now = new Date();
             const timeString = now.toLocaleTimeString('id-ID', { hour12: false });
             const dateString = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
@@ -150,51 +491,28 @@
             if (lastCheckedDate !== todayDate && lastCheckedDate !== null && lastAccidentDate) {
                 currentCounter = calculateCurrentCounter(lastAccidentDate);
                 document.getElementById('accident-counter').innerText = currentCounter;
-                document.getElementById('current-streak').innerText = currentCounter;
             }
             lastCheckedDate = todayDate;
             const infoElem = document.getElementById('next-increment-info');
             if (infoElem) infoElem.innerText = getNextIncrementInfo();
         }
 
-        // --- Core Data Loading Function (UPDATED) ---
+        // ==================== ZERO ACCIDENT DATA ====================
         async function loadZeroAccidentData() {
             try {
                 const response = await fetch(ZERO_ACCIDENT_API);
                 const rawData = await response.json();
-                console.log("Raw data from API:", rawData); // <-- LIHAT INI DI KONSOLE BROWSER
-
+                
                 if (!rawData || !Array.isArray(rawData)) {
-                    console.warn("API did not return an array.");
                     resetUI();
                     return;
                 }
 
-                // --- INI PERBAIKAN UTAMA: Mapping kolom secara fleksibel ---
                 const validAccidents = rawData
-                    .map(row => {
-                        // Cari kolom yang berisi tanggal dan deskripsi kecelakaan
-                        let dateValue = row.date || row.Date || row.tanggal || null;
-                        let accidentValue = row.Accident || row.acident || row.description || row.kejadian || null;
-                        
-                        // Jika masih belum ketemu, cari properti apa pun yang mirip tanggal/deskripsi
-                        if (!dateValue) {
-                            const possibleDateKey = Object.keys(row).find(key => key.toLowerCase().includes('date'));
-                            if (possibleDateKey) dateValue = row[possibleDateKey];
-                        }
-                        if (!accidentValue) {
-                            const possibleAccKey = Object.keys(row).find(key => key.toLowerCase().includes('accident') || key.toLowerCase().includes('desk'));
-                            if (possibleAccKey) accidentValue = row[possibleAccKey];
-                        }
-
-                        return { date: dateValue, Accident: accidentValue, original: row };
-                    })
-                    .filter(item => item.date && item.Accident); // Hanya ambil yang lengkap
+                    .filter(row => row.date && (row.Accident || row.acident))
+                    .map(row => ({ date: row.date, Accident: row.Accident || row.acident }));
                 
-                console.log("Processed Accidents:", validAccidents); // <-- LIHAT HASIL PEMETAAN
-
                 if (validAccidents.length > 0) {
-                    // Urutkan berdasarkan tanggal (terbaru di atas)
                     validAccidents.sort((a, b) => {
                         const dateA = parseDate(a.date);
                         const dateB = parseDate(b.date);
@@ -207,19 +525,16 @@
                     currentCounter = calculateCurrentCounter(lastAccidentDate);
                     
                     document.getElementById('accident-counter').innerText = currentCounter;
-                    document.getElementById('current-streak').innerText = currentCounter;
-                    document.getElementById('total-incidents').innerText = accidentHistory.length;
                     
                     const formattedLastDate = parseDate(lastAccidentDate)?.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) || lastAccidentDate;
                     document.getElementById('last-accident-date').innerText = formattedLastDate;
                     
-                    renderAccidentTable(accidentHistory.slice(0, 5));
+                    renderAccidentHistory(accidentHistory.slice(0, 3));
                 } else {
-                    console.log("No valid accident records found after processing.");
                     resetUI();
                 }
             } catch (error) {
-                console.error('Error loading zero accident data:', error);
+                console.error('Error:', error);
                 resetUI();
             }
         }
@@ -229,39 +544,90 @@
             currentCounter = 0;
             accidentHistory = [];
             document.getElementById('accident-counter').innerText = '0';
-            document.getElementById('current-streak').innerText = '0';
-            document.getElementById('total-incidents').innerText = '0';
             document.getElementById('last-accident-date').innerText = 'Never';
-            renderAccidentTable([]);
+            renderAccidentHistory([]);
         }
         
-        function renderAccidentTable(accidents) {
-            const tableBody = document.getElementById('accident-table-body');
+        function renderAccidentHistory(accidents) {
+            const container = document.getElementById('accident-history-list');
             if (!accidents || accidents.length === 0) {
-                tableBody.innerHTML = '<tr><td colspan="3" class="text-center text-green-400 py-4">✅ No accident records - Keep up the good work!</td></tr>';
+                container.innerHTML = '<div class="text-center text-green-400 py-4">✅ No accidents recorded</div>';
                 return;
             }
-            tableBody.innerHTML = accidents.map((item, index) => {
-                const parsedDate = parseDate(item.date);
-                const displayDate = parsedDate ? parsedDate.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) : item.date;
-                return `<tr><td class="text-slate-400">${index + 1}</td><td class="text-slate-300">${displayDate}</td><td class="text-slate-300">${item.Accident || '-'}</td></tr>`;
+            container.innerHTML = accidents.map((item, idx) => {
+                const date = parseDate(item.date)?.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' }) || item.date;
+                const accidentText = item.Accident.length > 70 ? item.Accident.substring(0, 70) + '...' : item.Accident;
+                return `<div class="history-text text-slate-300 border-b border-slate-800 pb-2">📅 ${date}<br>⚠️ ${accidentText}</div>`;
             }).join('');
         }
-        
-        function logout() { sessionStorage.removeItem('currentUser'); window.location.href = 'login.html'; }
-        
-        // --- INITIALIZATION ---
-        const user = checkAuth();
-        if (user) {
-            document.getElementById('user-name').innerText = user.username;
-            document.getElementById('welcome-name').innerText = user.username;
-            document.getElementById('user-role').innerHTML = user.role === 'admin' ? '<span class="text-cyan-400 text-xs">👑 Administrator</span>' : '<span class="text-slate-400 text-xs">👤 User</span>';
+
+        // ==================== TODAY'S EVENTS ====================
+        async function loadTodayEvents() {
+            try {
+                const response = await fetch(EVENT_API);
+                const events = await response.json();
+                const today = new Date();
+                const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+                const todayEvents = events.filter(e => e.date === todayStr);
+                
+                const todayDateSpan = document.getElementById('today-date');
+                todayDateSpan.innerText = today.toLocaleDateString('id-ID', { day:'numeric', month:'long' });
+                
+                const container = document.getElementById('today-events-list');
+                if (todayEvents.length === 0) {
+                    container.innerHTML = '<div class="text-center text-slate-500 py-4">📭 No events scheduled for today</div>';
+                    return;
+                }
+                container.innerHTML = todayEvents.map(event => {
+                    let icon = event.type === 'audit' ? '🔍' : (event.type === 'visit' ? '👥' : '📌');
+                    return `<div class="event-card">
+                        <div class="flex items-center gap-2">
+                            <span class="text-cyan-400">${icon}</span>
+                            <span class="event-title text-white">${event.title}</span>
+                        </div>
+                        <div class="event-type mt-1">${event.type}</div>
+                    </div>`;
+                }).join('');
+            } catch (error) {
+                console.error('Events error:', error);
+            }
+        }
+
+        // ==================== AUDIT SUMMARY ====================
+        async function loadAuditSummary() {
+            try {
+                const response = await fetch(AUDIT_API);
+                const audits = await response.json();
+                const open = audits.filter(a => a.status === 'OPEN').length;
+                const progress = audits.filter(a => a.status === 'IN PROGRESS').length;
+                document.getElementById('open-findings').innerText = open;
+                document.getElementById('progress-findings').innerText = progress;
+                document.getElementById('total-active').innerText = open + progress;
+            } catch (error) {
+                console.error('Audit error:', error);
+            }
+        }
+
+        // ==================== LOGOUT ====================
+        function logout() { 
+            sessionStorage.removeItem('currentUser'); 
+            window.location.href = 'login.html'; 
         }
         
+        // ==================== INITIALIZATION ====================
+        const user = checkAuth();
+        
         loadZeroAccidentData();
-        setInterval(updateClockAndCounter, 1000);
-        setInterval(loadZeroAccidentData, 15000); // Refresh setiap 15 detik
-        updateClockAndCounter();
+        loadTodayEvents();
+        loadAuditSummary();
+        
+        setInterval(updateClock, 1000);
+        setInterval(() => {
+            loadZeroAccidentData();
+            loadTodayEvents();
+            loadAuditSummary();
+        }, 10000);
+        updateClock();
     </script>
 </body>
 </html>

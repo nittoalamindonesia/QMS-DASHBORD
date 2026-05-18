@@ -2,35 +2,28 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Production - Machine Status | PT NITTO ALAM INDONESIA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
             min-height: 100vh;
+            overflow: hidden;
+            height: 100vh;
         }
         
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
+        /* Responsif Font Size */
+        html { font-size: 16px; }
+        @media (min-width: 1920px) { html { font-size: 18px; } }
+        @media (max-width: 1366px) { html { font-size: 15px; } }
+        @media (max-width: 1024px) { html { font-size: 14px; } }
+        @media (max-width: 768px) { html { font-size: 12px; } }
         
-        ::-webkit-scrollbar-track {
-            background: #1e293b;
-            border-radius: 10px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: #22d3ee;
-            border-radius: 10px;
-        }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #22d3ee; border-radius: 10px; }
         
         /* Stat Card */
         .stat-card {
@@ -38,87 +31,51 @@
             backdrop-filter: blur(10px);
             transition: all 0.3s ease;
             border: 1px solid rgba(51, 65, 85, 0.5);
+            border-radius: 0.8rem;
         }
-        
         .stat-card:hover {
             transform: translateY(-3px);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
         
-        /* Machine Card - Grid View */
+        /* Machine Card */
         .machine-card {
             background: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(5px);
             transition: all 0.2s ease;
-            border-radius: 12px;
-            padding: 12px;
+            border-radius: 0.75rem;
+            padding: 0.7rem;
             text-align: center;
             cursor: pointer;
             position: relative;
             overflow: hidden;
         }
-        
         .machine-card:hover {
             transform: translateY(-3px);
             background: rgba(15, 23, 42, 0.95);
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
         }
         
-        .machine-card:active {
-            transform: translateY(-1px);
-        }
-        
         /* Status Border */
-        .card-running {
-            border-top: 3px solid #22c55e;
-            background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.02));
-        }
-        
-        .card-stop {
-            border-top: 3px solid #ef4444;
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.02));
-        }
-        
-        .card-dandori {
-            border-top: 3px solid #eab308;
-            background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(234, 179, 8, 0.02));
-        }
-        
-        .card-trouble {
-            border-top: 3px solid #a855f7;
-            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.02));
-        }
+        .card-running { border-top: 3px solid #22c55e; background: linear-gradient(135deg, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.02)); }
+        .card-stop { border-top: 3px solid #ef4444; background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.02)); }
+        .card-dandori { border-top: 3px solid #eab308; background: linear-gradient(135deg, rgba(234, 179, 8, 0.1), rgba(234, 179, 8, 0.02)); }
+        .card-trouble { border-top: 3px solid #a855f7; background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(168, 85, 247, 0.02)); }
         
         /* Status Badge */
         .status-badge {
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            padding: 2px 8px;
+            padding: 0.2rem 0.6rem;
             border-radius: 20px;
-            font-size: 10px;
+            font-size: 0.6rem;
             font-weight: bold;
         }
-        
-        .badge-running {
-            background: rgba(34, 197, 94, 0.2);
-            color: #4ade80;
-        }
-        
-        .badge-stop {
-            background: rgba(239, 68, 68, 0.2);
-            color: #f87171;
-        }
-        
-        .badge-dandori {
-            background: rgba(234, 179, 8, 0.2);
-            color: #fbbf24;
-        }
-        
-        .badge-trouble {
-            background: rgba(168, 85, 247, 0.2);
-            color: #c084fc;
-        }
+        .badge-running { background: rgba(34, 197, 94, 0.2); color: #4ade80; }
+        .badge-stop { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .badge-dandori { background: rgba(234, 179, 8, 0.2); color: #fbbf24; }
+        .badge-trouble { background: rgba(168, 85, 247, 0.2); color: #c084fc; }
         
         .section-header {
             background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(6, 182, 212, 0.02));
@@ -128,7 +85,6 @@
         .refresh-btn {
             transition: all 0.3s ease;
         }
-        
         .refresh-btn:hover {
             transform: rotate(180deg);
             background: rgba(34, 211, 238, 0.2);
@@ -136,13 +92,13 @@
         
         .count-badge {
             background: rgba(34, 211, 238, 0.15);
-            padding: 4px 12px;
+            padding: 0.2rem 0.8rem;
             border-radius: 20px;
-            font-size: 12px;
+            font-size: 0.65rem;
             font-weight: bold;
         }
         
-        /* Modal/Popup for Part Info */
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -156,81 +112,47 @@
             justify-content: center;
             align-items: center;
         }
-        
-        .modal.active {
-            display: flex;
-        }
-        
+        .modal.active { display: flex; }
         .modal-content {
             background: linear-gradient(135deg, #1e293b, #0f172a);
-            border-radius: 24px;
+            border-radius: 1.2rem;
             max-width: 500px;
             width: 90%;
             border: 1px solid rgba(34, 211, 238, 0.3);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            animation: modalSlideIn 0.3s ease;
         }
-        
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .close-modal {
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .close-modal:hover {
-            transform: scale(1.1);
-        }
+        .close-modal { cursor: pointer; transition: all 0.2s ease; }
+        .close-modal:hover { transform: scale(1.1); }
         
         /* Search box */
         .search-box {
             transition: all 0.3s ease;
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            border-radius: 0.6rem;
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+            color: white;
         }
-        
         .search-box:focus {
             border-color: #22d3ee;
-            box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.2);
+            outline: none;
         }
         
         /* Section collapse */
-        .section-collapse {
-            cursor: pointer;
-            user-select: none;
-        }
+        .section-collapse { cursor: pointer; user-select: none; }
+        .section-collapse:hover { background: rgba(34, 211, 238, 0.05); }
+        .rotate-icon { transition: transform 0.2s ease; }
+        .rotate-icon.collapsed { transform: rotate(-90deg); }
         
-        .section-collapse:hover {
-            background: rgba(34, 211, 238, 0.05);
-        }
-        
-        .rotate-icon {
-            transition: transform 0.2s ease;
-        }
-        
-        .rotate-icon.collapsed {
-            transform: rotate(-90deg);
-        }
-        
-        /* Part code styling */
         .part-code {
             font-family: 'Courier New', monospace;
-            font-size: 18px;
+            font-size: 1rem;
             letter-spacing: 1px;
         }
         
         /* Tooltip */
-        .machine-card {
-            position: relative;
-        }
-        
+        .machine-card { position: relative; }
         .machine-card .part-tooltip {
             position: absolute;
             bottom: 100%;
@@ -238,319 +160,456 @@
             transform: translateX(-50%);
             background: #1e293b;
             color: #22d3ee;
-            padding: 4px 8px;
-            border-radius: 8px;
-            font-size: 9px;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.4rem;
+            font-size: 0.55rem;
             white-space: nowrap;
             z-index: 10;
             pointer-events: none;
             opacity: 0;
             transition: opacity 0.2s;
-            margin-bottom: 5px;
+            margin-bottom: 0.3rem;
         }
+        .machine-card:hover .part-tooltip { opacity: 1; }
         
-        .machine-card:hover .part-tooltip {
-            opacity: 1;
+        /* ========== POP UP SIDEBAR MENU (SAMA DENGAN MAIN DASHBOARD) ========== */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+            display: none;
         }
+        .menu-overlay.active { display: block; }
         
-        /* Navigation Menu */
-        .nav-item {
-            transition: all 0.3s ease;
+        .popup-sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            backdrop-filter: blur(12px);
+            border-right: 1px solid rgba(34, 211, 238, 0.3);
+            z-index: 999;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
         }
+        .popup-sidebar.active { left: 0; }
         
-        .nav-item:hover {
-            transform: translateX(5px);
-            background: rgba(34, 211, 238, 0.1);
+        .logo-section { padding: 1rem; border-bottom: 1px solid rgba(34, 211, 238, 0.2); margin-bottom: 0.8rem; }
+        .menu-item { margin: 0.2rem 0.6rem; }
+        .menu-button {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #94a3b8;
+            background: transparent;
+            text-decoration: none;
+            font-size: 0.85rem;
         }
+        .menu-button:hover { background: rgba(34, 211, 238, 0.1); color: #22d3ee; transform: translateX(5px); }
+        .menu-button.active { background: rgba(34, 211, 238, 0.2); color: #22d3ee; border-left: 3px solid #22d3ee; }
+        .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
         
         .logout-btn {
+            margin-top: auto;
+            margin-bottom: 1rem;
+            margin-left: 0.6rem;
+            margin-right: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #94a3b8;
+            border-top: 1px solid rgba(51, 65, 85, 0.5);
+            font-size: 0.85rem;
+        }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.2); color: #f87171; transform: translateX(5px); }
+        .status-online { text-align: center; padding: 0.8rem; border-top: 1px solid rgba(51, 65, 85, 0.3); font-size: 0.65rem; }
+        
+        /* Tombol Hamburger */
+        .hamburger-btn {
+            background: rgba(34, 211, 238, 0.1);
+            border: 1px solid rgba(34, 211, 238, 0.3);
+            border-radius: 0.6rem;
+            padding: 0.4rem 0.6rem;
+            cursor: pointer;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .hamburger-btn:hover { background: rgba(34, 211, 238, 0.2); transform: scale(1.02); }
+        
+        /* Running Text */
+        .running-text { background: linear-gradient(90deg, #1e293b, #0f172a, #1e293b); border-top: 1px solid rgba(34, 211, 238, 0.3); border-bottom: 1px solid rgba(34, 211, 238, 0.3); }
+        .running-text marquee { font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; color: #22d3ee; padding: 0.25rem 0; }
+        
+        .digital-clock { 
+            font-family: 'Courier New', monospace; 
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            background: #0a0a0f; 
+            padding: 0.3rem 0.8rem; 
+            border-radius: 0.6rem; 
+            letter-spacing: 2px; 
+            border: 1px solid #22d3ee; 
+            color: #22d3ee;
         }
         
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.2);
-            transform: translateX(3px);
+        /* Dashboard Layout */
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .main-layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 0.8rem;
+        }
+        
+        .card-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .card-header-custom {
+            flex-shrink: 0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(51, 65, 85, 0.3);
+        }
+        
+        .scrollable-content {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            padding-right: 0.3rem;
+        }
+        
+        .machine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.6rem;
+        }
+        
+        @media (min-width: 1920px) {
+            .machine-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
         }
     </style>
 </head>
-<body class="text-white">
+<body>
 
-    <div class="flex h-screen p-4 gap-4">
-
-        <!-- SIDEBAR MENU -->
-        <aside class="w-72 bg-gradient-to-b from-slate-900/95 to-slate-900/80 backdrop-blur-sm border border-slate-800/50 rounded-3xl p-6 flex flex-col shrink-0">
-            <div class="flex items-center gap-3 mb-8 pb-6 border-b border-slate-800/50">
-                <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
-                    <span class="text-white text-xl font-bold">NS</span>
+    <!-- OVERLAY -->
+    <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+    
+    <!-- POP UP SIDEBAR MENU -->
+    <div id="popupSidebar" class="popup-sidebar">
+        <div class="logo-section">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg flex items-center justify-center">
+                    <span class="text-white text-sm font-bold">NS</span>
                 </div>
                 <div>
-                    <h1 class="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">PT NITTO ALAM INDONESIA</h1>
-                    <p class="text-slate-500 text-xs">Plant 2</p>
+                    <h1 class="text-xs font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-[7px]">Plant 2</p>
                 </div>
             </div>
-            
-            <!-- User Info -->
-            <div class="bg-slate-800/50 rounded-xl p-3 mb-6">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-cyan-500/20 rounded-full flex items-center justify-center">
-                        <span class="text-xl">👤</span>
-                    </div>
-                    <div>
-                        <p class="text-white text-sm font-medium" id="user-name">Loading...</p>
-                        <p class="text-xs" id="user-role">Loading...</p>
-                    </div>
-                </div>
-            </div>
-            
-            <nav class="space-y-2 flex-1">
-                <a href="maindashboard.html" class="nav-item flex items-center gap-3 hover:bg-slate-800/50 px-4 py-3 rounded-xl transition-all text-slate-400">
-                    <span class="text-xl">📊</span>
-                    <span>Main Dashboard</span>
-                </a>
-                <a href="activityschedule.html" class="nav-item flex items-center gap-3 hover:bg-slate-800/50 px-4 py-3 rounded-xl transition-all text-slate-400">
-                    <span class="text-xl">📅</span>
-                    <span>Activity Schedule</span>
-                </a>
-                <a href="production.html" class="nav-item flex items-center gap-3 bg-gradient-to-r from-cyan-500/20 to-transparent text-cyan-400 px-4 py-3 rounded-xl font-medium">
-                    <span class="text-xl">🏭</span>
-                    <span>Production</span>
-                </a>
-                <a href="audit.html" class="nav-item flex items-center gap-3 hover:bg-slate-800/50 px-4 py-3 rounded-xl transition-all text-slate-400">
-                    <span class="text-xl">🔍</span>
-                    <span>Audit Finding</span>
-                </a>
-            </nav>
-            
-            <div class="pt-6 mt-auto border-t border-slate-800/50 space-y-3">
-                <div class="flex items-center gap-2 text-slate-500 text-xs">
-                    <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    <span>System Online</span>
-                </div>
-                <button onclick="logout()" class="logout-btn w-full flex items-center gap-2 text-slate-400 hover:text-red-400 text-sm px-3 py-2 rounded-lg transition">
-                    <span>🚪</span>
-                    <span>Logout</span>
-                </button>
-            </div>
-        </aside>
+        </div>
+        
+        <div class="menu-item">
+            <a href="maindashboard.html" class="menu-button">
+                <span class="menu-icon">📊</span>
+                <span>Main Dashboard</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="activityschedule.html" class="menu-button">
+                <span class="menu-icon">📅</span>
+                <span>Activity Schedule</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="production.html" class="menu-button active">
+                <span class="menu-icon">🏭</span>
+                <span>Production</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="audit.html" class="menu-button">
+                <span class="menu-icon">🔍</span>
+                <span>Audit Finding</span>
+            </a>
+        </div>
+        
+        <div class="logout-btn" onclick="logout()">
+            <span class="menu-icon">🚪</span>
+            <span>Logout</span>
+        </div>
+        
+        <div class="status-online">
+            <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mx-auto"></div>
+            <span>System Online</span>
+        </div>
+    </div>
 
-        <!-- MAIN CONTENT -->
-        <main class="flex-1 flex flex-col gap-4 overflow-y-auto">
-            
-            <!-- HEADER -->
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-2">
+    <!-- MAIN CONTENT -->
+    <div class="dashboard-container">
+        
+        <!-- TOP BAR -->
+        <div class="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 px-3 py-1.5 flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-2">
+                <div class="hamburger-btn" onclick="toggleMenu()">
+                    <span>☰</span>
+                </div>
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent flex items-center gap-2">
-                        <span>🏭</span> Production Monitoring
-                    </h1>
-                    <p class="text-slate-400 text-sm mt-1">Click on any machine to see the part being produced</p>
-                </div>
-                <div class="flex items-center gap-3 flex-wrap">
-                    <div class="relative">
-                        <input type="text" id="search-input" placeholder="🔍 Search machine..." 
-                               class="search-box bg-slate-800/50 border border-slate-700 rounded-xl px-4 py-2 text-sm w-48 focus:outline-none">
-                    </div>
-                    <div class="text-right">
-                        <p id="clock" class="text-cyan-400 font-bold text-lg">--:--:--</p>
-                        <p id="date-header" class="text-slate-500 text-xs">Loading...</p>
-                    </div>
-                    <button onclick="manualRefresh()" class="refresh-btn bg-slate-800 hover:bg-slate-700 p-2.5 rounded-xl transition-all">
-                        <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                        </svg>
-                    </button>
-                    <div class="flex items-center gap-2 bg-green-500/10 px-3 py-2 rounded-xl border border-green-500/20">
-                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <span class="text-green-400 text-xs font-bold uppercase">Live</span>
-                    </div>
+                    <h1 class="text-xs md:text-sm font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">PT NITTO ALAM INDONESIA</h1>
+                    <p class="text-slate-500 text-[7px]">Plant 2 - Quality Control System</p>
                 </div>
             </div>
-
-            <!-- RUNNING TEXT MOTTO -->
-            <div class="bg-cyan-500/10 rounded-lg px-3 py-2 border border-cyan-500/20 shrink-0">
-                <marquee behavior="scroll" direction="left" class="text-cyan-400 text-xs font-medium">
-                    🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | COMMITMENT TO QUALITY & EXCELLENCE | TARGET: WORLD CLASS MANUFACTURING
-                </marquee>
-            </div>
-
-            <!-- FILTER / LEGEND -->
-            <div class="flex flex-wrap items-center justify-between gap-3">
-                <div class="flex flex-wrap gap-2">
-                    <span class="text-xs text-slate-400 mr-1">Filter:</span>
-                    <button onclick="filterStatus('all')" id="filter-all" class="filter-btn px-3 py-1 rounded-full text-xs bg-cyan-500/20 text-cyan-400">All</button>
-                    <button onclick="filterStatus('running')" id="filter-running" class="filter-btn px-3 py-1 rounded-full text-xs bg-slate-800 text-slate-400 hover:bg-green-500/20 hover:text-green-400">▶️ Running</button>
-                    <button onclick="filterStatus('stop')" id="filter-stop" class="filter-btn px-3 py-1 rounded-full text-xs bg-slate-800 text-slate-400 hover:bg-red-500/20 hover:text-red-400">⏹️ Stop</button>
-                    <button onclick="filterStatus('dandori')" id="filter-dandori" class="filter-btn px-3 py-1 rounded-full text-xs bg-slate-800 text-slate-400 hover:bg-yellow-500/20 hover:text-yellow-400">🔄 Dandori</button>
-                    <button onclick="filterStatus('trouble')" id="filter-trouble" class="filter-btn px-3 py-1 rounded-full text-xs bg-slate-800 text-slate-400 hover:bg-purple-500/20 hover:text-purple-400">⚠️ Trouble</button>
-                </div>
-                <div class="text-xs text-slate-500">
-                    <span id="filtered-count">0</span> machines shown
+            <div class="flex items-center gap-2">
+                <div class="digital-clock" id="clock">00:00:00</div>
+                <div class="flex items-center gap-1 bg-green-500/10 px-1.5 py-0.5 rounded-lg border border-green-500/20">
+                    <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-green-400 text-[6px] font-bold uppercase">LIVE</span>
                 </div>
             </div>
+        </div>
 
-            <!-- STATISTICS CARDS -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div class="stat-card rounded-xl p-3 text-center">
-                    <div class="text-slate-400 text-xs mb-1">Total Mesin</div>
-                    <div id="total-count" class="text-2xl md:text-3xl font-bold text-cyan-400">0</div>
-                    <div class="text-slate-500 text-[10px] mt-1">All Units</div>
-                </div>
-                <div class="stat-card rounded-xl p-3 text-center">
-                    <div class="text-slate-400 text-xs mb-1">Running</div>
-                    <div id="running-count" class="text-2xl md:text-3xl font-bold text-green-400">0</div>
-                    <div class="text-slate-500 text-[10px] mt-1">Operational</div>
-                </div>
-                <div class="stat-card rounded-xl p-3 text-center">
-                    <div class="text-slate-400 text-xs mb-1">Stop</div>
-                    <div id="stop-count" class="text-2xl md:text-3xl font-bold text-red-400">0</div>
-                    <div class="text-slate-500 text-[10px] mt-1">Down / Idle</div>
-                </div>
-                <div class="stat-card rounded-xl p-3 text-center">
-                    <div class="text-slate-400 text-xs mb-1">Dandori / Trouble</div>
-                    <div id="dandori-count" class="text-2xl md:text-3xl font-bold text-yellow-400">0</div>
-                    <div class="text-slate-500 text-[10px] mt-1">Setup / Issue</div>
-                </div>
-            </div>
+        <!-- RUNNING TEXT -->
+        <div class="running-text shrink-0">
+            <marquee behavior="scroll" direction="left" scrollamount="3">
+                🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | COMMITMENT TO QUALITY & EXCELLENCE | TARGET: WORLD CLASS MANUFACTURING
+            </marquee>
+        </div>
 
-            <!-- LOADING INDICATOR -->
-            <div id="loading" class="fixed bottom-4 right-4 bg-slate-800/90 rounded-lg px-3 py-1.5 text-xs hidden z-50">
-                <div class="flex items-center gap-2">
-                    <div class="w-3 h-3 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
-                    <span class="text-slate-300">Refreshing...</span>
-                </div>
-            </div>
-
-            <!-- MACHINE SECTIONS - GRID VIEW -->
-            <div class="space-y-5" id="machine-container">
+        <!-- MAIN CONTENT AREA -->
+        <div class="main-layout">
+            <div class="content-area">
                 
-                <!-- HEADING MACHINES -->
-                <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
-                    <div class="section-header px-4 py-3 section-collapse" onclick="toggleSection('heading-section')">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xl">🔧</span>
-                                <h3 class="font-bold text-cyan-400 text-base">Heading Machines</h3>
-                                <span id="heading-total" class="count-badge text-cyan-400 ml-2">0 units</span>
-                            </div>
-                            <svg id="heading-icon" class="rotate-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
+                <!-- HEADER -->
+                <div class="flex flex-wrap justify-between items-start gap-2 mb-3">
+                    <div>
+                        <h1 class="text-lg font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent flex items-center gap-2">
+                            <span>🏭</span> Production Monitoring
+                        </h1>
+                        <p class="text-slate-400 text-[10px]">Click on any machine to see the part being produced</p>
                     </div>
-                    <div id="heading-machines" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-4">
-                        <div class="col-span-full text-center text-slate-500 py-6 text-sm">Loading...</div>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <input type="text" id="search-input" placeholder="🔍 Search machine..." class="search-box text-xs w-36">
+                        <button onclick="manualRefresh()" class="refresh-btn bg-slate-800 hover:bg-slate-700 p-1.5 rounded-lg transition">
+                            <svg class="w-4 h-4 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                            </svg>
+                        </button>
                     </div>
                 </div>
 
-                <!-- ROLLING MACHINES -->
-                <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
-                    <div class="section-header px-4 py-3 section-collapse" onclick="toggleSection('rolling-section')">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xl">⚙️</span>
-                                <h3 class="font-bold text-cyan-400 text-base">Rolling Machines</h3>
-                                <span id="rolling-total" class="count-badge text-cyan-400 ml-2">0 units</span>
-                            </div>
-                            <svg id="rolling-icon" class="rotate-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
+                <!-- FILTER / LEGEND -->
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                    <div class="flex flex-wrap gap-1">
+                        <span class="text-[9px] text-slate-400 mr-1">Filter:</span>
+                        <button onclick="filterStatus('all')" id="filter-all" class="filter-btn px-2 py-0.5 rounded-full text-[9px] bg-cyan-500/20 text-cyan-400">All</button>
+                        <button onclick="filterStatus('running')" id="filter-running" class="filter-btn px-2 py-0.5 rounded-full text-[9px] bg-slate-800 text-slate-400 hover:bg-green-500/20 hover:text-green-400">▶️ Running</button>
+                        <button onclick="filterStatus('stop')" id="filter-stop" class="filter-btn px-2 py-0.5 rounded-full text-[9px] bg-slate-800 text-slate-400 hover:bg-red-500/20 hover:text-red-400">⏹️ Stop</button>
+                        <button onclick="filterStatus('dandori')" id="filter-dandori" class="filter-btn px-2 py-0.5 rounded-full text-[9px] bg-slate-800 text-slate-400 hover:bg-yellow-500/20 hover:text-yellow-400">🔄 Dandori</button>
+                        <button onclick="filterStatus('trouble')" id="filter-trouble" class="filter-btn px-2 py-0.5 rounded-full text-[9px] bg-slate-800 text-slate-400 hover:bg-purple-500/20 hover:text-purple-400">⚠️ Trouble</button>
                     </div>
-                    <div id="rolling-machines" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-4">
-                        <div class="col-span-full text-center text-slate-500 py-6 text-sm">Loading...</div>
+                    <div class="text-[9px] text-slate-500">
+                        <span id="filtered-count">0</span> machines shown
                     </div>
                 </div>
 
-                <!-- WASHING -->
-                <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
-                    <div class="section-header px-4 py-3 section-collapse" onclick="toggleSection('washing-section')">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xl">🧼</span>
-                                <h3 class="font-bold text-cyan-400 text-base">Washing</h3>
-                                <span id="washing-total" class="count-badge text-cyan-400 ml-2">0 units</span>
-                            </div>
-                            <svg id="washing-icon" class="rotate-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
+                <!-- STATISTICS CARDS -->
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
+                    <div class="stat-card rounded-lg p-2 text-center">
+                        <div class="text-[9px] text-slate-400">Total Mesin</div>
+                        <div id="total-count" class="text-lg font-bold text-cyan-400">0</div>
                     </div>
-                    <div id="washing-machines" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-4">
-                        <div class="col-span-full text-center text-slate-500 py-6 text-sm">Loading...</div>
+                    <div class="stat-card rounded-lg p-2 text-center">
+                        <div class="text-[9px] text-slate-400">Running</div>
+                        <div id="running-count" class="text-lg font-bold text-green-400">0</div>
                     </div>
-                </div>
-
-                <!-- FURNACE -->
-                <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
-                    <div class="section-header px-4 py-3 section-collapse" onclick="toggleSection('furnace-section')">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xl">🔥</span>
-                                <h3 class="font-bold text-cyan-400 text-base">Furnace</h3>
-                                <span id="furnace-total" class="count-badge text-cyan-400 ml-2">0 units</span>
-                            </div>
-                            <svg id="furnace-icon" class="rotate-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
+                    <div class="stat-card rounded-lg p-2 text-center">
+                        <div class="text-[9px] text-slate-400">Stop</div>
+                        <div id="stop-count" class="text-lg font-bold text-red-400">0</div>
                     </div>
-                    <div id="furnace-machines" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-4">
-                        <div class="col-span-full text-center text-slate-500 py-6 text-sm">Loading...</div>
+                    <div class="stat-card rounded-lg p-2 text-center">
+                        <div class="text-[9px] text-slate-400">Dandori/Trouble</div>
+                        <div id="dandori-count" class="text-lg font-bold text-yellow-400">0</div>
                     </div>
                 </div>
 
-                <!-- PLATING -->
-                <div class="bg-slate-900/30 rounded-xl border border-slate-800 overflow-hidden">
-                    <div class="section-header px-4 py-3 section-collapse" onclick="toggleSection('plating-section')">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="text-xl">⚡</span>
-                                <h3 class="font-bold text-cyan-400 text-base">Plating Lines</h3>
-                                <span id="plating-total" class="count-badge text-cyan-400 ml-2">0 units</span>
-                            </div>
-                            <svg id="plating-icon" class="rotate-icon w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                            </svg>
-                        </div>
-                    </div>
-                    <div id="plating-machines" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 p-4">
-                        <div class="col-span-full text-center text-slate-500 py-6 text-sm">Loading...</div>
+                <!-- LOADING INDICATOR -->
+                <div id="loading" class="fixed bottom-4 right-4 bg-slate-800/90 rounded-lg px-2 py-1 text-[9px] hidden z-50">
+                    <div class="flex items-center gap-1">
+                        <div class="w-2 h-2 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
+                        <span>Refreshing...</span>
                     </div>
                 </div>
 
+                <!-- MACHINE SECTIONS -->
+                <div class="space-y-3 flex-1 overflow-y-auto" id="machine-container">
+                    
+                    <!-- HEADING MACHINES -->
+                    <div class="bg-slate-900/30 rounded-lg border border-slate-800 overflow-hidden">
+                        <div class="section-header px-3 py-2 section-collapse" onclick="toggleSection('heading-section')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm">🔧</span>
+                                    <h3 class="font-bold text-cyan-400 text-xs">Heading Machines</h3>
+                                    <span id="heading-total" class="count-badge text-cyan-400 ml-1">0 units</span>
+                                </div>
+                                <svg id="heading-icon" class="rotate-icon w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div id="heading-machines" class="machine-grid p-2">
+                            <div class="col-span-full text-center text-slate-500 py-4 text-xs">Loading...</div>
+                        </div>
+                    </div>
+
+                    <!-- ROLLING MACHINES -->
+                    <div class="bg-slate-900/30 rounded-lg border border-slate-800 overflow-hidden">
+                        <div class="section-header px-3 py-2 section-collapse" onclick="toggleSection('rolling-section')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm">⚙️</span>
+                                    <h3 class="font-bold text-cyan-400 text-xs">Rolling Machines</h3>
+                                    <span id="rolling-total" class="count-badge text-cyan-400 ml-1">0 units</span>
+                                </div>
+                                <svg id="rolling-icon" class="rotate-icon w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div id="rolling-machines" class="machine-grid p-2">
+                            <div class="col-span-full text-center text-slate-500 py-4 text-xs">Loading...</div>
+                        </div>
+                    </div>
+
+                    <!-- WASHING -->
+                    <div class="bg-slate-900/30 rounded-lg border border-slate-800 overflow-hidden">
+                        <div class="section-header px-3 py-2 section-collapse" onclick="toggleSection('washing-section')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm">🧼</span>
+                                    <h3 class="font-bold text-cyan-400 text-xs">Washing</h3>
+                                    <span id="washing-total" class="count-badge text-cyan-400 ml-1">0 units</span>
+                                </div>
+                                <svg id="washing-icon" class="rotate-icon w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div id="washing-machines" class="machine-grid p-2">
+                            <div class="col-span-full text-center text-slate-500 py-4 text-xs">Loading...</div>
+                        </div>
+                    </div>
+
+                    <!-- FURNACE -->
+                    <div class="bg-slate-900/30 rounded-lg border border-slate-800 overflow-hidden">
+                        <div class="section-header px-3 py-2 section-collapse" onclick="toggleSection('furnace-section')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm">🔥</span>
+                                    <h3 class="font-bold text-cyan-400 text-xs">Furnace</h3>
+                                    <span id="furnace-total" class="count-badge text-cyan-400 ml-1">0 units</span>
+                                </div>
+                                <svg id="furnace-icon" class="rotate-icon w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div id="furnace-machines" class="machine-grid p-2">
+                            <div class="col-span-full text-center text-slate-500 py-4 text-xs">Loading...</div>
+                        </div>
+                    </div>
+
+                    <!-- PLATING -->
+                    <div class="bg-slate-900/30 rounded-lg border border-slate-800 overflow-hidden">
+                        <div class="section-header px-3 py-2 section-collapse" onclick="toggleSection('plating-section')">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-sm">⚡</span>
+                                    <h3 class="font-bold text-cyan-400 text-xs">Plating Lines</h3>
+                                    <span id="plating-total" class="count-badge text-cyan-400 ml-1">0 units</span>
+                                </div>
+                                <svg id="plating-icon" class="rotate-icon w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div id="plating-machines" class="machine-grid p-2">
+                            <div class="col-span-full text-center text-slate-500 py-4 text-xs">Loading...</div>
+                        </div>
+                    </div>
+
+                </div>
+                
+                <!-- LAST UPDATE INFO -->
+                <div class="text-center mt-2 pt-2">
+                    <p id="last-update" class="text-slate-500 text-[8px]">Last update: --:--:--</p>
+                </div>
             </div>
-            
-            <!-- LAST UPDATE INFO -->
-            <div class="text-center mt-4 pb-4">
-                <p id="last-update" class="text-slate-500 text-[10px]">Last update: --:--:--</p>
-                <p class="text-slate-600 text-[8px] mt-1">Auto refresh every 5 seconds</p>
-            </div>
-        </main>
+        </div>
     </div>
 
     <!-- MODAL for Part Info -->
     <div id="partModal" class="modal" onclick="closeModal()">
         <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center p-4 border-b border-slate-700">
-                <h3 class="text-lg font-bold text-cyan-400 flex items-center gap-2">
+            <div class="flex justify-between items-center p-3 border-b border-slate-700">
+                <h3 class="text-sm font-bold text-cyan-400 flex items-center gap-2">
                     <span>🔧</span> Machine Detail
                 </h3>
-                <button onclick="closeModal()" class="close-modal text-slate-400 hover:text-white text-2xl">&times;</button>
+                <button onclick="closeModal()" class="close-modal text-slate-400 hover:text-white text-xl">&times;</button>
             </div>
-            <div class="p-5">
-                <div class="mb-4">
-                    <label class="text-slate-400 text-xs block mb-1">Machine Name</label>
-                    <div id="modal-machine" class="text-white font-bold text-lg">-</div>
+            <div class="p-4">
+                <div class="mb-3">
+                    <label class="text-slate-400 text-[10px] block mb-1">Machine Name</label>
+                    <div id="modal-machine" class="text-white font-bold text-sm">-</div>
                 </div>
-                <div class="mb-4">
-                    <label class="text-slate-400 text-xs block mb-1">Status</label>
+                <div class="mb-3">
+                    <label class="text-slate-400 text-[10px] block mb-1">Status</label>
                     <div id="modal-status" class="inline-flex">-</div>
                 </div>
-                <div class="mb-4">
-                    <label class="text-slate-400 text-xs block mb-1">Part / Material</label>
-                    <div id="modal-part" class="part-code bg-slate-800/50 p-3 rounded-xl text-cyan-400 font-mono text-sm break-all">-</div>
+                <div class="mb-3">
+                    <label class="text-slate-400 text-[10px] block mb-1">Part / Material</label>
+                    <div id="modal-part" class="part-code bg-slate-800/50 p-2 rounded-lg text-cyan-400 font-mono text-xs break-all">-</div>
                 </div>
-                <div class="mt-4 pt-3 border-t border-slate-700">
-                    <p class="text-slate-500 text-[10px] text-center">Click outside to close</p>
+                <div class="mt-3 pt-2 border-t border-slate-700 text-center">
+                    <p class="text-slate-500 text-[8px]">Click outside to close</p>
                 </div>
             </div>
         </div>
@@ -558,33 +617,40 @@
 
     <script>
         // ==================== AUTHENTICATION ====================
-        
         function checkAuth() {
             const userJson = sessionStorage.getItem('currentUser');
-            if (!userJson) {
-                window.location.href = 'login.html';
-                return null;
-            }
+            if (!userJson) { window.location.href = 'login.html'; return null; }
             return JSON.parse(userJson);
         }
         
         const currentUser = checkAuth();
-        
-        if (currentUser) {
-            document.getElementById('user-name').innerText = currentUser.username;
-            const roleHtml = currentUser.role === 'admin' ? 
-                '<span class="text-cyan-400 text-xs">👑 Administrator</span>' : 
-                '<span class="text-slate-400 text-xs">👤 User</span>';
-            document.getElementById('user-role').innerHTML = roleHtml;
-        }
         
         function logout() {
             sessionStorage.removeItem('currentUser');
             window.location.href = 'login.html';
         }
         
-        // ==================== MACHINE DATA ====================
+        // ==================== MENU FUNCTIONS ====================
+        function toggleMenu() {
+            const sidebar = document.getElementById('popupSidebar');
+            const overlay = document.getElementById('menuOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
         
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const sidebar = document.getElementById('popupSidebar');
+                const overlay = document.getElementById('menuOverlay');
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+                closeModal();
+            }
+        });
+        
+        // ==================== MACHINE DATA ====================
         let allMachines = [];
         let currentFilter = 'all';
         let currentSearch = '';
@@ -617,11 +683,7 @@
         
         function showPartModal(machine, status, part) {
             const modal = document.getElementById('partModal');
-            const modalMachine = document.getElementById('modal-machine');
-            const modalStatus = document.getElementById('modal-status');
-            const modalPart = document.getElementById('modal-part');
-            
-            modalMachine.innerText = machine;
+            document.getElementById('modal-machine').innerText = machine;
             
             const statusLower = (status || '').toLowerCase();
             let statusHtml = '';
@@ -631,8 +693,8 @@
             else if (statusLower === 'trouble') statusHtml = '<span class="status-badge badge-trouble">⚠️ Trouble</span>';
             else statusHtml = '<span class="status-badge">❓ Unknown</span>';
             
-            modalStatus.innerHTML = statusHtml;
-            modalPart.innerText = part || 'No part information available';
+            document.getElementById('modal-status').innerHTML = statusHtml;
+            document.getElementById('modal-part').innerText = part || 'No part information available';
             modal.classList.add('active');
         }
         
@@ -642,10 +704,7 @@
         
         function updateClock() {
             const now = new Date();
-            const time = now.toLocaleTimeString('id-ID', { hour12: false });
-            const date = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('clock').innerText = time;
-            document.getElementById('date-header').innerText = date;
+            document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', { hour12: false });
         }
         
         function updateLastUpdate() {
@@ -731,7 +790,7 @@
             if (!container) return;
             
             if (!machines || machines.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center text-slate-500 py-6 text-sm">No machines found</div>';
+                container.innerHTML = '<div class="col-span-full text-center text-slate-500 py-4 text-xs">No machines found</div>';
                 if (totalId) document.getElementById(totalId).innerHTML = '0 units';
                 return;
             }
@@ -749,9 +808,9 @@
                 
                 return `
                     <div class="machine-card ${cardClass}" onclick="showPartModal('${machineName.replace(/'/g, "\\'")}', '${machine.status}', '${part.replace(/'/g, "\\'")}')">
-                        <div class="text-sm font-bold text-white truncate mb-2" title="${machineName}">${machineName}</div>
-                        <div class="flex items-center justify-center gap-1">
-                            <span class="status-badge ${badgeClass}">${statusIcon} ${statusText}</span>
+                        <div class="text-[10px] font-bold text-white truncate" title="${machineName}">${machineName}</div>
+                        <div class="flex items-center justify-center gap-1 mt-1">
+                            <span class="status-badge ${badgeClass} text-[8px]">${statusIcon} ${statusText}</span>
                         </div>
                         <div class="part-tooltip">📦 ${shortPart}</div>
                     </div>
@@ -801,7 +860,6 @@
             autoRefreshInterval = setInterval(loadMachineData, 5000);
         }
         
-        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
         document.getElementById('search-input').addEventListener('input', searchMachines);
         
         loadMachineData();
