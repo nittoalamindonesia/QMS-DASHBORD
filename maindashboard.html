@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Main Dashboard - PT NITTO ALAM INDONESIA</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); 
+            background: #FFFFFF;
             min-height: 100vh; 
             font-family: 'Inter', system-ui, sans-serif;
             overflow: hidden;
@@ -23,28 +24,29 @@
         @media (max-width: 768px) { html { font-size: 12px; } }
         
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #1e293b; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #22d3ee; border-radius: 10px; }
+        ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
         
-        /* Stat Card */
+        /* Stat Card - White Theme */
         .stat-card { 
-            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(30, 41, 59, 0.9)); 
-            backdrop-filter: blur(10px); 
+            background: #FFFFFF;
             transition: all 0.3s ease; 
-            border: 1px solid rgba(51, 65, 85, 0.5); 
+            border: 1px solid #E5E7EB; 
             border-radius: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        .stat-card:hover { transform: translateY(-3px); border-color: rgba(34, 211, 238, 0.4); }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #0284C7; }
         
-        /* Zero Accident Card */
+        /* Zero Accident Card - White Theme */
         .zero-accident-card {
-            background: linear-gradient(145deg, #1a1a2e, #0f0f1a);
+            background: #FFFFFF;
             border-radius: 1rem;
-            border: 2px solid rgba(34, 211, 238, 0.4);
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         .zero-header {
-            background: linear-gradient(135deg, #2d2d44, #1a1a2e);
-            border-bottom: 2px solid #22d3ee;
+            background: #F8FAFC;
+            border-bottom: 2px solid #0284C7;
             border-radius: 1rem 1rem 0 0;
             padding: 0.8rem 1.2rem;
         }
@@ -52,9 +54,8 @@
             font-family: 'Courier New', monospace;
             font-size: 4rem;
             font-weight: 800;
-            color: #22d3ee;
-            text-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
-            background: #00000040;
+            color: #0284C7;
+            background: #F0F9FF;
             padding: 0.5rem 1rem;
             border-radius: 1rem;
             display: inline-block;
@@ -66,20 +67,18 @@
             font-size: 0.75rem;
             letter-spacing: 2px;
             font-weight: 600;
-            color: #22d3ee;
+            color: #0284C7;
         }
         
-        /* Event Card */
         .event-card {
-            background: rgba(15, 23, 42, 0.7);
-            backdrop-filter: blur(5px);
+            background: #F8FAFC;
             border-radius: 0.75rem;
-            border-left: 4px solid #22d3ee;
+            border-left: 4px solid #0284C7;
             transition: all 0.2s ease;
             padding: 0.8rem 1rem;
             margin-bottom: 0.6rem;
         }
-        .event-card:hover { transform: translateX(5px); background: rgba(34, 211, 238, 0.15); }
+        .event-card:hover { transform: translateX(5px); background: #F0F9FF; }
         
         /* ========== POP UP SIDEBAR MENU ========== */
         .menu-overlay {
@@ -101,18 +100,17 @@
             left: -280px;
             width: 280px;
             height: 100vh;
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-            backdrop-filter: blur(12px);
-            border-right: 1px solid rgba(34, 211, 238, 0.3);
+            background: #FFFFFF;
+            border-right: 1px solid #E5E7EB;
             z-index: 999;
             transition: left 0.3s ease;
             display: flex;
             flex-direction: column;
-            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
         }
         .popup-sidebar.active { left: 0; }
         
-        .logo-section { padding: 1.5rem 1rem; border-bottom: 1px solid rgba(34, 211, 238, 0.2); margin-bottom: 1rem; }
+        .logo-section { padding: 1.5rem 1rem; border-bottom: 1px solid #E5E7EB; margin-bottom: 1rem; }
         .menu-item { margin: 0.25rem 0.75rem; }
         .menu-button {
             display: flex;
@@ -122,13 +120,13 @@
             border-radius: 0.75rem;
             cursor: pointer;
             transition: all 0.2s ease;
-            color: #94a3b8;
+            color: #475569;
             background: transparent;
             text-decoration: none;
             font-size: 0.9rem;
         }
-        .menu-button:hover { background: rgba(34, 211, 238, 0.1); color: #22d3ee; transform: translateX(5px); }
-        .menu-button.active { background: rgba(34, 211, 238, 0.2); color: #22d3ee; border-left: 3px solid #22d3ee; }
+        .menu-button:hover { background: #F0F9FF; color: #0284C7; transform: translateX(5px); }
+        .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
         .menu-icon { font-size: 1.3rem; min-width: 2rem; }
         
         .logout-btn {
@@ -143,16 +141,15 @@
             border-radius: 0.75rem;
             cursor: pointer;
             transition: all 0.2s ease;
-            color: #94a3b8;
-            border-top: 1px solid rgba(51, 65, 85, 0.5);
+            color: #475569;
+            border-top: 1px solid #E5E7EB;
         }
-        .logout-btn:hover { background: rgba(239, 68, 68, 0.2); color: #f87171; transform: translateX(5px); }
-        .status-online { text-align: center; padding: 1rem; border-top: 1px solid rgba(51, 65, 85, 0.3); }
+        .logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
+        .status-online { text-align: center; padding: 1rem; border-top: 1px solid #E5E7EB; }
         
-        /* Tombol Hamburger */
         .hamburger-btn {
-            background: rgba(34, 211, 238, 0.1);
-            border: 1px solid rgba(34, 211, 238, 0.3);
+            background: #F0F9FF;
+            border: 1px solid #0284C7;
             border-radius: 0.75rem;
             padding: 0.5rem 0.8rem;
             cursor: pointer;
@@ -161,26 +158,25 @@
             align-items: center;
             gap: 0.5rem;
         }
-        .hamburger-btn:hover { background: rgba(34, 211, 238, 0.2); transform: scale(1.02); }
+        .hamburger-btn:hover { background: #0284C7; color: white; transform: scale(1.02); }
+        .hamburger-btn:hover span { color: white; }
         
-        /* Running Text */
-        .running-text { background: linear-gradient(90deg, #1e293b, #0f172a, #1e293b); border-top: 1px solid rgba(34, 211, 238, 0.3); border-bottom: 1px solid rgba(34, 211, 238, 0.3); }
-        .running-text marquee { font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; color: #22d3ee; padding: 0.3rem 0; }
+        .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
+        .running-text marquee { font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; color: #0284C7; padding: 0.3rem 0; }
         
         .digital-clock { 
             font-family: 'Courier New', monospace; 
             font-size: 1.6rem; 
             font-weight: 700; 
-            background: #0a0a0f; 
+            background: #F8FAFC; 
             padding: 0.4rem 1rem; 
             border-radius: 0.75rem; 
             letter-spacing: 3px; 
-            border: 1px solid #22d3ee; 
-            color: #22d3ee;
+            border: 1px solid #E5E7EB; 
+            color: #0284C7;
         }
         @media (max-width: 1024px) { .digital-clock { font-size: 1.3rem; padding: 0.3rem 0.8rem; } }
         
-        /* Dashboard Grid - RAPI */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -202,11 +198,17 @@
             padding-right: 0.5rem;
         }
         
-        /* Typography - Mudah Dibaca */
+        .chart-container {
+            flex: 1;
+            min-height: 0;
+            position: relative;
+        }
+        
         .card-title {
             font-size: 1rem;
             font-weight: 600;
             letter-spacing: 0.5px;
+            color: #1E293B;
         }
         .card-value {
             font-size: 1.5rem;
@@ -214,19 +216,16 @@
         }
         .card-label {
             font-size: 0.8rem;
-            color: #94a3b8;
+            color: #64748B;
         }
         .event-title {
             font-size: 0.9rem;
             font-weight: 500;
+            color: #1E293B;
         }
         .event-type {
             font-size: 0.7rem;
-            color: #64748b;
-        }
-        .history-text {
-            font-size: 0.8rem;
-            line-height: 1.4;
+            color: #64748B;
         }
         
         @media (min-width: 1920px) {
@@ -234,18 +233,20 @@
             .card-value { font-size: 1.8rem; }
             .card-label { font-size: 0.9rem; }
             .event-title { font-size: 1rem; }
-            .history-text { font-size: 0.9rem; }
         }
         
-        /* Warna Status */
-        .text-open { color: #f87171; }
-        .text-progress { color: #fbbf24; }
-        .text-active { color: #22d3ee; }
+        .text-open { color: #EF4444; }
+        .text-progress { color: #F59E0B; }
+        .text-active { color: #0284C7; }
         
-        /* Spacing yang konsisten */
-        .p-consistent { padding: 0.8rem; }
-        .gap-consistent { gap: 0.8rem; }
-        .mb-consistent { margin-bottom: 0.8rem; }
+        /* Warna teks utama */
+        .text-primary { color: #1E293B; }
+        .text-brand { color: #1A63F6; }
+        .border-brand { border-color: #0284C7; }
+        
+        /* Warna untuk card background */
+        .bg-card-white { background: #FFFFFF; }
+        .bg-secondary { background: #F8FAFC; }
     </style>
 </head>
 <body>
@@ -253,49 +254,22 @@
     <!-- OVERLAY -->
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
     
-    <!-- POP UP SIDEBAR MENU -->
+    <!-- POP UP SIDEBAR MENU (akan diisi dinamis oleh JS) -->
     <div id="popupSidebar" class="popup-sidebar">
         <div class="logo-section">
             <div class="flex items-center gap-2">
-                <div class="w-10 h-10 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center">
+                <div class="w-10 h-10 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-xl flex items-center justify-center">
                     <span class="text-white text-lg font-bold">NS</span>
                 </div>
                 <div>
-                    <h1 class="text-sm font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">NITTO SEIKO</h1>
+                    <h1 class="text-sm font-bold text-brand">NITTO SEIKO</h1>
                     <p class="text-slate-500 text-[9px]">Plant 2</p>
                 </div>
             </div>
         </div>
         
-        <div class="menu-item">
-            <a href="maindashboard.html" class="menu-button active">
-                <span class="menu-icon">📊</span>
-                <span>Main Dashboard</span>
-            </a>
-        </div>
-        <div class="menu-item">
-            <a href="activityschedule.html" class="menu-button">
-                <span class="menu-icon">📅</span>
-                <span>Activity Schedule</span>
-            </a>
-        </div>
-        <div class="menu-item">
-            <a href="production.html" class="menu-button">
-                <span class="menu-icon">🏭</span>
-                <span>Production</span>
-            </a>
-        </div>
-        <div class="menu-item">
-            <a href="audit.html" class="menu-button">
-                <span class="menu-icon">🔍</span>
-                <span>Audit Finding</span>
-            </a>
-        </div>
-        
-        <div class="logout-btn" onclick="logout()">
-            <span class="menu-icon">🚪</span>
-            <span>Logout</span>
-        </div>
+        <!-- Menu akan diisi oleh JavaScript berdasarkan role -->
+        <div id="menu-container"></div>
         
         <div class="status-online">
             <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mx-auto"></div>
@@ -307,22 +281,22 @@
     <div class="main-content" style="margin-left: 0;">
         
         <!-- TOP BAR -->
-        <div class="bg-slate-900/80 backdrop-blur-sm border-b border-slate-800 px-4 py-2 flex justify-between items-center shrink-0">
+        <div class="bg-white border-b border-gray-200 px-4 py-2 flex justify-between items-center shrink-0">
             <div class="flex items-center gap-3">
                 <div class="hamburger-btn" onclick="toggleMenu()">
-                    <span class="text-xl">☰</span>
-                    <span class="text-sm hidden md:inline">Menu</span>
+                    <span class="text-xl text-gray-700">☰</span>
+                    <span class="text-sm hidden md:inline text-gray-600">Menu</span>
                 </div>
                 <div>
-                    <h1 class="text-base md:text-lg font-bold bg-gradient-to-r from-cyan-400 to-cyan-300 bg-clip-text text-transparent">PT NITTO ALAM INDONESIA</h1>
+                    <h1 class="text-base md:text-lg font-bold text-brand">PT NITTO ALAM INDONESIA</h1>
                     <p class="text-slate-500 text-[9px] md:text-[10px]">Plant 2 - Quality Control System</p>
                 </div>
             </div>
             <div class="flex items-center gap-3">
                 <div class="digital-clock" id="clock">00:00:00</div>
-                <div class="flex items-center gap-1 bg-green-500/10 px-2 py-1 rounded-lg border border-green-500/20">
+                <div class="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg border border-green-200">
                     <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                    <span class="text-green-400 text-[8px] md:text-[9px] font-bold uppercase">LIVE</span>
+                    <span class="text-green-600 text-[8px] md:text-[9px] font-bold uppercase">LIVE</span>
                 </div>
             </div>
         </div>
@@ -334,7 +308,7 @@
             </marquee>
         </div>
 
-        <!-- DASHBOARD CARDS - RAPI -->
+        <!-- DASHBOARD CARDS -->
         <div class="dashboard-grid">
             
             <!-- CARD 1: ZERO ACCIDENT -->
@@ -344,23 +318,22 @@
                     <span class="zero-label">DAYS COUNT</span>
                 </div>
                 <div class="flex-1 flex flex-col justify-center p-4 text-center">
-                    <div class="text-slate-400 text-xs mb-2" id="date-display">Loading...</div>
+                    <div class="text-slate-500 text-xs mb-2" id="date-display">Loading...</div>
                     <div class="zero-digit mx-auto" id="accident-counter">0</div>
                     <div class="zero-label text-[10px] mt-3">DAYS WITHOUT ACCIDENT</div>
-                    <div class="bg-black/30 rounded-lg mt-3 px-3 py-2">
-                        <span class="text-slate-400 text-[10px]">Last accident: </span>
-                        <span class="text-cyan-400 text-[10px] font-bold" id="last-accident-date">Never</span>
+                    <div class="bg-slate-50 rounded-lg mt-3 px-3 py-2">
+                        <span class="text-slate-500 text-[10px]">Last accident: </span>
+                        <span class="text-cyan-600 text-[10px] font-bold" id="last-accident-date">Never</span>
                     </div>
-                    <div class="text-slate-500 text-[9px] mt-2" id="next-increment-info"></div>
                 </div>
             </div>
 
             <!-- CARD 2: TODAY'S EVENTS -->
-            <div class="bg-slate-900/50 rounded-xl border border-slate-800 p-4 flex flex-col card-full">
+            <div class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col card-full shadow-sm">
                 <div class="flex items-center justify-between mb-3 shrink-0">
                     <div class="flex items-center gap-2">
                         <span class="text-xl">📅</span>
-                        <h3 class="font-semibold text-cyan-400 card-title">Today's Events</h3>
+                        <h3 class="font-semibold text-gray-800 card-title">Today's Events</h3>
                     </div>
                     <span class="text-slate-500 text-[10px]" id="today-date">-</span>
                 </div>
@@ -373,14 +346,14 @@
             <div class="stat-card p-4 card-full">
                 <div class="flex items-center gap-2 mb-3 shrink-0">
                     <span class="text-xl">🔍</span>
-                    <h3 class="font-semibold text-cyan-400 card-title">Audit Finding</h3>
+                    <h3 class="font-semibold text-gray-800 card-title">Audit Finding</h3>
                 </div>
                 <div id="audit-summary" class="space-y-3 flex-1">
-                    <div class="flex justify-between items-center py-2 border-b border-slate-800">
+                    <div class="flex justify-between items-center py-2 border-b border-gray-200">
                         <span class="card-label">OPEN</span>
                         <span class="card-value text-open font-bold" id="open-findings">0</span>
                     </div>
-                    <div class="flex justify-between items-center py-2 border-b border-slate-800">
+                    <div class="flex justify-between items-center py-2 border-b border-gray-200">
                         <span class="card-label">IN PROGRESS</span>
                         <span class="card-value text-progress font-bold" id="progress-findings">0</span>
                     </div>
@@ -391,23 +364,54 @@
                 </div>
             </div>
 
-            <!-- CARD 4: ACCIDENT HISTORY -->
+            <!-- CARD 4: RFQ CHART -->
             <div class="stat-card p-4 card-full">
                 <div class="flex items-center justify-between mb-3 shrink-0">
                     <div class="flex items-center gap-2">
-                        <span class="text-xl">📋</span>
-                        <h3 class="font-semibold text-cyan-400 card-title">Accident History</h3>
+                        <span class="text-xl">📊</span>
+                        <h3 class="font-semibold text-gray-800 card-title">RFQ per Bulan</h3>
                     </div>
-                    <span class="text-slate-500 text-[9px]">Last 3 records</span>
+                    <span class="text-slate-500 text-[9px]">2026</span>
                 </div>
-                <div id="accident-history-list" class="scrollable-content space-y-2">
-                    <div class="text-center text-slate-500 py-4">No records</div>
+                <div class="chart-container">
+                    <canvas id="rfqChart"></canvas>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
+        // ==================== DATA RFQ ====================
+        const RFQ_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/RFQ";
+        
+        let chart = null;
+        
+        // ==================== FUNGSI PARSING TANGGAL ====================
+        function parseDate(dateString) {
+            if (!dateString) return null;
+            let str = dateString.toString().trim();
+            let parts = str.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
+            if (parts) {
+                let day = parseInt(parts[1], 10);
+                let month = parseInt(parts[2], 10) - 1;
+                let year = parseInt(parts[3], 10);
+                let date = new Date(year, month, day);
+                if (!isNaN(date.getTime())) return date;
+            }
+            let date = new Date(str);
+            if (!isNaN(date.getTime())) return date;
+            return null;
+        }
+        
+        function daysBetween(date1, date2) {
+            const d1 = new Date(date1);
+            const d2 = new Date(date2);
+            d1.setHours(0, 0, 0, 0);
+            d2.setHours(0, 0, 0, 0);
+            const diffTime = Math.abs(d2 - d1);
+            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        }
+        
         // ==================== MENU FUNCTIONS ====================
         function toggleMenu() {
             const sidebar = document.getElementById('popupSidebar');
@@ -427,6 +431,53 @@
             }
         });
         
+        // ==================== ROLE-BASED MENU ====================
+        const adminMenus = [
+            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: true },
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🏭", name: "Production", link: "production.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: false }
+        ];
+        
+        const userMenus = [
+            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: true },
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false }
+        ];
+        
+        function renderMenu() {
+            const userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) return;
+            
+            const user = JSON.parse(userJson);
+            const role = user.role || 'user';
+            const menus = role === 'admin' ? adminMenus : userMenus;
+            
+            const menuContainer = document.getElementById('menu-container');
+            let menuHtml = '';
+            
+            menus.forEach(menu => {
+                const activeClass = menu.active ? 'active' : '';
+                menuHtml += `
+                    <div class="menu-item">
+                        <a href="${menu.link}" class="menu-button ${activeClass}">
+                            <span class="menu-icon">${menu.icon}</span>
+                            <span>${menu.name}</span>
+                        </a>
+                    </div>
+                `;
+            });
+            
+            menuHtml += `
+                <div class="logout-btn" onclick="logout()">
+                    <span class="menu-icon">🚪</span>
+                    <span>Logout</span>
+                </div>
+            `;
+            
+            menuContainer.innerHTML = menuHtml;
+        }
+        
         // ==================== API ENDPOINTS ====================
         const ZERO_ACCIDENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/Zero%20Accident%20Board";
         const EVENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/event";
@@ -434,50 +485,23 @@
         
         let lastAccidentDate = null;
         let currentCounter = 0;
-        let accidentHistory = [];
         let lastCheckedDate = null;
 
-        // ==================== HELPER FUNCTIONS ====================
         function checkAuth() {
             const userJson = sessionStorage.getItem('currentUser');
             if (!userJson) { window.location.href = 'login.html'; return null; }
             return JSON.parse(userJson);
         }
 
-        function parseDate(dateString) {
-            if (!dateString) return null;
-            let date = new Date(dateString);
-            if (!isNaN(date.getTime())) return date;
-            let parts = dateString.match(/(\d+)[-/](\d+)[-/](\d+)/);
-            if (parts) {
-                let day = parseInt(parts[1], 10);
-                let month = parseInt(parts[2], 10) - 1;
-                let year = parseInt(parts[3], 10);
-                if (year < 100) year += 2000;
-                date = new Date(year, month, day);
-                if (!isNaN(date.getTime())) return date;
-            }
-            return null;
-        }
-
         function calculateCurrentCounter(lastDate) {
             if (!lastDate) return 0;
-            const today = new Date(); today.setHours(0,0,0,0);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
             const lastAccident = parseDate(lastDate);
             if (!lastAccident) return 0;
-            lastAccident.setHours(0,0,0,0);
+            lastAccident.setHours(0, 0, 0, 0);
             const diffDays = Math.floor((today - lastAccident) / (1000 * 60 * 60 * 24));
             return diffDays >= 0 ? diffDays : 0;
-        }
-
-        function getNextIncrementInfo() {
-            const now = new Date();
-            const nextMidnight = new Date(now);
-            nextMidnight.setDate(now.getDate() + 1);
-            nextMidnight.setHours(0,0,0,0);
-            const hoursLeft = Math.floor((nextMidnight - now) / (1000 * 60 * 60));
-            const minutesLeft = Math.floor(((nextMidnight - now) % (1000 * 60 * 60)) / (1000 * 60));
-            return `+1 day at 00:00 (${hoursLeft}h ${minutesLeft}m)`;
         }
 
         function updateClock() {
@@ -493,11 +517,8 @@
                 document.getElementById('accident-counter').innerText = currentCounter;
             }
             lastCheckedDate = todayDate;
-            const infoElem = document.getElementById('next-increment-info');
-            if (infoElem) infoElem.innerText = getNextIncrementInfo();
         }
 
-        // ==================== ZERO ACCIDENT DATA ====================
         async function loadZeroAccidentData() {
             try {
                 const response = await fetch(ZERO_ACCIDENT_API);
@@ -516,20 +537,22 @@
                     validAccidents.sort((a, b) => {
                         const dateA = parseDate(a.date);
                         const dateB = parseDate(b.date);
+                        if (!dateA && !dateB) return 0;
+                        if (!dateA) return 1;
+                        if (!dateB) return -1;
                         return dateB - dateA;
                     });
                     
-                    accidentHistory = validAccidents;
-                    const latest = accidentHistory[0];
+                    const latest = validAccidents[0];
                     lastAccidentDate = latest.date;
                     currentCounter = calculateCurrentCounter(lastAccidentDate);
                     
                     document.getElementById('accident-counter').innerText = currentCounter;
                     
-                    const formattedLastDate = parseDate(lastAccidentDate)?.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) || lastAccidentDate;
+                    const formattedLastDate = parseDate(lastAccidentDate)?.toLocaleDateString('id-ID', { 
+                        day: 'numeric', month: 'long', year: 'numeric' 
+                    }) || lastAccidentDate;
                     document.getElementById('last-accident-date').innerText = formattedLastDate;
-                    
-                    renderAccidentHistory(accidentHistory.slice(0, 3));
                 } else {
                     resetUI();
                 }
@@ -542,26 +565,10 @@
         function resetUI() {
             lastAccidentDate = null;
             currentCounter = 0;
-            accidentHistory = [];
             document.getElementById('accident-counter').innerText = '0';
             document.getElementById('last-accident-date').innerText = 'Never';
-            renderAccidentHistory([]);
-        }
-        
-        function renderAccidentHistory(accidents) {
-            const container = document.getElementById('accident-history-list');
-            if (!accidents || accidents.length === 0) {
-                container.innerHTML = '<div class="text-center text-green-400 py-4">✅ No accidents recorded</div>';
-                return;
-            }
-            container.innerHTML = accidents.map((item, idx) => {
-                const date = parseDate(item.date)?.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' }) || item.date;
-                const accidentText = item.Accident.length > 70 ? item.Accident.substring(0, 70) + '...' : item.Accident;
-                return `<div class="history-text text-slate-300 border-b border-slate-800 pb-2">📅 ${date}<br>⚠️ ${accidentText}</div>`;
-            }).join('');
         }
 
-        // ==================== TODAY'S EVENTS ====================
         async function loadTodayEvents() {
             try {
                 const response = await fetch(EVENT_API);
@@ -582,8 +589,8 @@
                     let icon = event.type === 'audit' ? '🔍' : (event.type === 'visit' ? '👥' : '📌');
                     return `<div class="event-card">
                         <div class="flex items-center gap-2">
-                            <span class="text-cyan-400">${icon}</span>
-                            <span class="event-title text-white">${event.title}</span>
+                            <span class="text-cyan-600">${icon}</span>
+                            <span class="event-title text-gray-800">${event.title}</span>
                         </div>
                         <div class="event-type mt-1">${event.type}</div>
                     </div>`;
@@ -593,7 +600,6 @@
             }
         }
 
-        // ==================== AUDIT SUMMARY ====================
         async function loadAuditSummary() {
             try {
                 const response = await fetch(AUDIT_API);
@@ -608,7 +614,98 @@
             }
         }
 
-        // ==================== LOGOUT ====================
+        async function loadRFQChart() {
+            try {
+                const response = await fetch(RFQ_API);
+                const data = await response.json();
+                if (!data || data.length === 0) return;
+                
+                const months = [];
+                const continueData = [];
+                const taData = [];
+                const declineData = [];
+                const noProgresData = [];
+                
+                for (let row of data) {
+                    const month = row["month"] || row["Month"] || "";
+                    if (month) {
+                        months.push(month);
+                        continueData.push(parseInt(row["continue"] || 0));
+                        taData.push(parseInt(row["technical assistance"] || 0));
+                        declineData.push(parseInt(row["decline"] || 0));
+                        noProgresData.push(parseInt(row["no progres"] || 0));
+                    }
+                }
+                
+                renderRFQChart(months, continueData, taData, declineData, noProgresData);
+            } catch (error) {
+                console.error("RFQ Chart error:", error);
+            }
+        }
+        
+        function renderRFQChart(labels, continueData, taData, declineData, noProgresData) {
+            const ctx = document.getElementById('rfqChart').getContext('2d');
+            if (chart) chart.destroy();
+            
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        { label: 'Continue', data: continueData, backgroundColor: '#22c55e', borderRadius: 4, barPercentage: 0.7 },
+                        { label: 'Technical Assistance', data: taData, backgroundColor: '#3b82f6', borderRadius: 4, barPercentage: 0.7 },
+                        { label: 'Decline', data: declineData, backgroundColor: '#ef4444', borderRadius: 4, barPercentage: 0.7 },
+                        { label: 'No Progres', data: noProgresData, backgroundColor: '#9ca3af', borderRadius: 4, barPercentage: 0.7 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { 
+                            position: 'top',
+                            labels: { color: '#475569', font: { size: 10 }, usePointStyle: true, boxWidth: 8 }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            titleColor: '#0284C7',
+                            bodyColor: 'white'
+                        }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#64748b', font: { size: 9 }, rotation: 45 }, grid: { color: '#E5E7EB' } },
+                        y: { ticks: { color: '#64748b', stepSize: 5, font: { size: 9 } }, grid: { color: '#E5E7EB' }, beginAtZero: true }
+                    }
+                }
+            });
+            
+            // Plugin untuk angka di atas bar
+            const originalDraw = chart.draw;
+            chart.draw = function() {
+                originalDraw.apply(this, arguments);
+                const ctx = this.ctx;
+                this.data.datasets.forEach((dataset, i) => {
+                    const meta = this.getDatasetMeta(i);
+                    if (!meta.hidden) {
+                        meta.data.forEach((element, index) => {
+                            const value = dataset.data[index];
+                            if (value > 0) {
+                                ctx.save();
+                                ctx.font = 'bold 9px "Inter"';
+                                ctx.fillStyle = '#475569';
+                                ctx.textAlign = 'center';
+                                ctx.textBaseline = 'bottom';
+                                const position = element.tooltipPosition();
+                                ctx.fillText(value, position.x, position.y - 3);
+                                ctx.restore();
+                            }
+                        });
+                    }
+                });
+            };
+            chart.update();
+        }
+
         function logout() { 
             sessionStorage.removeItem('currentUser'); 
             window.location.href = 'login.html'; 
@@ -617,15 +714,19 @@
         // ==================== INITIALIZATION ====================
         const user = checkAuth();
         
+        renderMenu();
+        
         loadZeroAccidentData();
         loadTodayEvents();
         loadAuditSummary();
+        loadRFQChart();
         
         setInterval(updateClock, 1000);
         setInterval(() => {
             loadZeroAccidentData();
             loadTodayEvents();
             loadAuditSummary();
+            loadRFQChart();
         }, 10000);
         updateClock();
     </script>

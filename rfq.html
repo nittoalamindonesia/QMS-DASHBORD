@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <title>RFQ Monitoring - NITTO SEIKO</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      background: #FFFFFF;
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+    
+    /* Responsif Font Size */
+    html { font-size: 16px; }
+    @media (min-width: 1920px) { html { font-size: 18px; } }
+    @media (max-width: 1366px) { html { font-size: 15px; } }
+    @media (max-width: 1024px) { html { font-size: 14px; } }
+    @media (max-width: 768px) { html { font-size: 12px; } }
+    
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
+    
+    /* Stat Card - White Theme */
+    .stat-card { 
+      background: #FFFFFF;
+      transition: all 0.3s ease; 
+      border: 1px solid #E5E7EB; 
+      border-radius: 0.8rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #0284C7; }
+    
+    /* POP UP SIDEBAR MENU - White Theme */
+    .menu-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+      z-index: 998;
+      display: none;
+    }
+    .menu-overlay.active { display: block; }
+    
+    .popup-sidebar {
+      position: fixed;
+      top: 0;
+      left: -280px;
+      width: 280px;
+      height: 100vh;
+      background: #FFFFFF;
+      border-right: 1px solid #E5E7EB;
+      z-index: 999;
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
+    }
+    .popup-sidebar.active { left: 0; }
+    
+    .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; margin-bottom: 0.8rem; }
+    .menu-item { margin: 0.2rem 0.6rem; }
+    .menu-button {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #475569;
+      background: transparent;
+      text-decoration: none;
+      font-size: 0.85rem;
+    }
+    .menu-button:hover { background: #F0F9FF; color: #0284C7; transform: translateX(5px); }
+    .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
+    .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
+    
+    .logout-btn {
+      margin-top: auto;
+      margin-bottom: 1rem;
+      margin-left: 0.6rem;
+      margin-right: 0.6rem;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 0.8rem;
+      border-radius: 0.6rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #475569;
+      border-top: 1px solid #E5E7EB;
+      font-size: 0.85rem;
+    }
+    .logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
+    .status-online { text-align: center; padding: 0.8rem; border-top: 1px solid #E5E7EB; font-size: 0.65rem; color: #64748B; }
+    
+    /* Tombol Hamburger */
+    .hamburger-btn {
+      background: #F0F9FF;
+      border: 1px solid #0284C7;
+      border-radius: 0.6rem;
+      padding: 0.4rem 0.6rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .hamburger-btn:hover { background: #0284C7; transform: scale(1.02); }
+    .hamburger-btn:hover span { color: white; }
+    .hamburger-btn span { color: #1E293B; }
+    
+    /* Running Text */
+    .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
+    .running-text marquee { font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; color: #0284C7; padding: 0.25rem 0; }
+    
+    .digital-clock { 
+      font-family: 'Courier New', monospace; 
+      font-size: 1.2rem; 
+      font-weight: 700; 
+      background: #F8FAFC; 
+      padding: 0.3rem 0.8rem; 
+      border-radius: 0.6rem; 
+      letter-spacing: 2px; 
+      border: 1px solid #E5E7EB; 
+      color: #0284C7;
+    }
+    
+    /* Dashboard Layout */
+    .dashboard-container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+    }
+    
+    .main-layout {
+      display: flex;
+      flex: 1;
+      min-height: 0;
+      overflow: hidden;
+    }
+    
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 0.8rem;
+    }
+    
+    .chart-container {
+      background: #F8FAFC;
+      border-radius: 0.8rem;
+      border: 1px solid #E5E7EB;
+      padding: 1rem;
+      height: 450px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- OVERLAY -->
+  <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+  
+  <!-- POP UP SIDEBAR MENU -->
+  <div id="popupSidebar" class="popup-sidebar">
+    <div class="logo-section">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
+          <span class="text-white text-sm font-bold">NS</span>
+        </div>
+        <div>
+          <h1 class="text-xs font-bold text-[#1A63F6]">NITTO SEIKO</h1>
+          <p class="text-slate-500 text-[7px]">Plant 2</p>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Menu akan diisi oleh JavaScript berdasarkan role -->
+    <div id="menu-container"></div>
+    
+    <div class="status-online">
+      <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mx-auto"></div>
+      <span>System Online</span>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="dashboard-container">
+    
+    <!-- TOP BAR -->
+    <div class="bg-white border-b border-gray-200 px-3 py-1.5 flex justify-between items-center shrink-0">
+      <div class="flex items-center gap-2">
+        <div class="hamburger-btn" onclick="toggleMenu()">
+          <span>☰</span>
+        </div>
+        <div>
+          <h1 class="text-xs md:text-sm font-bold text-[#1A63F6]">PT NITTO ALAM INDONESIA</h1>
+          <p class="text-slate-500 text-[7px]">Plant 2 - Quality Control System</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="digital-clock" id="clock">00:00:00</div>
+        <div class="flex items-center gap-1 bg-green-50 px-1.5 py-0.5 rounded-lg border border-green-200">
+          <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
+          <span class="text-green-600 text-[6px] font-bold uppercase">LIVE</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RUNNING TEXT -->
+    <div class="running-text shrink-0">
+      <marquee behavior="scroll" direction="left" scrollamount="3">
+        🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | COMMITMENT TO QUALITY & EXCELLENCE | TARGET: WORLD CLASS MANUFACTURING
+      </marquee>
+    </div>
+
+    <!-- MAIN LAYOUT -->
+    <div class="main-layout">
+      <div class="content-area">
+        
+        <!-- Header -->
+        <div class="mb-4">
+          <h1 class="text-lg font-bold text-[#1A63F6] flex items-center gap-2">
+            <span>📄</span> RFQ Monitoring
+          </h1>
+          <p class="text-slate-500 text-[10px]">Data Request for Quotation per bulan (Live dari Google Sheet)</p>
+        </div>
+
+        <!-- Statistik Cards -->
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
+          <div class="stat-card p-3 text-center">
+            <div class="text-[9px] text-slate-500">Total RFQ</div>
+            <div class="text-xl font-bold text-cyan-600" id="total-all">0</div>
+          </div>
+          <div class="stat-card p-3 text-center border border-green-200">
+            <div class="text-[9px] text-slate-500">✅ Continue</div>
+            <div class="text-xl font-bold text-green-600" id="total-continue">0</div>
+          </div>
+          <div class="stat-card p-3 text-center border border-red-200">
+            <div class="text-[9px] text-slate-500">❌ Decline</div>
+            <div class="text-xl font-bold text-red-600" id="total-decline">0</div>
+          </div>
+          <div class="stat-card p-3 text-center border border-blue-200">
+            <div class="text-[9px] text-slate-500">⚙️ Technical Assistance</div>
+            <div class="text-xl font-bold text-blue-600" id="total-ta">0</div>
+          </div>
+          <div class="stat-card p-3 text-center border border-gray-200">
+            <div class="text-[9px] text-slate-500">📝 No Progres</div>
+            <div class="text-xl font-bold text-gray-500" id="total-np">0</div>
+          </div>
+        </div>
+
+        <!-- Bar Chart -->
+        <div class="chart-container">
+          <canvas id="rfqChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ==================== ROLE-BASED MENU ====================
+    const adminMenus = [
+      { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+      { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+      { icon: "🏭", name: "Production", link: "production.html", active: false },
+      { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+      { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: true }
+    ];
+    
+    const userMenus = [
+      { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+      { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false }
+    ];
+    
+    function renderMenu() {
+      const userJson = sessionStorage.getItem('currentUser');
+      if (!userJson) return;
+      
+      const user = JSON.parse(userJson);
+      const role = user.role || 'user';
+      const menus = role === 'admin' ? adminMenus : userMenus;
+      
+      const menuContainer = document.getElementById('menu-container');
+      let menuHtml = '';
+      
+      menus.forEach(menu => {
+        const activeClass = menu.active ? 'active' : '';
+        menuHtml += `
+          <div class="menu-item">
+            <a href="${menu.link}" class="menu-button ${activeClass}">
+              <span class="menu-icon">${menu.icon}</span>
+              <span>${menu.name}</span>
+            </a>
+          </div>
+        `;
+      });
+      
+      menuHtml += `
+        <div class="logout-btn" onclick="logout()">
+          <span class="menu-icon">🚪</span>
+          <span>Logout</span>
+        </div>
+      `;
+      
+      menuContainer.innerHTML = menuHtml;
+    }
+    
+    // ==================== KONFIGURASI ====================
+    const RFQ_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/RFQ";
+    
+    let chart = null;
+    
+    // ==================== MENU FUNCTIONS ====================
+    function toggleMenu() {
+      const sidebar = document.getElementById('popupSidebar');
+      const overlay = document.getElementById('menuOverlay');
+      sidebar.classList.toggle('active');
+      overlay.classList.toggle('active');
+    }
+    
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const sidebar = document.getElementById('popupSidebar');
+        const overlay = document.getElementById('menuOverlay');
+        if (sidebar.classList.contains('active')) {
+          sidebar.classList.remove('active');
+          overlay.classList.remove('active');
+        }
+      }
+    });
+    
+    // ==================== AUTHENTICATION ====================
+    function checkAuth() {
+      const userJson = sessionStorage.getItem('currentUser');
+      if (!userJson) { window.location.href = 'login.html'; return null; }
+      return JSON.parse(userJson);
+    }
+    
+    const currentUser = checkAuth();
+    
+    function logout() {
+      sessionStorage.removeItem('currentUser');
+      window.location.href = 'login.html';
+    }
+    
+    // ==================== CLOCK ====================
+    function updateClock() {
+      const now = new Date();
+      document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', { hour12: false });
+    }
+    
+    // ==================== AMBIL DATA DARI GOOGLE SHEET ====================
+    async function loadRFQData() {
+      try {
+        const response = await fetch(RFQ_API);
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const data = await response.json();
+        
+        console.log("Data RFQ dari sheet:", data);
+        
+        if (!data || data.length === 0) {
+          return;
+        }
+        
+        // Parse data berdasarkan header
+        const months = [];
+        const continueData = [];
+        const taData = [];
+        const declineData = [];
+        const noProgresData = [];
+        
+        let totalRFQ = 0;
+        let totalContinue = 0;
+        let totalTA = 0;
+        let totalDecline = 0;
+        let totalNP = 0;
+        
+        for (let row of data) {
+          const month = row["month"] || row["Month"] || row["MONTH"] || "";
+          const total = parseInt(row["total rfq"] || row["total"] || row["TOTAL"] || 0);
+          const continueVal = parseInt(row["continue"] || row["Continue"] || row["CONTINUE"] || 0);
+          const ta = parseInt(row["technical assistance"] || row["Technical Assistance"] || row["TECHNICAL ASSISTANCE"] || 0);
+          const decline = parseInt(row["decline"] || row["Decline"] || row["DECLINE"] || 0);
+          const np = parseInt(row["no progres"] || row["No Progres"] || row["NO PROGRES"] || 0);
+          
+          if (month && month !== "") {
+            months.push(month);
+            continueData.push(continueVal);
+            taData.push(ta);
+            declineData.push(decline);
+            noProgresData.push(np);
+            
+            totalRFQ += total;
+            totalContinue += continueVal;
+            totalTA += ta;
+            totalDecline += decline;
+            totalNP += np;
+          }
+        }
+        
+        // Update statistik cards
+        document.getElementById('total-all').innerText = totalRFQ;
+        document.getElementById('total-continue').innerText = totalContinue;
+        document.getElementById('total-decline').innerText = totalDecline;
+        document.getElementById('total-ta').innerText = totalTA;
+        document.getElementById('total-np').innerText = totalNP;
+        
+        // Update chart
+        renderChart(months, continueData, taData, declineData, noProgresData);
+        
+      } catch (error) {
+        console.error("Error loading RFQ data:", error);
+      }
+    }
+    
+    // ==================== BAR CHART ====================
+    function renderChart(labels, continueData, taData, declineData, noProgresData) {
+      const ctx = document.getElementById('rfqChart').getContext('2d');
+      
+      if (chart) chart.destroy();
+      
+      chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            { label: 'Continue', data: continueData, backgroundColor: '#22c55e', borderRadius: 4, barPercentage: 0.7 },
+            { label: 'Technical Assistance', data: taData, backgroundColor: '#3b82f6', borderRadius: 4, barPercentage: 0.7 },
+            { label: 'Decline', data: declineData, backgroundColor: '#ef4444', borderRadius: 4, barPercentage: 0.7 },
+            { label: 'No Progres', data: noProgresData, backgroundColor: '#94a3b8', borderRadius: 4, barPercentage: 0.7 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { 
+              position: 'top',
+              labels: { color: '#475569', font: { size: 10 }, usePointStyle: true, boxWidth: 8 }
+            },
+            tooltip: {
+              backgroundColor: '#1e293b',
+              titleColor: '#0284C7',
+              bodyColor: 'white'
+            }
+          },
+          scales: {
+            x: { 
+              ticks: { color: '#64748B', font: { size: 9 }, rotation: 45 }, 
+              grid: { color: '#E5E7EB' } 
+            },
+            y: { 
+              ticks: { color: '#64748B', stepSize: 5, font: { size: 9 } }, 
+              grid: { color: '#E5E7EB' }, 
+              beginAtZero: true 
+            }
+          }
+        }
+      });
+      
+      // Tambahkan angka di atas bar
+      const originalDraw = chart.draw;
+      chart.draw = function() {
+        originalDraw.apply(this, arguments);
+        const ctx = this.ctx;
+        this.data.datasets.forEach((dataset, i) => {
+          const meta = this.getDatasetMeta(i);
+          if (!meta.hidden) {
+            meta.data.forEach((element, index) => {
+              const value = dataset.data[index];
+              if (value > 0) {
+                ctx.save();
+                ctx.font = 'bold 9px "Inter"';
+                ctx.fillStyle = '#475569';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'bottom';
+                const position = element.tooltipPosition();
+                ctx.fillText(value, position.x, position.y - 3);
+                ctx.restore();
+              }
+            });
+          }
+        });
+      };
+      chart.update();
+    }
+    
+    // ==================== INITIALIZATION ====================
+    // Render menu berdasarkan role
+    renderMenu();
+    
+    // Load data pertama kali
+    loadRFQData();
+    
+    // Auto refresh setiap 5 DETIK
+    setInterval(loadRFQData, 5000);
+    
+    // Clock update
+    updateClock();
+    setInterval(updateClock, 1000);
+  </script>
+</body>
+</html>
