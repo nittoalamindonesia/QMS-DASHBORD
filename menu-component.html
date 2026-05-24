@@ -1,0 +1,114 @@
+<!-- menu-component.html -->
+<!-- Komponen Menu Sidebar untuk semua halaman -->
+<!-- Cukup update file ini sekali, semua halaman akan berubah -->
+
+<div class="logo-section">
+    <div class="flex items-center gap-2">
+        <div class="w-7 h-7 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
+            <span class="text-white text-xs font-bold">NS</span>
+        </div>
+        <div>
+            <h1 class="text-[10px] font-bold text-brand">NITTO SEIKO</h1>
+            <p class="text-slate-500 text-[6px]">Plant 2</p>
+        </div>
+    </div>
+</div>
+
+<div id="dynamic-menu-container">
+    <!-- Menu akan diisi JavaScript berdasarkan role -->
+</div>
+
+<div class="status-online">
+    <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse mx-auto"></div>
+    <span class="text-slate-500 text-[6px]">System Online</span>
+</div>
+
+<script>
+    // ==================== KONFIGURASI MENU ====================
+    // UPDATE MENU DI SINI CUKUP SEKALI, SEMUA HALAMAN AKAN BERUBAH
+    
+    const adminMenus = [
+        { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+        { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+        { icon: "🏭", name: "Production", link: "production.html", active: false },
+        { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+        { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: false },
+        { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
+    ];
+    
+    const userMenus = [
+        { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+        { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+        { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
+    ];
+    
+    // Fungsi untuk menandai menu aktif berdasarkan halaman saat ini
+    function setActiveMenuByCurrentPage() {
+        const currentPage = window.location.pathname.split('/').pop() || 'maindashboard.html';
+        const menuContainer = document.getElementById('dynamic-menu-container');
+        if (!menuContainer) return;
+        
+        const menuLinks = menuContainer.querySelectorAll('.menu-button');
+        menuLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    }
+    
+    // Render menu berdasarkan role
+    function renderMenuComponent() {
+        const userJson = sessionStorage.getItem('currentUser');
+        if (!userJson) {
+            window.location.href = 'login.html';
+            return;
+        }
+        
+        const user = JSON.parse(userJson);
+        const role = user.role || 'user';
+        const menus = role === 'admin' ? adminMenus : userMenus;
+        
+        const menuContainer = document.getElementById('dynamic-menu-container');
+        if (!menuContainer) return;
+        
+        let menuHtml = '';
+        
+        menus.forEach(menu => {
+            menuHtml += `
+                <div class="menu-item">
+                    <a href="${menu.link}" class="menu-button">
+                        <span class="menu-icon">${menu.icon}</span>
+                        <span>${menu.name}</span>
+                    </a>
+                </div>
+            `;
+        });
+        
+        menuHtml += `
+            <div class="logout-btn" onclick="logout()">
+                <span class="menu-icon">🚪</span>
+                <span>Logout</span>
+            </div>
+        `;
+        
+        menuContainer.innerHTML = menuHtml;
+        
+        // Tandai menu aktif berdasarkan halaman saat ini
+        setActiveMenuByCurrentPage();
+    }
+    
+    // Fungsi logout global
+    window.logout = function() {
+        sessionStorage.removeItem('currentUser');
+        window.location.href = 'login.html';
+    };
+    
+    // Render menu saat komponen dimuat
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', renderMenuComponent);
+    } else {
+        renderMenuComponent();
+    }
+</script>

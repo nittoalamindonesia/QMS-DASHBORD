@@ -1,189 +1,196 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-    <title>Production - Machine Status | PT NITTO ALAM INDONESIA</title>
+    <title>Production Monitoring - NITTO SEIKO</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            background: #FFFFFF;
-            min-height: 100vh;
+            background: #F1F5F9;
+            font-family: 'Inter', system-ui, sans-serif;
             overflow: hidden;
             height: 100vh;
+            width: 100vw;
         }
         
-        /* Responsif Font Size */
-        html { font-size: 16px; }
-        @media (min-width: 1920px) { html { font-size: 18px; } }
-        @media (max-width: 1366px) { html { font-size: 15px; } }
-        @media (max-width: 1024px) { html { font-size: 14px; } }
-        @media (max-width: 768px) { html { font-size: 12px; } }
+        /* ========== OPTIMASI TV 50-55 INCH - GRAFIK SEBESAR MUNGKIN ========== */
+        html { font-size: 14px; }
         
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        /* TV 50 inch (1920x1080) - GRAFIK BESAR */
+        @media (min-width: 1920px) and (max-width: 2559px) {
+            html { font-size: 16px; }
+            body { transform: scale(1); }
+            .chart-container { height: 650px !important; }
+            .stat-value { font-size: 1.6rem; }
+            .stat-label { font-size: 0.6rem; }
+            .stats-grid { gap: 0.4rem; margin-bottom: 0.3rem; }
+            .stat-card { padding: 0.2rem 0.15rem; }
+        }
+        
+        /* TV 55 inch (2560x1440) - GRAFIK LEBIH BESAR */
+        @media (min-width: 2560px) and (max-width: 3839px) {
+            html { font-size: 18px; }
+            body { transform: scale(1); }
+            .chart-container { height: 780px !important; }
+            .stat-value { font-size: 2rem; }
+            .stat-label { font-size: 0.7rem; }
+            .stats-grid { gap: 0.5rem; margin-bottom: 0.4rem; }
+            .stat-card { padding: 0.25rem 0.2rem; }
+        }
+        
+        /* Fallback */
+        @media (max-width: 1919px) {
+            html { font-size: 12px; }
+            body { transform: scale(0.95); transform-origin: top left; width: 105.26%; }
+            .chart-container { height: 550px !important; }
+        }
+        
+        ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
         
-        /* Stat Card - White Theme */
-        .stat-card {
-            background: #FFFFFF;
-            transition: all 0.3s ease;
-            border: 1px solid #E5E7EB;
+        .card {
+            background: white;
             border-radius: 0.8rem;
+            border: 1px solid #E5E7EB;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            border-color: #0284C7;
-        }
         
-        /* Machine Card - White Theme */
-        .machine-card {
-            background: #F8FAFC;
-            transition: all 0.2s ease;
-            border-radius: 0.75rem;
-            padding: 0.7rem;
-            text-align: center;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid #E5E7EB;
-        }
-        .machine-card:hover {
-            transform: translateY(-3px);
-            background: #FFFFFF;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-            border-color: #0284C7;
-        }
-        
-        /* Status Border */
-        .card-running { border-top: 3px solid #22c55e; }
-        .card-stop { border-top: 3px solid #ef4444; }
-        .card-dandori { border-top: 3px solid #eab308; }
-        .card-trouble { border-top: 3px solid #a855f7; }
-        
-        /* Status Badge - White Theme */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 0.2rem 0.6rem;
-            border-radius: 20px;
-            font-size: 0.6rem;
-            font-weight: bold;
-        }
-        .badge-running { background: #DCFCE7; color: #22c55e; }
-        .badge-stop { background: #FEE2E2; color: #ef4444; }
-        .badge-dandori { background: #FEF3C7; color: #eab308; }
-        .badge-trouble { background: #F3E8FF; color: #a855f7; }
-        
-        .section-header {
-            background: #F8FAFC;
-            border-bottom: 1px solid #E5E7EB;
-        }
-        
-        .refresh-btn {
-            transition: all 0.3s ease;
-            background: #F8FAFC;
-            border: 1px solid #E5E7EB;
-            border-radius: 0.6rem;
-            padding: 0.3rem 0.5rem;
-        }
-        .refresh-btn:hover {
-            transform: rotate(180deg);
-            background: #F0F9FF;
-            border-color: #0284C7;
-        }
-        .refresh-btn svg { color: #0284C7; }
-        
-        .count-badge {
-            background: #E0F2FE;
-            padding: 0.2rem 0.8rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            font-weight: bold;
-            color: #0284C7;
-        }
-        
-        /* Modal - White Theme */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        .modal.active { display: flex; }
-        .modal-content {
-            background: #FFFFFF;
-            border-radius: 1.2rem;
-            max-width: 500px;
-            width: 90%;
-            border: 2px solid #0284C7;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.2);
-        }
-        .close-modal { cursor: pointer; transition: all 0.2s ease; }
-        .close-modal:hover { transform: scale(1.1); color: #EF4444; }
-        
-        /* Search box */
-        .search-box {
-            transition: all 0.3s ease;
-            background: #F8FAFC;
-            border: 1px solid #E5E7EB;
-            border-radius: 0.6rem;
-            padding: 0.4rem 0.8rem;
-            font-size: 0.8rem;
-            color: #1E293B;
-        }
-        .search-box:focus {
-            border-color: #0284C7;
-            outline: none;
-            box-shadow: 0 0 0 2px rgba(2,132,199,0.1);
-        }
-        .search-box::placeholder { color: #94A3B8; }
-        
-        /* Section collapse */
-        .section-collapse { cursor: pointer; user-select: none; }
-        .section-collapse:hover { background: #F0F9FF; }
-        .rotate-icon { transition: transform 0.2s ease; color: #64748B; }
-        .rotate-icon.collapsed { transform: rotate(-90deg); }
-        
-        .part-code {
-            font-family: 'Courier New', monospace;
-            font-size: 1rem;
-            letter-spacing: 1px;
-        }
-        
-        /* Tooltip */
-        .machine-card { position: relative; }
-        .machine-card .part-tooltip {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1E293B;
-            color: #0284C7;
-            padding: 0.2rem 0.5rem;
-            border-radius: 0.4rem;
-            font-size: 0.55rem;
-            white-space: nowrap;
-            z-index: 10;
-            pointer-events: none;
-            opacity: 0;
-            transition: opacity 0.2s;
+        /* STAT CARD - MINIMALIS AGAR GRAFIK BESAR */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 0.4rem;
             margin-bottom: 0.3rem;
         }
-        .machine-card:hover .part-tooltip { opacity: 1; }
         
-        /* ========== POP UP SIDEBAR MENU - White Theme ========== */
+        .stat-card {
+            text-align: center;
+            background: white;
+            border-radius: 0.4rem;
+            border: 1px solid #E5E7EB;
+            padding: 0.2rem 0.15rem;
+        }
+        .stat-value {
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+            font-size: 1.4rem;
+            line-height: 1.2;
+        }
+        .stat-label {
+            color: #64748B;
+            font-weight: 600;
+            font-size: 0.55rem;
+            letter-spacing: 0.3px;
+        }
+        
+        /* CHART - SEBESAR MUNGKIN */
+        .chart-container {
+            height: 580px !important;
+            position: relative;
+            width: 100%;
+        }
+        
+        .slider-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 0.8rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+            flex: 1;
+            min-height: 0;
+        }
+        
+        .slider-card {
+            flex: 0 0 100%;
+            padding: 0.1rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        
+        .slider-card > div {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+        
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(2, 132, 199, 0.85);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        .slider-btn:hover { background: #0284C7; }
+        .slider-btn-left { left: 10px; }
+        .slider-btn-right { right: 10px; }
+        
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 6px;
+            padding-bottom: 4px;
+        }
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #CBD5E1;
+            cursor: pointer;
+        }
+        .slider-dot.active { background: #0284C7; width: 28px; border-radius: 5px; }
+        
+        .divisi-header {
+            background: linear-gradient(135deg, #0284C7 0%, #0369a1 100%);
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 0.6rem 0.6rem 0 0;
+            margin: -0.1rem -0.1rem 0 -0.1rem;
+            flex-shrink: 0;
+        }
+        .divisi-header h3 { font-size: 0.9rem; font-weight: bold; }
+        .divisi-header p { font-size: 0.45rem; opacity: 0.9; }
+        .total-pcs { font-size: 0.65rem; font-weight: bold; }
+        
+        /* HEADER TOP */
+        .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
+        .running-text marquee { font-size: 0.65rem; font-weight: 600; color: #0284C7; padding: 0.15rem 0; }
+        
+        .digital-clock { 
+            font-family: 'Courier New', monospace; 
+            font-weight: 700; 
+            background: #F8FAFC; 
+            padding: 0.15rem 0.6rem; 
+            border-radius: 0.4rem; 
+            border: 1px solid #E5E7EB; 
+            color: #0284C7;
+            font-size: 0.85rem;
+        }
+        
+        /* SIDEBAR */
         .menu-overlay {
             position: fixed;
             top: 0;
@@ -209,143 +216,119 @@
             transition: left 0.3s ease;
             display: flex;
             flex-direction: column;
-            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
         }
         .popup-sidebar.active { left: 0; }
         
-        .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; margin-bottom: 0.8rem; }
-        .menu-item { margin: 0.2rem 0.6rem; }
+        .logo-section { padding: 0.8rem; border-bottom: 1px solid #E5E7EB; }
+        .menu-item { margin: 0.15rem 0.5rem; }
         .menu-button {
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            padding: 0.6rem 0.8rem;
-            border-radius: 0.6rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            gap: 0.5rem;
+            padding: 0.5rem 0.7rem;
+            border-radius: 0.5rem;
             color: #475569;
-            background: transparent;
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            transition: all 0.2s;
         }
         .menu-button:hover { background: #F0F9FF; color: #0284C7; transform: translateX(5px); }
         .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
-        .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
+        .menu-icon { font-size: 1.1rem; min-width: 1.6rem; }
         
-        .logout-btn {
-            margin-top: auto;
-            margin-bottom: 1rem;
-            margin-left: 0.6rem;
-            margin-right: 0.6rem;
+        .sidebar-logout-btn {
+            margin: 0.8rem;
             display: flex;
             align-items: center;
-            gap: 0.6rem;
-            padding: 0.6rem 0.8rem;
-            border-radius: 0.6rem;
+            gap: 0.5rem;
+            padding: 0.5rem 0.7rem;
+            border-radius: 0.5rem;
             cursor: pointer;
-            transition: all 0.2s ease;
-            color: #475569;
             border-top: 1px solid #E5E7EB;
-            font-size: 0.85rem;
+            transition: all 0.2s;
+            color: #475569;
+            font-size: 0.8rem;
         }
-        .logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
-        .status-online { text-align: center; padding: 0.8rem; border-top: 1px solid #E5E7EB; font-size: 0.65rem; color: #64748B; }
+        .sidebar-logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
         
-        /* Tombol Hamburger */
         .hamburger-btn {
             background: #F0F9FF;
             border: 1px solid #0284C7;
-            border-radius: 0.6rem;
-            padding: 0.4rem 0.6rem;
+            border-radius: 0.4rem;
+            padding: 0.2rem 0.45rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
         }
-        .hamburger-btn:hover { background: #0284C7; transform: scale(1.02); }
+        .hamburger-btn:hover { background: #0284C7; }
         .hamburger-btn:hover span { color: white; }
-        .hamburger-btn span { color: #1E293B; }
         
-        /* Running Text */
-        .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
-        .running-text marquee { font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; color: #0284C7; padding: 0.25rem 0; }
+        .text-brand { color: #1A63F6; }
         
-        .digital-clock { 
-            font-family: 'Courier New', monospace; 
-            font-size: 1.2rem; 
-            font-weight: 700; 
-            background: #F8FAFC; 
-            padding: 0.3rem 0.8rem; 
-            border-radius: 0.6rem; 
-            letter-spacing: 2px; 
-            border: 1px solid #E5E7EB; 
-            color: #0284C7;
-        }
-        
-        /* Dashboard Layout */
-        .dashboard-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            overflow: hidden;
-        }
-        
-        .main-layout {
-            display: flex;
-            flex: 1;
-            min-height: 0;
-            overflow: hidden;
-        }
-        
-        .content-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            padding: 0.8rem;
-        }
-        
-        .card-container {
-            display: flex;
-            flex-direction: column;
             height: 100%;
-            min-height: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0284C7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* FULL LAYAR CONTAINER */
+        .full-container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
         }
         
-        .card-header-custom {
-            flex-shrink: 0;
-            padding-bottom: 0.5rem;
-            margin-bottom: 0.5rem;
-            border-bottom: 1px solid #E5E7EB;
-        }
-        
-        .scrollable-content {
+        .main-content {
             flex: 1;
-            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 0.4rem;
+        }
+        
+        .chart-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
             min-height: 0;
-            padding-right: 0.3rem;
         }
         
-        .machine-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 0.6rem;
+        .last-update {
+            font-size: 0.5rem;
+            margin-top: 0.2rem;
         }
         
-        @media (min-width: 1920px) {
-            .machine-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+        .card-inner {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
         }
     </style>
 </head>
 <body>
 
-    <!-- OVERLAY -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="text-center"><div class="spinner mx-auto mb-2"></div><p>Mengambil data dari Google Sheet...</p></div>
+    </div>
+
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
-    
-    <!-- POP UP SIDEBAR MENU -->
     <div id="popupSidebar" class="popup-sidebar">
         <div class="logo-section">
             <div class="flex items-center gap-2">
@@ -353,557 +336,489 @@
                     <span class="text-white text-sm font-bold">NS</span>
                 </div>
                 <div>
-                    <h1 class="text-xs font-bold text-[#1A63F6]">NITTO SEIKO</h1>
-                    <p class="text-slate-500 text-[7px]">Plant 2</p>
+                    <h1 class="text-sm font-bold text-brand">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-[8px]">Plant 2</p>
                 </div>
             </div>
         </div>
-        
         <div id="menu-container"></div>
-        
-        <div class="status-online">
-            <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mx-auto"></div>
-            <span>System Online</span>
+        <div class="sidebar-logout-btn" onclick="logout()">
+            <span class="menu-icon">🚪</span>
+            <span>Logout</span>
         </div>
+        <div class="text-center p-2 text-slate-400 text-[10px] border-t mt-1">System Online</div>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="dashboard-container">
-        
+    <div class="full-container">
         <!-- TOP BAR -->
-        <div class="bg-white border-b border-gray-200 px-3 py-1.5 flex justify-between items-center shrink-0">
+        <div class="bg-white border-b border-gray-200 px-2 py-1 flex justify-between items-center shrink-0">
             <div class="flex items-center gap-2">
-                <div class="hamburger-btn" onclick="toggleMenu()">
-                    <span>☰</span>
-                </div>
-                <div>
-                    <h1 class="text-xs md:text-sm font-bold text-[#1A63F6]">PT NITTO ALAM INDONESIA</h1>
-                    <p class="text-slate-500 text-[7px]">Plant 2 - Quality Control System</p>
-                </div>
+                <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-xs">☰</span></div>
+                <div><h1 class="text-[9px] font-bold text-brand">PT NITTO ALAM INDONESIA</h1><p class="text-slate-500 text-[6px]">Plant 2 - Production Monitoring</p></div>
             </div>
             <div class="flex items-center gap-2">
                 <div class="digital-clock" id="clock">00:00:00</div>
-                <div class="flex items-center gap-1 bg-green-50 px-1.5 py-0.5 rounded-lg border border-green-200">
+                <div class="flex items-center gap-1 bg-green-50 px-1.5 py-0.5 rounded-lg">
                     <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
-                    <span class="text-green-600 text-[6px] font-bold uppercase">LIVE</span>
+                    <span class="text-green-600 text-[6px] font-bold">LIVE</span>
                 </div>
             </div>
         </div>
 
         <!-- RUNNING TEXT -->
         <div class="running-text shrink-0">
-            <marquee behavior="scroll" direction="left" scrollamount="3">
-                🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | COMMITMENT TO QUALITY & EXCELLENCE | TARGET: WORLD CLASS MANUFACTURING
+            <marquee behavior="scroll" direction="left" scrollamount="2">
+                🏆 PRODUCTION MONITORING SYSTEM 🏆 | Real vs Target | Skala Grafik Otomatis
             </marquee>
         </div>
 
-        <!-- MAIN CONTENT AREA -->
-        <div class="main-layout">
-            <div class="content-area">
-                
-                <!-- HEADER -->
-                <div class="flex flex-wrap justify-between items-start gap-2 mb-3">
-                    <div>
-                        <h1 class="text-lg font-bold text-[#1A63F6] flex items-center gap-2">
-                            <span>🏭</span> Production Monitoring
-                        </h1>
-                        <p class="text-slate-500 text-[10px]">Click on any machine to see the part being produced</p>
-                    </div>
-                    <div class="flex items-center gap-2 flex-wrap">
-                        <input type="text" id="search-input" placeholder="🔍 Search machine..." class="search-box text-xs w-36">
-                        <button onclick="manualRefresh()" class="refresh-btn p-1.5 rounded-lg transition">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
+        <!-- MAIN CONTENT - GRAFIK SEBESAR MUNGKIN -->
+        <div class="main-content">
+            <!-- STATISTIK 6 CARD - MINIMALIS -->
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-label">TOTAL</div><div class="stat-value text-cyan-600" id="stat-total">0</div></div>
+                <div class="stat-card"><div class="stat-label">DOUBLE HEADER</div><div class="stat-value text-blue-600" id="stat-dh">0</div></div>
+                <div class="stat-card"><div class="stat-label">2D3B</div><div class="stat-value text-green-600" id="stat-2d3b">0</div></div>
+                <div class="stat-card"><div class="stat-label">ROLLING</div><div class="stat-value text-yellow-600" id="stat-rolling">0</div></div>
+                <div class="stat-card"><div class="stat-label">FURNACE</div><div class="stat-value text-orange-600" id="stat-furnace">0</div></div>
+                <div class="stat-card"><div class="stat-label">PLATING</div><div class="stat-value text-purple-600" id="stat-plating">0</div></div>
+            </div>
 
-                <!-- FILTER / LEGEND -->
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                    <div class="flex flex-wrap gap-1">
-                        <span class="text-[9px] text-slate-500 mr-1">Filter:</span>
-                        <button onclick="filterStatus('all')" id="filter-all" class="filter-btn px-2 py-0.5 rounded-full text-[9px] bg-cyan-100 text-cyan-700">All</button>
-                        <button onclick="filterStatus('running')" id="filter-running" class="filter-btn px-2 py-0.5 rounded-full text-[9px] bg-gray-100 text-gray-600 hover:bg-green-100 hover:text-green-700">▶️ Running</button>
-                        <button onclick="filterStatus('stop')" id="filter-stop" class="filter-btn px-2 py-0.5 rounded-full text-[9px] bg-gray-100 text-gray-600 hover:bg-red-100 hover:text-red-700">⏹️ Stop</button>
-                        <button onclick="filterStatus('dandori')" id="filter-dandori" class="filter-btn px-2 py-0.5 rounded-full text-[9px] bg-gray-100 text-gray-600 hover:bg-yellow-100 hover:text-yellow-700">🔄 Dandori</button>
-                        <button onclick="filterStatus('trouble')" id="filter-trouble" class="filter-btn px-2 py-0.5 rounded-full text-[9px] bg-gray-100 text-gray-600 hover:bg-purple-100 hover:text-purple-700">⚠️ Trouble</button>
-                    </div>
-                    <div class="text-[9px] text-slate-500">
-                        <span id="filtered-count">0</span> machines shown
-                    </div>
-                </div>
-
-                <!-- STATISTICS CARDS -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-2 mb-3">
-                    <div class="stat-card rounded-lg p-2 text-center">
-                        <div class="text-[9px] text-slate-500">Total Mesin</div>
-                        <div id="total-count" class="text-lg font-bold text-cyan-600">0</div>
-                    </div>
-                    <div class="stat-card rounded-lg p-2 text-center">
-                        <div class="text-[9px] text-slate-500">Running</div>
-                        <div id="running-count" class="text-lg font-bold text-green-600">0</div>
-                    </div>
-                    <div class="stat-card rounded-lg p-2 text-center">
-                        <div class="text-[9px] text-slate-500">Stop</div>
-                        <div id="stop-count" class="text-lg font-bold text-red-600">0</div>
-                    </div>
-                    <div class="stat-card rounded-lg p-2 text-center">
-                        <div class="text-[9px] text-slate-500">Dandori/Trouble</div>
-                        <div id="dandori-count" class="text-lg font-bold text-yellow-600">0</div>
-                    </div>
-                </div>
-
-                <!-- LOADING INDICATOR -->
-                <div id="loading" class="fixed bottom-4 right-4 bg-gray-800 text-white rounded-lg px-2 py-1 text-[9px] hidden z-50">
-                    <div class="flex items-center gap-1">
-                        <div class="w-2 h-2 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin"></div>
-                        <span>Refreshing...</span>
-                    </div>
-                </div>
-
-                <!-- MACHINE SECTIONS -->
-                <div class="space-y-3 flex-1 overflow-y-auto" id="machine-container">
-                    
-                    <!-- HEADING MACHINES -->
-                    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                        <div class="section-header px-3 py-2 section-collapse" onclick="toggleSection('heading-section')">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm">🔧</span>
-                                    <h3 class="font-bold text-cyan-600 text-xs">Heading Machines</h3>
-                                    <span id="heading-total" class="count-badge ml-1">0 units</span>
+            <!-- CHART WRAPPER - GRAFIK BESAR -->
+            <div class="chart-wrapper">
+                <div class="card" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+                    <div class="slider-container">
+                        <button class="slider-btn slider-btn-left" onclick="prevSlide()">‹</button>
+                        <button class="slider-btn slider-btn-right" onclick="nextSlide()">›</button>
+                        
+                        <div class="slider-wrapper" id="sliderWrapper">
+                            <!-- SLIDE 1: DOUBLE HEADER -->
+                            <div class="slider-card">
+                                <div class="bg-white rounded-xl overflow-hidden card-inner">
+                                    <div class="divisi-header">
+                                        <div class="flex justify-between items-center">
+                                            <div><h3>🏭 DOUBLE HEADER</h3><p>Produksi vs Target per Bulan</p></div>
+                                            <div class="text-right"><div class="total-pcs" id="total-dh">0</div><div class="text-[7px] opacity-80">Total PCS</div></div>
+                                        </div>
+                                    </div>
+                                    <div class="p-2" style="flex:1; min-height:0;">
+                                        <div class="chart-container"><canvas id="chart-doubleheader"></canvas></div>
+                                        <p class="text-center text-[7px] text-slate-400 mt-1">📊 Bar biru = Real Produksi | 📈 Garis putus = Target</p>
+                                    </div>
                                 </div>
-                                <svg id="heading-icon" class="rotate-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
+                            </div>
+                            <!-- SLIDE 2: 2D3B -->
+                            <div class="slider-card">
+                                <div class="bg-white rounded-xl overflow-hidden card-inner">
+                                    <div class="divisi-header" style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);">
+                                        <div class="flex justify-between items-center"><div><h3>⚙️ 2D3B</h3><p>Produksi vs Target per Bulan</p></div>
+                                        <div class="text-right"><div class="total-pcs" id="total-2d3b">0</div><div class="text-[7px] opacity-80">Total PCS</div></div></div>
+                                    </div>
+                                    <div class="p-2" style="flex:1; min-height:0;">
+                                        <div class="chart-container"><canvas id="chart-2d3b"></canvas></div>
+                                        <p class="text-center text-[7px] text-slate-400 mt-1">📊 Bar biru = Real Produksi | 📈 Garis putus = Target</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- SLIDE 3: ROLLING -->
+                            <div class="slider-card">
+                                <div class="bg-white rounded-xl overflow-hidden card-inner">
+                                    <div class="divisi-header" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%);">
+                                        <div class="flex justify-between items-center"><div><h3>🔄 ROLLING</h3><p>Produksi vs Target per Bulan</p></div>
+                                        <div class="text-right"><div class="total-pcs" id="total-rolling">0</div><div class="text-[7px] opacity-80">Total PCS</div></div></div>
+                                    </div>
+                                    <div class="p-2" style="flex:1; min-height:0;">
+                                        <div class="chart-container"><canvas id="chart-rolling"></canvas></div>
+                                        <p class="text-center text-[7px] text-slate-400 mt-1">📊 Bar biru = Real Produksi | 📈 Garis putus = Target</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- SLIDE 4: FURNACE -->
+                            <div class="slider-card">
+                                <div class="bg-white rounded-xl overflow-hidden card-inner">
+                                    <div class="divisi-header" style="background: linear-gradient(135deg, #475569 0%, #334155 100%);">
+                                        <div class="flex justify-between items-center"><div><h3>🔥 FURNACE</h3><p>Produksi vs Target per Bulan</p></div>
+                                        <div class="text-right"><div class="total-pcs" id="total-furnace">0</div><div class="text-[7px] opacity-80">Total PCS</div></div></div>
+                                    </div>
+                                    <div class="p-2" style="flex:1; min-height:0;">
+                                        <div class="chart-container"><canvas id="chart-furnace"></canvas></div>
+                                        <p class="text-center text-[7px] text-slate-400 mt-1">📊 Bar biru = Real Produksi | 📈 Garis putus = Target</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- SLIDE 5: PLATING -->
+                            <div class="slider-card">
+                                <div class="bg-white rounded-xl overflow-hidden card-inner">
+                                    <div class="divisi-header" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);">
+                                        <div class="flex justify-between items-center"><div><h3>⚡ PLATING</h3><p>Produksi vs Target per Bulan</p></div>
+                                        <div class="text-right"><div class="total-pcs" id="total-plating">0</div><div class="text-[7px] opacity-80">Total PCS</div></div></div>
+                                    </div>
+                                    <div class="p-2" style="flex:1; min-height:0;">
+                                        <div class="chart-container"><canvas id="chart-plating"></canvas></div>
+                                        <p class="text-center text-[7px] text-slate-400 mt-1">📊 Bar biru = Real Produksi | 📈 Garis putus = Target</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div id="heading-machines" class="machine-grid p-2">
-                            <div class="col-span-full text-center text-slate-500 py-4 text-xs">Loading...</div>
-                        </div>
+                        <div class="slider-dots" id="sliderDots"></div>
                     </div>
-
-                    <!-- ROLLING MACHINES -->
-                    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                        <div class="section-header px-3 py-2 section-collapse" onclick="toggleSection('rolling-section')">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm">⚙️</span>
-                                    <h3 class="font-bold text-cyan-600 text-xs">Rolling Machines</h3>
-                                    <span id="rolling-total" class="count-badge ml-1">0 units</span>
-                                </div>
-                                <svg id="rolling-icon" class="rotate-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div id="rolling-machines" class="machine-grid p-2">
-                            <div class="col-span-full text-center text-slate-500 py-4 text-xs">Loading...</div>
-                        </div>
-                    </div>
-
-                    <!-- WASHING -->
-                    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                        <div class="section-header px-3 py-2 section-collapse" onclick="toggleSection('washing-section')">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm">🧼</span>
-                                    <h3 class="font-bold text-cyan-600 text-xs">Washing</h3>
-                                    <span id="washing-total" class="count-badge ml-1">0 units</span>
-                                </div>
-                                <svg id="washing-icon" class="rotate-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div id="washing-machines" class="machine-grid p-2">
-                            <div class="col-span-full text-center text-slate-500 py-4 text-xs">Loading...</div>
-                        </div>
-                    </div>
-
-                    <!-- FURNACE -->
-                    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                        <div class="section-header px-3 py-2 section-collapse" onclick="toggleSection('furnace-section')">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm">🔥</span>
-                                    <h3 class="font-bold text-cyan-600 text-xs">Furnace</h3>
-                                    <span id="furnace-total" class="count-badge ml-1">0 units</span>
-                                </div>
-                                <svg id="furnace-icon" class="rotate-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div id="furnace-machines" class="machine-grid p-2">
-                            <div class="col-span-full text-center text-slate-500 py-4 text-xs">Loading...</div>
-                        </div>
-                    </div>
-
-                    <!-- PLATING -->
-                    <div class="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                        <div class="section-header px-3 py-2 section-collapse" onclick="toggleSection('plating-section')">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm">⚡</span>
-                                    <h3 class="font-bold text-cyan-600 text-xs">Plating Lines</h3>
-                                    <span id="plating-total" class="count-badge ml-1">0 units</span>
-                                </div>
-                                <svg id="plating-icon" class="rotate-icon w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                </svg>
-                            </div>
-                        </div>
-                        <div id="plating-machines" class="machine-grid p-2">
-                            <div class="col-span-full text-center text-slate-500 py-4 text-xs">Loading...</div>
-                        </div>
-                    </div>
-
-                </div>
-                
-                <!-- LAST UPDATE INFO -->
-                <div class="text-center mt-2 pt-2">
-                    <p id="last-update" class="text-slate-400 text-[8px]">Last update: --:--:--</p>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <!-- MODAL for Part Info -->
-    <div id="partModal" class="modal" onclick="closeModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center p-3 border-b border-gray-200">
-                <h3 class="text-sm font-bold text-cyan-600 flex items-center gap-2">
-                    <span>🔧</span> Machine Detail
-                </h3>
-                <button onclick="closeModal()" class="close-modal text-gray-400 hover:text-red-500 text-xl">&times;</button>
-            </div>
-            <div class="p-4">
-                <div class="mb-3">
-                    <label class="text-slate-500 text-[10px] block mb-1">Machine Name</label>
-                    <div id="modal-machine" class="text-gray-800 font-bold text-sm">-</div>
-                </div>
-                <div class="mb-3">
-                    <label class="text-slate-500 text-[10px] block mb-1">Status</label>
-                    <div id="modal-status" class="inline-flex">-</div>
-                </div>
-                <div class="mb-3">
-                    <label class="text-slate-500 text-[10px] block mb-1">Part / Material</label>
-                    <div id="modal-part" class="part-code bg-gray-100 p-2 rounded-lg text-cyan-600 font-mono text-xs break-all">-</div>
-                </div>
-                <div class="mt-3 pt-2 border-t border-gray-200 text-center">
-                    <p class="text-slate-400 text-[8px]">Click outside to close</p>
-                </div>
-            </div>
+            <div class="last-update text-center"><p class="text-slate-400" id="lastSyncTime">Mengambil data dari Google Sheet...</p></div>
         </div>
     </div>
 
     <script>
-        // ==================== ROLE-BASED MENU ====================
-        const adminMenus = [
+        // ==================== KONFIGURASI MENU ====================
+        var adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
             { icon: "🏭", name: "Production", link: "production.html", active: true },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: false }
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
         ];
         
-        const userMenus = [
+        var userMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false }
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
         ];
         
         function renderMenu() {
-            const userJson = sessionStorage.getItem('currentUser');
-            if (!userJson) return;
-            
-            const user = JSON.parse(userJson);
-            const role = user.role || 'user';
-            const menus = role === 'admin' ? adminMenus : userMenus;
-            
-            const menuContainer = document.getElementById('menu-container');
-            let menuHtml = '';
-            
-            menus.forEach(menu => {
-                const activeClass = menu.active ? 'active' : '';
-                menuHtml += `
-                    <div class="menu-item">
-                        <a href="${menu.link}" class="menu-button ${activeClass}">
-                            <span class="menu-icon">${menu.icon}</span>
-                            <span>${menu.name}</span>
-                        </a>
-                    </div>
-                `;
-            });
-            
-            menuHtml += `
-                <div class="logout-btn" onclick="logout()">
-                    <span class="menu-icon">🚪</span>
-                    <span>Logout</span>
-                </div>
-            `;
-            
+            var userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) { window.location.href = 'login.html'; return; }
+            var user = JSON.parse(userJson);
+            var role = user.role || 'user';
+            var menus = role === 'admin' ? adminMenus : userMenus;
+            var currentPage = window.location.pathname.split('/').pop() || 'production.html';
+            var menuContainer = document.getElementById('menu-container');
+            var menuHtml = '';
+            for (var i = 0; i < menus.length; i++) {
+                var menu = menus[i];
+                var activeClass = (menu.link === currentPage) ? 'active' : '';
+                menuHtml += '<div class="menu-item"><a href="' + menu.link + '" class="menu-button ' + activeClass + '"><span class="menu-icon">' + menu.icon + '</span><span>' + menu.name + '</span></a></div>';
+            }
             menuContainer.innerHTML = menuHtml;
         }
         
-        // ==================== AUTHENTICATION ====================
-        function checkAuth() {
-            const userJson = sessionStorage.getItem('currentUser');
-            if (!userJson) { window.location.href = 'login.html'; return null; }
-            return JSON.parse(userJson);
-        }
-        
-        const currentUser = checkAuth();
-        
-        function logout() {
-            sessionStorage.removeItem('currentUser');
-            window.location.href = 'login.html';
-        }
-        
-        // ==================== MENU FUNCTIONS ====================
         function toggleMenu() {
-            const sidebar = document.getElementById('popupSidebar');
-            const overlay = document.getElementById('menuOverlay');
+            var sidebar = document.getElementById('popupSidebar');
+            var overlay = document.getElementById('menuOverlay');
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
         }
         
-        document.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
-                const sidebar = document.getElementById('popupSidebar');
-                const overlay = document.getElementById('menuOverlay');
+                var sidebar = document.getElementById('popupSidebar');
+                var overlay = document.getElementById('menuOverlay');
                 if (sidebar.classList.contains('active')) {
                     sidebar.classList.remove('active');
                     overlay.classList.remove('active');
                 }
-                closeModal();
             }
         });
         
-        // ==================== MACHINE DATA ====================
-        let allMachines = [];
-        let currentFilter = 'all';
-        let currentSearch = '';
+        function checkAuth() {
+            var userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) { window.location.href = 'login.html'; return null; }
+            return JSON.parse(userJson);
+        }
         
-        const MACHINE_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/machine";
-        let autoRefreshInterval;
+        var currentUser = checkAuth();
+        if (currentUser) renderMenu();
         
-        let sectionState = {
-            heading: true,
-            rolling: true,
-            washing: true,
-            furnace: true,
-            plating: true
+        function logout() { sessionStorage.removeItem('currentUser'); window.location.href = 'login.html'; }
+        function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString('id-ID', { hour12: false }); }
+        
+        // ==================== KONFIGURASI GOOGLE SHEET ====================
+        var SHEET_ID = "1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0";
+        var PRODUKSI_SHEET_NAME = "produksi";
+        var TARGET_SHEET_NAME = "target_produksi";
+        
+        var DIVISI_LIST = ["Double Header", "2D3B", "rolling", "Furnace", "Plating"];
+        var BULAN_LIST = ["Jan-26", "Feb-26", "Mar-26", "Apr-26", "May-26", "Jun-26"];
+        
+        var produksiData = [];
+        var targetData = {};
+        var charts = {};
+        
+        var machineToDivision = {
+            "YH1538": "Double Header", "YH1030": "Double Header", "H20": "Double Header",
+            "N2308": "2D3B", "PF630": "2D3B", "N2310": "2D3B", "HBF": "2D3B", "HBP": "2D3B",
+            "CBF": "2D3B", "ZH30": "2D3B", "Iwen": "2D3B", "YH1576": "2D3B", "YH2076": "2D3B",
+            "YH1552": "2D3B", "MINTANG": "2D3B", "KHC": "2D3B",
+            "AS": "rolling", "TS": "rolling", "ZR1.5": "rolling", "ZR1.5H": "rolling",
+            "HRDM": "rolling", "SR12": "rolling", "CHUNZU": "rolling", "HRCM": "rolling",
+            "NR430": "rolling", "NR875": "rolling", "JSR3": "rolling", "KHA": "rolling",
+            "DPR8L": "rolling", "CTR": "rolling", "THI 4R": "rolling", "CPR12": "rolling",
+            "HRA M-01": "rolling", "USR2": "rolling", "DR125": "rolling",
+            "M300": "Furnace",
+            "Line Preatreatment": "Plating", "Line Zinc": "Plating", "Line Backing": "Plating", "Line CHromating": "Plating"
         };
         
-        function toggleSection(section) {
-            const container = document.getElementById(`${section}-machines`);
-            const icon = document.getElementById(`${section}-icon`);
-            
-            if (sectionState[section.replace('-section', '')]) {
-                container.classList.add('hidden');
-                icon.classList.add('collapsed');
-                sectionState[section.replace('-section', '')] = false;
-            } else {
-                container.classList.remove('hidden');
-                icon.classList.remove('collapsed');
-                sectionState[section.replace('-section', '')] = true;
+        function detectDivision(machineName) {
+            if (!machineName) return "Unknown";
+            for (var key in machineToDivision) {
+                if (machineName.indexOf(key) !== -1) return machineToDivision[key];
             }
+            return "Unknown";
         }
         
-        function showPartModal(machine, status, part) {
-            const modal = document.getElementById('partModal');
-            document.getElementById('modal-machine').innerText = machine;
-            
-            const statusLower = (status || '').toLowerCase();
-            let statusHtml = '';
-            if (statusLower === 'running') statusHtml = '<span class="status-badge badge-running">▶️ Running</span>';
-            else if (statusLower === 'stop') statusHtml = '<span class="status-badge badge-stop">⏹️ Stop</span>';
-            else if (statusLower === 'dandori') statusHtml = '<span class="status-badge badge-dandori">🔄 Dandori</span>';
-            else if (statusLower === 'trouble') statusHtml = '<span class="status-badge badge-trouble">⚠️ Trouble</span>';
-            else statusHtml = '<span class="status-badge">❓ Unknown</span>';
-            
-            document.getElementById('modal-status').innerHTML = statusHtml;
-            document.getElementById('modal-part').innerText = part || 'No part information available';
-            modal.classList.add('active');
-        }
+        function showLoading(show) { document.getElementById('loadingOverlay').style.display = show ? 'flex' : 'none'; }
         
-        function closeModal() {
-            document.getElementById('partModal').classList.remove('active');
-        }
-        
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', { hour12: false });
-        }
-        
-        function updateLastUpdate() {
-            const now = new Date();
-            document.getElementById('last-update').innerText = `Last update: ${now.toLocaleTimeString('id-ID', { hour12: false })}`;
-        }
-        
-        function getCardClass(status) {
-            const s = (status || '').toLowerCase();
-            if (s === 'running') return 'card-running';
-            if (s === 'stop') return 'card-stop';
-            if (s === 'dandori') return 'card-dandori';
-            if (s === 'trouble') return 'card-trouble';
-            return '';
-        }
-        
-        function getBadgeClass(status) {
-            const s = (status || '').toLowerCase();
-            if (s === 'running') return 'badge-running';
-            if (s === 'stop') return 'badge-stop';
-            if (s === 'dandori') return 'badge-dandori';
-            if (s === 'trouble') return 'badge-trouble';
-            return '';
-        }
-        
-        function getStatusIcon(status) {
-            const s = (status || '').toLowerCase();
-            if (s === 'running') return '▶️';
-            if (s === 'stop') return '⏹️';
-            if (s === 'dandori') return '🔄';
-            if (s === 'trouble') return '⚠️';
-            return '❓';
-        }
-        
-        function filterStatus(status) {
-            currentFilter = status;
-            
-            document.querySelectorAll('.filter-btn').forEach(btn => {
-                btn.classList.remove('bg-cyan-100', 'text-cyan-700');
-                btn.classList.add('bg-gray-100', 'text-gray-600');
-            });
-            
-            const activeBtn = document.getElementById(`filter-${status}`);
-            if (activeBtn) {
-                activeBtn.classList.remove('bg-gray-100', 'text-gray-600');
-                activeBtn.classList.add('bg-cyan-100', 'text-cyan-700');
-            }
-            if (status === 'all') {
-                document.getElementById('filter-all').classList.remove('bg-gray-100', 'text-gray-600');
-                document.getElementById('filter-all').classList.add('bg-cyan-100', 'text-cyan-700');
-            }
-            
-            applyFilters();
-        }
-        
-        function searchMachines() {
-            currentSearch = document.getElementById('search-input').value.toLowerCase();
-            applyFilters();
-        }
-        
-        function applyFilters() {
-            const groups = { heading: [], rolling: [], washing: [], furnace: [], plating: [] };
-            let filteredCount = 0;
-            
-            allMachines.forEach(item => {
-                const type = (item.type || '').toLowerCase();
-                const status = (item.status || '').toLowerCase();
-                const machineName = (item.machine || '').toLowerCase();
-                
-                let passFilter = currentFilter === 'all' || status === currentFilter;
-                let passSearch = !currentSearch || machineName.includes(currentSearch);
-                
-                if (passFilter && passSearch && groups[type]) {
-                    groups[type].push(item);
-                    filteredCount++;
-                }
-            });
-            
-            document.getElementById('filtered-count').innerText = filteredCount;
-            renderGroup('heading-machines', groups.heading, 'heading-total');
-            renderGroup('rolling-machines', groups.rolling, 'rolling-total');
-            renderGroup('washing-machines', groups.washing, 'washing-total');
-            renderGroup('furnace-machines', groups.furnace, 'furnace-total');
-            renderGroup('plating-machines', groups.plating, 'plating-total');
-        }
-        
-        function renderGroup(containerId, machines, totalId) {
-            const container = document.getElementById(containerId);
-            if (!container) return;
-            
-            if (!machines || machines.length === 0) {
-                container.innerHTML = '<div class="col-span-full text-center text-slate-500 py-4 text-xs">No machines found</div>';
-                if (totalId) document.getElementById(totalId).innerHTML = '0 units';
-                return;
-            }
-            
-            if (totalId) document.getElementById(totalId).innerHTML = `${machines.length} units`;
-            
-            container.innerHTML = machines.map(machine => {
-                const cardClass = getCardClass(machine.status);
-                const badgeClass = getBadgeClass(machine.status);
-                const statusIcon = getStatusIcon(machine.status);
-                const machineName = machine.machine || '-';
-                const statusText = machine.status || 'Unknown';
-                const part = machine['part on machine'] || machine.part || 'No part info';
-                const shortPart = part.length > 25 ? part.substring(0, 22) + '...' : part;
-                
-                return `
-                    <div class="machine-card ${cardClass}" onclick="showPartModal('${machineName.replace(/'/g, "\\'")}', '${machine.status}', '${part.replace(/'/g, "\\'")}')">
-                        <div class="text-[10px] font-bold text-gray-800 truncate" title="${machineName}">${machineName}</div>
-                        <div class="flex items-center justify-center gap-1 mt-1">
-                            <span class="status-badge ${badgeClass} text-[8px]">${statusIcon} ${statusText}</span>
-                        </div>
-                        <div class="part-tooltip">📦 ${shortPart}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-        
-        function renderStatistics(data) {
-            const total = data.length;
-            const running = data.filter(m => (m.status || '').toLowerCase() === 'running').length;
-            const stop = data.filter(m => (m.status || '').toLowerCase() === 'stop').length;
-            const dandori = data.filter(m => (m.status || '').toLowerCase() === 'dandori').length;
-            const trouble = data.filter(m => (m.status || '').toLowerCase() === 'trouble').length;
-            
-            document.getElementById('total-count').innerText = total;
-            document.getElementById('running-count').innerText = running;
-            document.getElementById('stop-count').innerText = stop;
-            document.getElementById('dandori-count').innerText = dandori + trouble;
-        }
-        
-        function showLoading(show) {
-            const loadingDiv = document.getElementById('loading');
-            loadingDiv.classList.toggle('hidden', !show);
-        }
-        
-        async function loadMachineData() {
-            showLoading(true);
+        async function fetchCSV(url) {
             try {
-                const response = await fetch(MACHINE_API);
-                const data = await response.json();
-                if (data && Array.isArray(data) && data.length > 0) {
-                    allMachines = data;
-                    renderStatistics(allMachines);
-                    applyFilters();
+                var response = await fetch(url, { cache: 'no-cache' });
+                if (!response.ok) throw new Error();
+                var text = await response.text();
+                var lines = text.trim().split(/\r?\n/);
+                if (lines.length < 2) return [];
+                var headers = lines[0].split(',').map(function(h) { return h.replace(/"/g, '').trim().toLowerCase(); });
+                var result = [];
+                for (var i = 1; i < lines.length; i++) {
+                    var values = lines[i].split(',').map(function(v) { return v.replace(/"/g, '').trim(); });
+                    var row = {};
+                    for (var j = 0; j < headers.length; j++) { row[headers[j]] = values[j] || ''; }
+                    result.push(row);
                 }
-            } catch (error) {
-                console.log('API Error:', error);
+                return result;
+            } catch(e) { return []; }
+        }
+        
+        async function loadProduksiFromSheet() {
+            var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&sheet=' + PRODUKSI_SHEET_NAME;
+            var data = await fetchCSV(url);
+            if (data.length > 0) {
+                produksiData = [];
+                for (var i = 0; i < data.length; i++) {
+                    var row = data[i];
+                    var qty = parseInt(row.qty || row.quantity || 0);
+                    if (qty > 0 && (row.tanggal || row.date)) {
+                        produksiData.push({
+                            tanggal: row.tanggal || row.date || '',
+                            mesin: row.mesin || row.machine || '',
+                            qty: qty,
+                            divisi: row.divisi || detectDivision(row.mesin || row.machine || '')
+                        });
+                    }
+                }
+            } else {
+                produksiData = [
+                    { tanggal: "2026-01-15", mesin: "YH1538 - 1", qty: 12500, divisi: "Double Header" },
+                    { tanggal: "2026-01-15", mesin: "N2308 - 1", qty: 8000, divisi: "2D3B" },
+                    { tanggal: "2026-01-16", mesin: "ZR1.5 - 1", qty: 15000, divisi: "rolling" },
+                    { tanggal: "2026-01-16", mesin: "M300", qty: 7500, divisi: "Furnace" },
+                    { tanggal: "2026-01-17", mesin: "Line Zinc", qty: 9000, divisi: "Plating" },
+                    { tanggal: "2026-02-10", mesin: "YH1030 - 2", qty: 11000, divisi: "Double Header" }
+                ];
             }
-            updateLastUpdate();
+            return produksiData;
+        }
+        
+        async function loadTargetFromSheet() {
+            var url = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&sheet=' + TARGET_SHEET_NAME;
+            var data = await fetchCSV(url);
+            for (var d = 0; d < DIVISI_LIST.length; d++) {
+                var div = DIVISI_LIST[d];
+                targetData[div] = {};
+                for (var b = 0; b < BULAN_LIST.length; b++) { targetData[div][BULAN_LIST[b]] = 0; }
+            }
+            if (data.length > 0) {
+                for (var i = 0; i < data.length; i++) {
+                    var row = data[i];
+                    var bulan = row.bulan || row.month || '';
+                    for (var d = 0; d < DIVISI_LIST.length; d++) {
+                        var div = DIVISI_LIST[d];
+                        var val = 0;
+                        for (var key in row) {
+                            if (key.toLowerCase() === div.toLowerCase() || key.toLowerCase().replace(/ /g, '_') === div.toLowerCase()) {
+                                val = parseInt(row[key]) || 0; break;
+                            }
+                        }
+                        if (val > 0 && bulan) targetData[div][bulan] = val;
+                    }
+                }
+            } else {
+                for (var d = 0; d < DIVISI_LIST.length; d++) {
+                    var div = DIVISI_LIST[d];
+                    for (var b = 0; b < BULAN_LIST.length; b++) {
+                        if (div === "Double Header") targetData[div][BULAN_LIST[b]] = 25000;
+                        else if (div === "2D3B") targetData[div][BULAN_LIST[b]] = 20000;
+                        else if (div === "rolling") targetData[div][BULAN_LIST[b]] = 30000;
+                        else if (div === "Furnace") targetData[div][BULAN_LIST[b]] = 15000;
+                        else if (div === "Plating") targetData[div][BULAN_LIST[b]] = 18000;
+                    }
+                }
+            }
+            return targetData;
+        }
+        
+        function getProductionByDivision(divisi) {
+            var result = {};
+            for (var b = 0; b < BULAN_LIST.length; b++) result[BULAN_LIST[b]] = 0;
+            for (var i = 0; i < produksiData.length; i++) {
+                var item = produksiData[i];
+                if (item.divisi === divisi && item.tanggal) {
+                    var bulanMap = { '01': 'Jan-26', '02': 'Feb-26', '03': 'Mar-26', '04': 'Apr-26', '05': 'May-26', '06': 'Jun-26' };
+                    var bulan = bulanMap[item.tanggal.substring(5,7)];
+                    if (bulan && result[bulan] !== undefined) result[bulan] += item.qty;
+                }
+            }
+            return result;
+        }
+        
+        function updateStatistics() {
+            var totals = { "Double Header": 0, "2D3B": 0, "rolling": 0, "Furnace": 0, "Plating": 0, total: 0 };
+            for (var i = 0; i < produksiData.length; i++) {
+                var item = produksiData[i];
+                if (totals[item.divisi] !== undefined) {
+                    totals[item.divisi] += item.qty;
+                    totals.total += item.qty;
+                }
+            }
+            document.getElementById('stat-total').innerText = totals.total.toLocaleString();
+            document.getElementById('stat-dh').innerText = totals["Double Header"].toLocaleString();
+            document.getElementById('stat-2d3b').innerText = totals["2D3B"].toLocaleString();
+            document.getElementById('stat-rolling').innerText = totals["rolling"].toLocaleString();
+            document.getElementById('stat-furnace').innerText = totals["Furnace"].toLocaleString();
+            document.getElementById('stat-plating').innerText = totals["Plating"].toLocaleString();
+            document.getElementById('total-dh').innerText = totals["Double Header"].toLocaleString();
+            document.getElementById('total-2d3b').innerText = totals["2D3B"].toLocaleString();
+            document.getElementById('total-rolling').innerText = totals["rolling"].toLocaleString();
+            document.getElementById('total-furnace').innerText = totals["Furnace"].toLocaleString();
+            document.getElementById('total-plating').innerText = totals["Plating"].toLocaleString();
+        }
+        
+        function renderChart(divisi, realDataArr, targetDataArr) {
+            var chartId = 'chart-' + divisi.toLowerCase().replace(/ /g, '');
+            var ctx = document.getElementById(chartId);
+            if (!ctx) return;
+            if (charts[divisi]) charts[divisi].destroy();
+            
+            var maxReal = Math.max.apply(Math, realDataArr);
+            var maxTarget = Math.max.apply(Math, targetDataArr);
+            var maxValue = Math.max(maxReal, maxTarget);
+            var suggestedMax = maxValue === 0 ? 10000 : Math.ceil(maxValue * 1.2);
+            
+            charts[divisi] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: BULAN_LIST,
+                    datasets: [
+                        { label: 'Real Produksi (PCS)', type: 'bar', data: realDataArr, backgroundColor: '#0284C7', borderRadius: 8, barPercentage: 0.7 },
+                        { label: 'Target (PCS)', type: 'line', data: targetDataArr, borderColor: '#F59E0B', borderWidth: 3, borderDash: [8,6], pointRadius: 0, fill: false, tension: 0 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { position: 'top', labels: { font: { size: 11, weight: 'bold' }, usePointStyle: false, boxWidth: 25 } }, 
+                        tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + context.raw.toLocaleString() + ' PCS'; } } }
+                    },
+                    scales: { 
+                        y: { beginAtZero: true, suggestedMax: suggestedMax, title: { display: true, text: 'Jumlah (PCS)', font: { size: 10 } }, ticks: { callback: function(v) { return v.toLocaleString(); }, font: { size: 10 } } }, 
+                        x: { title: { display: true, text: 'Bulan', font: { size: 10 } }, ticks: { font: { size: 10 }, rotation: 45 } }
+                    }
+                }
+            });
+            
+            var originalDraw = charts[divisi].draw;
+            charts[divisi].draw = function() {
+                originalDraw.apply(this, arguments);
+                var ctx = this.ctx;
+                for (var i = 0; i < this.data.datasets.length; i++) {
+                    var dataset = this.data.datasets[i];
+                    if (dataset.type === 'bar') {
+                        var meta = this.getDatasetMeta(i);
+                        if (meta && meta.data) {
+                            for (var j = 0; j < meta.data.length; j++) {
+                                var element = meta.data[j];
+                                var value = dataset.data[j];
+                                if (value > 0 && element) {
+                                    ctx.save();
+                                    ctx.font = 'bold 10px "Inter"';
+                                    ctx.fillStyle = '#1e293b';
+                                    ctx.textAlign = 'center';
+                                    var pos = element.tooltipPosition();
+                                    if (pos) ctx.fillText(value.toLocaleString(), pos.x, pos.y - 8);
+                                    ctx.restore();
+                                }
+                            }
+                        }
+                    }
+                }
+            };
+            charts[divisi].update();
+        }
+        
+        function renderAllCharts() {
+            for (var d = 0; d < DIVISI_LIST.length; d++) {
+                var divisi = DIVISI_LIST[d];
+                var production = getProductionByDivision(divisi);
+                var realDataArr = [];
+                for (var b = 0; b < BULAN_LIST.length; b++) realDataArr.push(production[BULAN_LIST[b]]);
+                var targetDataArr = [];
+                for (var b = 0; b < BULAN_LIST.length; b++) targetDataArr.push(targetData[divisi][BULAN_LIST[b]] || 0);
+                renderChart(divisi, realDataArr, targetDataArr);
+            }
+        }
+        
+        async function refreshAllData() {
+            showLoading(true);
+            await loadProduksiFromSheet();
+            await loadTargetFromSheet();
+            updateStatistics();
+            renderAllCharts();
+            document.getElementById('lastSyncTime').innerHTML = 'Terakhir sinkron: ' + new Date().toLocaleTimeString('id-ID') + ' | Skala Otomatis';
             showLoading(false);
         }
         
-        function manualRefresh() { loadMachineData(); }
+        // ==================== SLIDER ====================
+        var currentSlide = 0;
+        var totalSlides = 5;
+        var autoSlideInterval = null;
         
-        function startAutoRefresh() {
-            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-            autoRefreshInterval = setInterval(loadMachineData, 5000);
+        function updateSlider() {
+            var wrapper = document.getElementById('sliderWrapper');
+            if (wrapper) wrapper.style.transform = 'translateX(-' + (currentSlide * 100) + '%)';
+            var dots = document.querySelectorAll('.slider-dot');
+            for (var i = 0; i < dots.length; i++) {
+                if (i === currentSlide) dots[i].classList.add('active');
+                else dots[i].classList.remove('active');
+            }
+            resetAutoSlide();
         }
         
-        document.getElementById('search-input').addEventListener('input', searchMachines);
+        function nextSlide() { currentSlide = (currentSlide + 1) % totalSlides; updateSlider(); }
+        function prevSlide() { currentSlide = (currentSlide - 1 + totalSlides) % totalSlides; updateSlider(); }
+        function goToSlide(idx) { currentSlide = idx; updateSlider(); }
         
-        renderMenu();
-        loadMachineData();
-        startAutoRefresh();
-        setInterval(updateClock, 1000);
+        function createDots() {
+            var container = document.getElementById('sliderDots');
+            if (!container) return;
+            container.innerHTML = '';
+            for (var i = 0; i < totalSlides; i++) {
+                var dot = document.createElement('div');
+                dot.className = 'slider-dot';
+                if (i === 0) dot.classList.add('active');
+                dot.onclick = (function(idx) { return function() { goToSlide(idx); }; })(i);
+                container.appendChild(dot);
+            }
+        }
+        
+        function startAutoSlide() { if (autoSlideInterval) clearInterval(autoSlideInterval); autoSlideInterval = setInterval(function() { nextSlide(); }, 15000); }
+        function resetAutoSlide() { if (autoSlideInterval) { clearInterval(autoSlideInterval); startAutoSlide(); } }
+        
+        // ==================== INIT ====================
         updateClock();
+        setInterval(updateClock, 1000);
+        createDots();
+        startAutoSlide();
+        refreshAllData();
+        setInterval(refreshAllData, 30000);
     </script>
 </body>
 </html>

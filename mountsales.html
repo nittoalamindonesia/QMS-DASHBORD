@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Sales Monitoring - NITTO SEIKO (Rupiah)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #F1F5F9;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        /* ========== OPTIMASI KHUSUS TV 50 INCH ========== */
+        html { font-size: 14px; }
+        
+        /* TV 50 inch (1920x1080) */
+        @media (min-width: 1920px) and (max-width: 2559px) {
+            html { font-size: 16px; }
+            body { transform: scale(1); }
+        }
+        
+        /* TV 55 inch (2560x1440) */
+        @media (min-width: 2560px) and (max-width: 3839px) {
+            html { font-size: 18px; }
+            body { transform: scale(1); }
+        }
+        
+        /* Fallback untuk layar lebih kecil */
+        @media (max-width: 1919px) {
+            html { font-size: 12px; }
+            body { transform: scale(0.95); transform-origin: top left; width: 105.26%; }
+        }
+        
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
+        
+        /* Stat Card */
+        .stat-card { 
+            background: #FFFFFF;
+            transition: all 0.3s ease; 
+            border: 1px solid #E5E7EB; 
+            border-radius: 0.8rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #0284C7; }
+        
+        /* SIDEBAR MENU */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+            display: none;
+        }
+        .menu-overlay.active { display: block; }
+        
+        .popup-sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: #FFFFFF;
+            border-right: 1px solid #E5E7EB;
+            z-index: 999;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .popup-sidebar.active { left: 0; }
+        
+        .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; }
+        .menu-item { margin: 0.2rem 0.6rem; }
+        .menu-button {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.6rem;
+            color: #475569;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .menu-button:hover { background: #F0F9FF; color: #0284C7; transform: translateX(5px); }
+        .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
+        .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
+        
+        /* LOGOUT BUTTON - SATU DI SIDEBAR */
+        .sidebar-logout-btn {
+            margin: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            border-top: 1px solid #E5E7EB;
+            transition: all 0.2s;
+            color: #475569;
+        }
+        .sidebar-logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
+        
+        .hamburger-btn {
+            background: #F0F9FF;
+            border: 1px solid #0284C7;
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .hamburger-btn:hover { background: #0284C7; }
+        .hamburger-btn:hover span { color: white; }
+        
+        .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
+        .running-text marquee { font-size: 0.7rem; font-weight: 600; color: #0284C7; padding: 0.25rem 0; }
+        
+        .digital-clock { 
+            font-family: 'Courier New', monospace; 
+            font-weight: 700; 
+            background: #F8FAFC; 
+            padding: 0.25rem 0.75rem; 
+            border-radius: 0.5rem; 
+            border: 1px solid #E5E7EB; 
+            color: #0284C7;
+            font-size: 1rem;
+        }
+        
+        .text-brand { color: #1A63F6; }
+        
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .main-layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 0.6rem;
+        }
+        
+        /* Stats Grid - 3 card (Total Bulan dihapus) */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 0.6rem;
+            background: white;
+            border-radius: 0.6rem;
+            border: 1px solid #E5E7EB;
+        }
+        .stat-label {
+            font-size: 0.6rem;
+            color: #64748B;
+        }
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* CHART CONTAINER - LEBIH BESAR */
+        .chart-container {
+            background: #FFFFFF;
+            border-radius: 1rem;
+            border: 1px solid #E5E7EB;
+            padding: 1rem;
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .chart-canvas {
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+        }
+        
+        /* Target Info Box */
+        .target-info {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(245, 158, 11, 0.15);
+            border-left: 3px solid #F59E0B;
+            padding: 6px 12px;
+            border-radius: 8px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .target-info .label { font-size: 10px; color: #F59E0B; font-weight: bold; }
+        .target-info .value { font-size: 12px; font-weight: bold; color: #F59E0B; }
+        
+        /* TV Ukuran Lebih Besar */
+        @media (min-width: 1920px) {
+            .stat-value { font-size: 1.4rem; }
+            .stat-label { font-size: 0.7rem; }
+            .digital-clock { font-size: 1.1rem; }
+        }
+        
+        @media (min-width: 2560px) {
+            .stat-value { font-size: 1.6rem; }
+            .stat-label { font-size: 0.8rem; }
+            .digital-clock { font-size: 1.3rem; }
+        }
+        
+        .format-number {
+            font-family: 'Courier New', monospace;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            flex: 1;
+            min-height: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- OVERLAY -->
+    <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+    
+    <!-- POP UP SIDEBAR MENU -->
+    <div id="popupSidebar" class="popup-sidebar">
+        <div class="logo-section">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
+                    <span class="text-white text-sm font-bold">NS</span>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold text-brand">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-[8px]">Plant 2</p>
+                </div>
+            </div>
+        </div>
+        <div id="menu-container"></div>
+        <div class="sidebar-logout-btn" onclick="logout()">
+            <span class="menu-icon">🚪</span>
+            <span>Logout</span>
+        </div>
+        <div class="text-center p-2 text-slate-400 text-[10px] border-t mt-1">System Online</div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="dashboard-container">
+        
+        <!-- TOP BAR -->
+        <div class="bg-white border-b border-gray-200 px-3 py-1.5 flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-2">
+                <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-sm">☰</span></div>
+                <div>
+                    <h1 class="text-sm font-bold text-brand">PT NITTO ALAM INDONESIA</h1>
+                    <p class="text-slate-500 text-[8px]">Plant 2 - Sales Monitoring</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="digital-clock" id="clock">00:00:00</div>
+                <div class="flex items-center gap-1 bg-green-50 px-2 py-0.5 rounded-lg">
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-green-600 text-[8px] font-bold">LIVE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RUNNING TEXT -->
+        <div class="running-text shrink-0">
+            <marquee behavior="scroll" direction="left" scrollamount="2">
+                🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | TARGET 20 MILIAR RUPIAH | SALES MONITORING
+            </marquee>
+        </div>
+
+        <!-- MAIN LAYOUT -->
+        <div class="main-layout">
+            <div class="content-area">
+                
+                <!-- Header -->
+                <div class="mb-2">
+                    <h1 class="text-base font-bold text-brand flex items-center gap-2">
+                        <span>💰</span> Sales Monitoring (Rupiah)
+                    </h1>
+                    <p class="text-slate-500 text-[9px]">Data penjualan per bulan - Target 20 Miliar Rupiah</p>
+                </div>
+
+                <!-- Statistik Cards (3 card - Total Bulan Dihapus) -->
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-label">Total Sales (Rp)</div>
+                        <div class="stat-value text-cyan-600" id="total-sales">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Rata-rata per Bulan (Rp)</div>
+                        <div class="stat-value text-green-600" id="avg-sales">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Penjualan Tertinggi (Rp)</div>
+                        <div class="stat-value text-yellow-600" id="max-sales">0</div>
+                    </div>
+                </div>
+
+                <!-- Chart Container dengan Target Info -->
+                <div class="chart-wrapper" style="flex:1; min-height:0;">
+                    <div class="chart-container" style="height:100%;">
+                        <div class="target-info">
+                            <div class="label">🎯 TARGET TAHUNAN</div>
+                            <div class="value">Rp 20.000.000.000</div>
+                        </div>
+                        <canvas id="salesChart" class="chart-canvas"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Last Update Info -->
+                <div class="text-center mt-2">
+                    <p id="last-update" class="text-slate-400 text-[8px]">Last update: --:--:--</p>
+                    <p class="text-slate-400 text-[7px]">Auto refresh setiap 30 detik | Data live dari Google Sheet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==================== KONFIGURASI MENU (ROLE-BASED) ====================
+        const adminMenus = [
+            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🏭", name: "Production", link: "production.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: true }
+        ];
+        
+        const userMenus = [
+            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: true }
+        ];
+        
+        function renderMenu() {
+            var userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            var user = JSON.parse(userJson);
+            var role = user.role || 'user';
+            var menus = role === 'admin' ? adminMenus : userMenus;
+            var currentPage = window.location.pathname.split('/').pop() || 'mountsales.html';
+            
+            var menuContainer = document.getElementById('menu-container');
+            var menuHtml = '';
+            
+            for (var i = 0; i < menus.length; i++) {
+                var menu = menus[i];
+                var activeClass = (menu.link === currentPage) ? 'active' : '';
+                menuHtml += '<div class="menu-item">';
+                menuHtml += '<a href="' + menu.link + '" class="menu-button ' + activeClass + '">';
+                menuHtml += '<span class="menu-icon">' + menu.icon + '</span>';
+                menuHtml += '<span>' + menu.name + '</span>';
+                menuHtml += '</a></div>';
+            }
+            
+            menuContainer.innerHTML = menuHtml;
+        }
+        
+        // ==================== MENU FUNCTIONS ====================
+        function toggleMenu() {
+            var sidebar = document.getElementById('popupSidebar');
+            var overlay = document.getElementById('menuOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+        
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                var sidebar = document.getElementById('popupSidebar');
+                var overlay = document.getElementById('menuOverlay');
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            }
+        });
+        
+        // ==================== AUTHENTICATION ====================
+        function checkAuth() {
+            var userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) { 
+                window.location.href = 'login.html'; 
+                return null; 
+            }
+            return JSON.parse(userJson);
+        }
+        
+        var currentUser = checkAuth();
+        if (currentUser) {
+            renderMenu();
+        }
+        
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+        
+        // ==================== CLOCK ====================
+        function updateClock() {
+            var now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', { hour12: false });
+        }
+        
+        function updateLastUpdate() {
+            var now = new Date();
+            document.getElementById('last-update').innerHTML = 'Last update: ' + now.toLocaleTimeString('id-ID', { hour12: false });
+        }
+        
+        // ==================== KONFIGURASI ====================
+        var PUBLISHED_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5OQDenPkOPt21YBEb_Nq7JZZMbbw1dwKt1Ucyee95eno1SzlQ-tFTU1FwvpyAp9mQg6SOEy_1kB8L/pubhtml";
+        var TARGET_SALES = 20000000000; // 20 Miliar Rupiah
+        var chart = null;
+        
+        // Format Rupiah ke format singkat (M, Jt, Rb)
+        function formatRupiahShort(num) {
+            if (num >= 1000000000) return (num / 1000000000).toFixed(1) + ' M';
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + ' Jt';
+            if (num >= 1000) return (num / 1000).toFixed(0) + ' Rb';
+            return num.toString();
+        }
+        
+        // Format Rupiah penuh
+        function formatRupiahFull(num) {
+            return new Intl.NumberFormat('id-ID', { 
+                style: 'currency', 
+                currency: 'IDR', 
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(num);
+        }
+        
+        // Ambil data dari Google Sheet
+        async function fetchSalesData() {
+            try {
+                var match = PUBLISHED_SHEET_URL.match(/\/d\/e\/([^\/]+)\//);
+                if (!match) throw new Error("Invalid published URL");
+                var publishedId = match[1];
+                var csvUrl = 'https://docs.google.com/spreadsheets/d/e/' + publishedId + '/pub?gid=814757349&single=true&output=csv';
+                
+                console.log("Fetching data from:", csvUrl);
+                
+                var response = await fetch(csvUrl, {
+                    cache: 'no-cache',
+                    headers: { 'Cache-Control': 'no-cache' }
+                });
+                
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                
+                var csvText = await response.text();
+                var data = parseCSVToArray(csvText);
+                
+                if (data.length === 0) throw new Error("No data in CSV");
+                
+                return data;
+            } catch(error) {
+                console.error("Error fetching:", error);
+                return null;
+            }
+        }
+        
+        // Parse CSV ke array object
+        function parseCSVToArray(csvText) {
+            var lines = csvText.trim().split(/\r?\n/);
+            if (lines.length < 2) return [];
+            
+            var headers = lines[0].split(',').map(function(h) { return h.replace(/"/g, '').trim().toLowerCase(); });
+            
+            var monthIdx = -1;
+            var salesIdx = -1;
+            for (var i = 0; i < headers.length; i++) {
+                if (headers[i] === 'month') monthIdx = i;
+                if (headers[i] === 'sales') salesIdx = i;
+            }
+            if (monthIdx === -1) monthIdx = 0;
+            if (salesIdx === -1) salesIdx = 1;
+            
+            var result = [];
+            
+            for (var i = 1; i < lines.length; i++) {
+                var values = parseCSVLine(lines[i]);
+                if (values.length <= Math.max(monthIdx, salesIdx)) continue;
+                
+                var month = values[monthIdx].replace(/"/g, '').trim();
+                var salesRaw = values[salesIdx].replace(/"/g, '').trim();
+                var sales = parseInt(salesRaw.replace(/\./g, '').replace(/,/g, ''));
+                
+                if (month && !isNaN(sales) && month !== '') {
+                    result.push({ month: month, sales: sales });
+                }
+            }
+            
+            return result;
+        }
+        
+        // Parse baris CSV
+        function parseCSVLine(line) {
+            var result = [];
+            var inQuote = false;
+            var current = '';
+            
+            for (var i = 0; i < line.length; i++) {
+                var char = line[i];
+                if (char === '"') {
+                    inQuote = !inQuote;
+                } else if (char === ',' && !inQuote) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        }
+        
+        // Update semua UI
+        async function loadAndUpdateDashboard() {
+            var data = await fetchSalesData();
+            
+            if (data && data.length > 0) {
+                var months = [];
+                var salesData = [];
+                var totalSales = 0;
+                var maxSales = 0;
+                
+                for (var i = 0; i < data.length; i++) {
+                    months.push(data[i].month);
+                    salesData.push(data[i].sales);
+                    totalSales = totalSales + data[i].sales;
+                    if (data[i].sales > maxSales) maxSales = data[i].sales;
+                }
+                var avgSales = Math.round(totalSales / salesData.length);
+                
+                document.getElementById('total-sales').innerHTML = formatRupiahShort(totalSales);
+                document.getElementById('avg-sales').innerHTML = formatRupiahShort(avgSales);
+                document.getElementById('max-sales').innerHTML = formatRupiahShort(maxSales);
+                
+                renderChart(months, salesData);
+            } else {
+                useFallbackData();
+            }
+            
+            updateLastUpdate();
+        }
+        
+        // Data fallback
+        function useFallbackData() {
+            var fallbackMonths = ['Jan-26', 'Feb-26', 'Mar-26', 'Apr-26', 'Mei-26', 'Jun-26', 'Jul-26', 'Ags-26', 'Sep-26', 'Okt-26', 'Nov-26', 'Des-26'];
+            var fallbackSales = [15000000, 25000000, 18000000, 22000000, 21000000, 23000000, 19000000, 27000000, 24000000, 26000000, 28000000, 30000000];
+            var totalSales = 0;
+            for (var i = 0; i < fallbackSales.length; i++) {
+                totalSales = totalSales + fallbackSales[i];
+            }
+            
+            document.getElementById('total-sales').innerHTML = formatRupiahShort(totalSales);
+            document.getElementById('avg-sales').innerHTML = formatRupiahShort(totalSales / 12);
+            document.getElementById('max-sales').innerHTML = formatRupiahShort(30000000);
+            
+            renderChart(fallbackMonths, fallbackSales);
+        }
+        
+        // Render Chart dengan Target Line (20 Miliar)
+        function renderChart(labels, salesData) {
+            var ctx = document.getElementById('salesChart').getContext('2d');
+            
+            if (chart) chart.destroy();
+            
+            // Dynamic scale: cari max dari salesData dan target
+            var maxSalesValue = Math.max.apply(Math, salesData);
+            var maxValue = Math.max(maxSalesValue, TARGET_SALES);
+            var suggestedMax = Math.ceil(maxValue * 1.15);
+            
+            // Buat data target (konstan untuk semua bulan)
+            var targetData = [];
+            for (var i = 0; i < labels.length; i++) {
+                targetData.push(TARGET_SALES);
+            }
+            
+            chart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Penjualan (Rupiah)',
+                            type: 'bar',
+                            data: salesData,
+                            backgroundColor: '#0284C7',
+                            borderRadius: 8,
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.85
+                        },
+                        {
+                            label: 'Trend',
+                            type: 'line',
+                            data: salesData,
+                            borderColor: '#22c55e',
+                            backgroundColor: 'rgba(34, 197, 94, 0.05)',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#22c55e',
+                            pointBorderColor: '#FFFFFF',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Target 20 Miliar',
+                            type: 'line',
+                            data: targetData,
+                            borderColor: '#F59E0B',
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            borderDash: [8, 6],
+                            pointRadius: 0,
+                            pointHoverRadius: 0,
+                            fill: false,
+                            tension: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { 
+                            position: 'top',
+                            labels: { 
+                                color: '#475569', 
+                                font: { size: 11, weight: 'bold' }, 
+                                usePointStyle: true, 
+                                boxWidth: 10,
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            titleColor: '#0284C7',
+                            bodyColor: '#e2e8f0',
+                            padding: 10,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatRupiahFull(context.raw);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            ticks: { color: '#64748B', font: { size: 10, weight: 'bold' }, rotation: 45, autoSkip: true }, 
+                            grid: { display: false },
+                            title: { display: true, text: 'Bulan', color: '#64748B', font: { size: 10, weight: 'bold' } }
+                        },
+                        y: { 
+                            ticks: { 
+                                color: '#64748B', 
+                                font: { size: 10 },
+                                callback: function(value) {
+                                    return formatRupiahShort(value);
+                                }
+                            }, 
+                            grid: { color: '#E2E8F0', lineWidth: 1 }, 
+                            beginAtZero: true,
+                            suggestedMax: suggestedMax,
+                            title: { display: true, text: 'Nominal (Rupiah)', color: '#64748B', font: { size: 10, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+            
+            // Tambahkan angka di atas bar
+            var originalDraw = chart.draw;
+            chart.draw = function() {
+                originalDraw.apply(this, arguments);
+                var ctx = this.ctx;
+                ctx.save();
+                ctx.font = 'bold 10px "Inter"';
+                ctx.fillStyle = '#1e293b';
+                ctx.textAlign = 'center';
+                
+                for (var i = 0; i < this.data.datasets.length; i++) {
+                    var dataset = this.data.datasets[i];
+                    if (dataset.type === 'bar') {
+                        var meta = this.getDatasetMeta(i);
+                        if (!meta.hidden && meta.data) {
+                            for (var j = 0; j < meta.data.length; j++) {
+                                var element = meta.data[j];
+                                var value = dataset.data[j];
+                                if (value > 0 && element) {
+                                    var position = element.tooltipPosition();
+                                    if (position) {
+                                        ctx.fillText(formatRupiahShort(value), position.x, position.y - 6);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                ctx.restore();
+            };
+            chart.update();
+        }
+        
+        // ==================== INITIALIZATION ====================
+        updateClock();
+        setInterval(updateClock, 1000);
+        
+        loadAndUpdateDashboard();
+        setInterval(loadAndUpdateDashboard, 30000);
+    </script>
+</body>
+</html>

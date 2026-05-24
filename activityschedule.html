@@ -8,25 +8,39 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            background: #FFFFFF;
+            background: #F1F5F9;
             font-family: 'Inter', system-ui, sans-serif;
             overflow: hidden;
             height: 100vh;
             width: 100vw;
         }
         
-        /* Responsif Font Size */
-        html { font-size: 16px; }
-        @media (min-width: 1920px) { html { font-size: 18px; } }
-        @media (max-width: 1366px) { html { font-size: 15px; } }
-        @media (max-width: 1024px) { html { font-size: 14px; } }
-        @media (max-width: 768px) { html { font-size: 12px; } }
+        /* ========== OPTIMASI KHUSUS TV 50-55 INCH ========== */
+        html { font-size: 15px; }
         
-        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        /* TV 50 inch (1920x1080) */
+        @media (min-width: 1920px) and (max-width: 2559px) {
+            html { font-size: 18px; }
+            body { transform: scale(1); }
+        }
+        
+        /* TV 55 inch (2560x1440) */
+        @media (min-width: 2560px) and (max-width: 3839px) {
+            html { font-size: 22px; }
+            body { transform: scale(1); }
+        }
+        
+        /* Fallback untuk layar lebih kecil */
+        @media (max-width: 1919px) {
+            html { font-size: 13px; }
+            body { transform: scale(0.95); transform-origin: top left; width: 105.26%; }
+        }
+        
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
         
-        /* Stat Card - White Theme */
+        /* Card styles */
         .stat-card { 
             background: #FFFFFF;
             transition: all 0.3s ease; 
@@ -34,71 +48,55 @@
             border-radius: 0.8rem;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #0284C7; }
         
-        /* Today Event Card */
         .today-event-card {
             background: #F8FAFC;
-            border-left: 3px solid #0284C7;
-            border-radius: 0.6rem;
-            padding: 0.6rem;
-            margin-bottom: 0.5rem;
+            border-left: 4px solid #0284C7;
+            border-radius: 0.5rem;
+            padding: 0.5rem 0.6rem;
+            margin-bottom: 0.4rem;
         }
         
-        /* Calendar Cell */
         .calendar-cell {
             background: #F8FAFC;
             border: 1px solid #E5E7EB;
             border-radius: 0.5rem;
-            padding: 0.4rem;
+            padding: 0.25rem;
             transition: all 0.15s ease;
             display: flex;
             flex-direction: column;
-            min-height: 80px;
-            width: 100%;
+            align-items: center;
+            justify-content: center;
+            min-height: 0;
+            height: 100%;
+            aspect-ratio: 1 / 0.85;
         }
-        
         .calendar-cell:hover {
             transform: translateY(-2px);
             border-color: #0284C7;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        
-        /* Tanggal Center */
-        .date-center {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 100%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
         .calendar-date {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             font-weight: bold;
             text-align: center;
             color: #1E293B;
         }
         
         .calendar-event {
-            font-size: 0.55rem;
-            margin-top: 0.2rem;
+            font-size: 0.6rem;
+            margin-top: 0.1rem;
             line-height: 1.2;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
             text-align: center;
+            max-width: 100%;
+            font-weight: 500;
         }
         
-        /* Warna Merah untuk Sabtu, Minggu, dan Libur */
-        .weekend-date {
-            color: #EF4444 !important;
-        }
-        .holiday-bg {
-            background: #FEF2F2;
-            border-color: #FEE2E2;
-        }
-        
-        /* POP UP SIDEBAR MENU */
+        /* SIDEBAR MENU */
         .menu-overlay {
             position: fixed;
             top: 0;
@@ -124,11 +122,10 @@
             transition: left 0.3s ease;
             display: flex;
             flex-direction: column;
-            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
         }
         .popup-sidebar.active { left: 0; }
         
-        .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; margin-bottom: 0.8rem; }
+        .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; }
         .menu-item { margin: 0.2rem 0.6rem; }
         .menu-button {
             display: flex;
@@ -136,68 +133,57 @@
             gap: 0.6rem;
             padding: 0.6rem 0.8rem;
             border-radius: 0.6rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
             color: #475569;
-            background: transparent;
             text-decoration: none;
-            font-size: 0.85rem;
+            font-size: 0.9rem;
+            transition: all 0.2s;
         }
         .menu-button:hover { background: #F0F9FF; color: #0284C7; transform: translateX(5px); }
         .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
         .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
         
-        .logout-btn {
-            margin-top: auto;
-            margin-bottom: 1rem;
-            margin-left: 0.6rem;
-            margin-right: 0.6rem;
+        /* LOGOUT BUTTON - SATU DI SIDEBAR */
+        .sidebar-logout-btn {
+            margin: 1rem;
             display: flex;
             align-items: center;
             gap: 0.6rem;
             padding: 0.6rem 0.8rem;
             border-radius: 0.6rem;
             cursor: pointer;
-            transition: all 0.2s ease;
-            color: #475569;
             border-top: 1px solid #E5E7EB;
-            font-size: 0.85rem;
+            transition: all 0.2s;
+            color: #475569;
         }
-        .logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
-        .status-online { text-align: center; padding: 0.8rem; border-top: 1px solid #E5E7EB; font-size: 0.65rem; color: #64748B; }
+        .sidebar-logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
         
-        /* Tombol Hamburger */
         .hamburger-btn {
             background: #F0F9FF;
             border: 1px solid #0284C7;
-            border-radius: 0.6rem;
-            padding: 0.4rem 0.6rem;
+            border-radius: 0.5rem;
+            padding: 0.35rem 0.65rem;
             cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
         }
-        .hamburger-btn:hover { background: #0284C7; transform: scale(1.02); }
+        .hamburger-btn:hover { background: #0284C7; }
         .hamburger-btn:hover span { color: white; }
         
-        /* Running Text */
         .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
-        .running-text marquee { font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; color: #0284C7; padding: 0.25rem 0; }
+        .running-text marquee { font-size: 0.85rem; font-weight: 600; color: #0284C7; padding: 0.3rem 0; }
         
         .digital-clock { 
             font-family: 'Courier New', monospace; 
-            font-size: 1.2rem; 
             font-weight: 700; 
             background: #F8FAFC; 
             padding: 0.3rem 0.8rem; 
-            border-radius: 0.6rem; 
-            letter-spacing: 2px; 
+            border-radius: 0.5rem; 
             border: 1px solid #E5E7EB; 
             color: #0284C7;
+            font-size: 1.2rem;
         }
         
-        /* Dashboard Layout */
+        .text-brand { color: #1A63F6; }
+        
+        /* LAYOUT UTAMA - FIT ONE PAGE */
         .dashboard-container {
             display: flex;
             flex-direction: column;
@@ -218,10 +204,9 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            padding: 0.8rem;
+            padding: 0.6rem;
         }
         
-        /* Grid 2 kolom */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
@@ -230,7 +215,6 @@
             min-height: 0;
         }
         
-        /* Card container */
         .card-container {
             display: flex;
             flex-direction: column;
@@ -241,8 +225,8 @@
         
         .card-header {
             flex-shrink: 0;
-            padding-bottom: 0.5rem;
-            margin-bottom: 0.5rem;
+            padding-bottom: 0.3rem;
+            margin-bottom: 0.3rem;
             border-bottom: 1px solid #E5E7EB;
         }
         
@@ -250,89 +234,103 @@
             flex: 1;
             overflow-y: auto;
             min-height: 0;
-            padding-right: 0.3rem;
+            padding-right: 0.2rem;
         }
         
-        /* Grid Calendar - 7 kolom tetap */
+        /* Calendar Grid */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 0.3rem;
+            gap: 0.25rem;
         }
         
         .days-header {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 0.3rem;
-            margin-bottom: 0.3rem;
+            gap: 0.25rem;
+            margin-bottom: 0.25rem;
             flex-shrink: 0;
         }
         
         .day-header {
             text-align: center;
-            font-size: 0.65rem;
+            font-size: 0.7rem;
             font-weight: bold;
-            padding: 0.2rem;
+            padding: 0.15rem;
         }
-        .day-header-sun, .day-header-sat { color: #EF4444; }
-        .day-header-other { color: #64748B; }
         
-        /* Upcoming events */
         .upcoming-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.5rem 0;
+            padding: 0.35rem 0;
             border-bottom: 1px solid #E5E7EB;
         }
         .upcoming-date {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #0284C7;
-            font-weight: 500;
+            font-weight: 600;
         }
         .upcoming-title {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: #1E293B;
             font-weight: 500;
-            max-width: 60%;
+            max-width: 65%;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
         }
         
-        /* Empty cell styling */
         .empty-cell {
             background: #F8FAFC;
             border: 1px solid #E5E7EB;
             border-radius: 0.5rem;
-            min-height: 80px;
+            height: 100%;
+            aspect-ratio: 1 / 0.85;
         }
         
-        /* TV Large */
+        /* Scroll events terbatas */
+        .events-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 0.2rem;
+            max-height: 100%;
+        }
+        
+        .upcoming-scroll {
+            max-height: 130px;
+            overflow-y: auto;
+            padding-right: 0.2rem;
+        }
+        
+        /* TV Ukuran Lebih Besar */
         @media (min-width: 1920px) {
             .calendar-date { font-size: 1rem; }
             .calendar-event { font-size: 0.7rem; }
-            .upcoming-date { font-size: 0.85rem; }
-            .upcoming-title { font-size: 0.85rem; }
-            .calendar-cell { min-height: 95px; }
-            .empty-cell { min-height: 95px; }
+            .day-header { font-size: 0.8rem; }
+            .upcoming-date { font-size: 0.8rem; }
+            .upcoming-title { font-size: 0.8rem; }
+            .digital-clock { font-size: 1.3rem; }
+            .running-text marquee { font-size: 0.95rem; }
+            .upcoming-scroll { max-height: 150px; }
+            .today-event-card { padding: 0.6rem 0.7rem; }
+            .today-event-card .font-bold { font-size: 0.85rem; }
+            .today-event-card .text-slate-500 { font-size: 0.75rem; }
         }
         
-        /* Mobile - jadi 1 kolom */
-        @media (max-width: 768px) {
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-            .calendar-date { font-size: 0.75rem; }
-            .calendar-event { font-size: 0.5rem; }
-            .calendar-cell { min-height: 65px; }
-            .empty-cell { min-height: 65px; }
+        @media (min-width: 2560px) {
+            .calendar-date { font-size: 1.1rem; }
+            .calendar-event { font-size: 0.8rem; }
+            .day-header { font-size: 0.9rem; }
+            .upcoming-date { font-size: 0.9rem; }
+            .upcoming-title { font-size: 0.9rem; }
+            .digital-clock { font-size: 1.5rem; }
+            .running-text marquee { font-size: 1.05rem; }
+            .upcoming-scroll { max-height: 170px; }
+            .today-event-card { padding: 0.7rem 0.8rem; }
+            .today-event-card .font-bold { font-size: 0.95rem; }
+            .today-event-card .text-slate-500 { font-size: 0.85rem; }
         }
-        
-        /* Warna teks */
-        .text-brand { color: #1A63F6; }
-        .text-secondary { color: #1E293B; }
     </style>
 </head>
 <body>
@@ -348,19 +346,17 @@
                     <span class="text-white text-sm font-bold">NS</span>
                 </div>
                 <div>
-                    <h1 class="text-xs font-bold text-brand">NITTO SEIKO</h1>
-                    <p class="text-slate-500 text-[7px]">Plant 2</p>
+                    <h1 class="text-sm font-bold text-brand">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-[8px]">Plant 2</p>
                 </div>
             </div>
         </div>
-        
-        <!-- Menu akan diisi oleh JavaScript berdasarkan role -->
         <div id="menu-container"></div>
-        
-        <div class="status-online">
-            <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mx-auto"></div>
-            <span>System Online</span>
+        <div class="sidebar-logout-btn" onclick="logout()">
+            <span class="menu-icon">🚪</span>
+            <span>Logout</span>
         </div>
+        <div class="text-center p-2 text-slate-400 text-[10px] border-t mt-1">System Online</div>
     </div>
 
     <!-- MAIN CONTENT -->
@@ -369,27 +365,25 @@
         <!-- TOP BAR -->
         <div class="bg-white border-b border-gray-200 px-3 py-1.5 flex justify-between items-center shrink-0">
             <div class="flex items-center gap-2">
-                <div class="hamburger-btn" onclick="toggleMenu()">
-                    <span class="text-gray-700">☰</span>
-                </div>
+                <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-sm">☰</span></div>
                 <div>
-                    <h1 class="text-xs md:text-sm font-bold text-brand">PT NITTO ALAM INDONESIA</h1>
-                    <p class="text-slate-500 text-[7px]">Plant 2 - Quality Control System</p>
+                    <h1 class="text-sm font-bold text-brand">PT NITTO ALAM INDONESIA</h1>
+                    <p class="text-slate-500 text-[8px]">Plant 2 - Activity Schedule</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
                 <div class="digital-clock" id="clock">00:00:00</div>
-                <div class="flex items-center gap-1 bg-green-50 px-1.5 py-0.5 rounded-lg border border-green-200">
-                    <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
-                    <span class="text-green-600 text-[6px] font-bold uppercase">LIVE</span>
+                <div class="flex items-center gap-1 bg-green-50 px-2 py-0.5 rounded-lg">
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-green-600 text-[8px] font-bold">LIVE</span>
                 </div>
             </div>
         </div>
 
         <!-- RUNNING TEXT -->
         <div class="running-text shrink-0">
-            <marquee behavior="scroll" direction="left" scrollamount="3">
-                🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | COMMITMENT TO QUALITY & EXCELLENCE | TARGET: WORLD CLASS MANUFACTURING
+            <marquee behavior="scroll" direction="left" scrollamount="2">
+                🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | COMMITMENT TO QUALITY & EXCELLENCE
             </marquee>
         </div>
 
@@ -405,15 +399,15 @@
                         <div class="card-header flex justify-between items-center">
                             <div class="flex items-center gap-1">
                                 <span class="text-sm">📅</span>
-                                <h2 id="calendar-month" class="text-cyan-600 font-bold text-xs">Loading...</h2>
+                                <h2 id="calendar-month" class="text-cyan-600 font-bold text-sm">Loading...</h2>
                             </div>
-                            <div class="text-slate-500 text-[7px] flex items-center gap-1">
-                                <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
+                            <div class="text-slate-500 text-[8px] flex items-center gap-1">
+                                <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
                                 <span>Live</span>
                             </div>
                         </div>
                         
-                        <!-- Days Header (Sabtu Minggu Merah) -->
+                        <!-- Days Header -->
                         <div class="days-header">
                             <div class="day-header text-red-500">Sun</div>
                             <div class="day-header text-slate-500">Mon</div>
@@ -425,9 +419,9 @@
                         </div>
                         
                         <!-- Calendar Grid -->
-                        <div class="card-body">
+                        <div class="card-body" style="overflow-y: visible;">
                             <div id="calendar-grid" class="calendar-grid">
-                                <div class="col-span-full text-center text-slate-500 text-xs py-4">Loading calendar...</div>
+                                <div class="col-span-full text-center text-slate-500 py-3 text-[10px]">Loading calendar...</div>
                             </div>
                         </div>
                     </div>
@@ -438,25 +432,25 @@
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-1">
                                     <span class="text-sm">📌</span>
-                                    <h3 class="font-bold text-cyan-600 text-xs">Today's Events</h3>
+                                    <h3 class="font-bold text-cyan-600 text-sm">Today's Events</h3>
                                 </div>
-                                <span id="today-date" class="text-slate-500 text-[8px]">-</span>
+                                <span id="today-date" class="text-slate-500 text-[9px]">-</span>
                             </div>
                         </div>
-                        <div class="card-body">
+                        <div class="events-scroll">
                             <div id="today-events-list">
-                                <div class="text-center text-slate-500 text-xs py-4">Loading events...</div>
+                                <div class="text-center text-slate-500 py-2 text-[9px]">Loading events...</div>
                             </div>
                         </div>
                         
                         <!-- UPCOMING EVENTS -->
                         <div class="mt-2 pt-2 border-t border-gray-200 shrink-0">
-                            <div class="flex items-center gap-1 mb-2">
+                            <div class="flex items-center gap-1 mb-1">
                                 <span class="text-sm">⏰</span>
                                 <h3 class="font-bold text-cyan-600 text-xs uppercase tracking-wide">Upcoming Events</h3>
                             </div>
-                            <div id="upcoming-events" class="space-y-1 max-h-32 overflow-y-auto">
-                                <div class="text-center text-slate-500 py-2 text-xs">Loading...</div>
+                            <div id="upcoming-events" class="upcoming-scroll space-y-0.5">
+                                <div class="text-center text-slate-500 py-1 text-[9px]">Loading...</div>
                             </div>
                         </div>
                     </div>
@@ -466,18 +460,20 @@
     </div>
 
     <script>
-        // ==================== ROLE-BASED MENU ====================
+        // ==================== KONFIGURASI MENU (ROLE-BASED) ====================
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
             { icon: "🏭", name: "Production", link: "production.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: false }
+            { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
         ];
         
         const userMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true }
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
         ];
         
         function renderMenu() {
@@ -487,12 +483,13 @@
             const user = JSON.parse(userJson);
             const role = user.role || 'user';
             const menus = role === 'admin' ? adminMenus : userMenus;
+            const currentPage = window.location.pathname.split('/').pop() || 'activityschedule.html';
             
             const menuContainer = document.getElementById('menu-container');
             let menuHtml = '';
             
             menus.forEach(menu => {
-                const activeClass = menu.active ? 'active' : '';
+                const activeClass = menu.link === currentPage ? 'active' : '';
                 menuHtml += `
                     <div class="menu-item">
                         <a href="${menu.link}" class="menu-button ${activeClass}">
@@ -503,60 +500,11 @@
                 `;
             });
             
-            menuHtml += `
-                <div class="logout-btn" onclick="logout()">
-                    <span class="menu-icon">🚪</span>
-                    <span>Logout</span>
-                </div>
-            `;
-            
             menuContainer.innerHTML = menuHtml;
         }
         
-        // ==================== KALENDER NASIONAL INDONESIA 2026 ====================
-        const NATIONAL_HOLIDAYS_2026 = [
-            { month: 0, day: 1, name: "Tahun Baru 2026" },
-            { month: 1, day: 16, name: "Isra Miraj" },
-            { month: 2, day: 19, name: "Nyepi" },
-            { month: 3, day: 1, name: "Wafat Isa" },
-            { month: 3, day: 2, name: "Idul Fitri" },
-            { month: 3, day: 3, name: "Idul Fitri" },
-            { month: 4, day: 1, name: "Hari Buruh" },
-            { month: 4, day: 14, name: "Kenaikan Isa" },
-            { month: 5, day: 1, name: "Pancasila" },
-            { month: 5, day: 25, name: "Idul Adha" },
-            { month: 6, day: 16, name: "Tahun Baru Islam" },
-            { month: 7, day: 17, name: "Kemerdekaan RI" },
-            { month: 8, day: 4, name: "Maulid Nabi" },
-            { month: 11, day: 25, name: "Natal" }
-        ];
+        function isWeekend(dayIndex) { return dayIndex === 0 || dayIndex === 6; }
         
-        const COLLECTIVE_LEAVE_2026 = [
-            { month: 3, day: 4, name: "Cuti Idul Fitri" },
-            { month: 3, day: 5, name: "Cuti Idul Fitri" },
-            { month: 3, day: 6, name: "Cuti Idul Fitri" },
-            { month: 5, day: 26, name: "Cuti Idul Adha" },
-            { month: 7, day: 18, name: "Cuti Tahun Baru Islam" },
-            { month: 11, day: 24, name: "Cuti Natal" },
-            { month: 11, day: 26, name: "Cuti Natal" }
-        ];
-        
-        function isNationalHoliday(year, month, day) {
-            if (year !== 2026) return { isHoliday: false, name: null };
-            for (const h of NATIONAL_HOLIDAYS_2026) {
-                if (h.month === month && h.day === day) return { isHoliday: true, name: h.name };
-            }
-            for (const l of COLLECTIVE_LEAVE_2026) {
-                if (l.month === month && l.day === day) return { isHoliday: true, name: l.name };
-            }
-            return { isHoliday: false, name: null };
-        }
-        
-        function isWeekend(dayIndex) { 
-            return dayIndex === 0 || dayIndex === 6; 
-        }
-        
-        // ==================== MENU FUNCTIONS ====================
         function toggleMenu() {
             const sidebar = document.getElementById('popupSidebar');
             const overlay = document.getElementById('menuOverlay');
@@ -575,7 +523,6 @@
             }
         });
         
-        // ==================== AUTHENTICATION ====================
         function checkAuth() {
             const userJson = sessionStorage.getItem('currentUser');
             if (!userJson) { window.location.href = 'login.html'; return null; }
@@ -589,7 +536,6 @@
             window.location.href = 'login.html';
         }
         
-        // ==================== DATA FUNCTIONS ====================
         const EVENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/event";
         let autoRefreshInterval;
         
@@ -645,17 +591,18 @@
                         `;
                     }).join('');
                 } else {
-                    todayEventsDiv.innerHTML = '<div class="text-center text-slate-500 py-2 text-xs">📭 No events today</div>';
+                    todayEventsDiv.innerHTML = '<div class="text-center text-slate-500 py-2 text-[9px]">📭 No events today</div>';
                 }
                 
-                // Update upcoming events
-                const upcomingEvents = events.filter(e => new Date(e.date) > new Date()).slice(0, 5);
+                const upcomingEvents = events.filter(e => new Date(e.date) > new Date()).slice(0, 4);
                 const upcomingDiv = document.getElementById('upcoming-events');
                 if (upcomingEvents.length > 0) {
                     upcomingDiv.innerHTML = upcomingEvents.map(event => {
                         const eventDate = new Date(event.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
                         let icon = '📌';
                         if (event.type === 'holiday') icon = '🎉';
+                        else if (event.type === 'audit') icon = '🔍';
+                        else if (event.type === 'visit') icon = '👥';
                         return `
                             <div class="upcoming-item">
                                 <span class="upcoming-date">${icon} ${eventDate}</span>
@@ -664,11 +611,25 @@
                         `;
                     }).join('');
                 } else {
-                    upcomingDiv.innerHTML = '<div class="text-center text-slate-500 py-2 text-xs">No upcoming events</div>';
+                    upcomingDiv.innerHTML = '<div class="text-center text-slate-500 py-1 text-[9px]">No upcoming events</div>';
                 }
                 
             } catch (error) {
                 console.error('Error:', error);
+                const fallbackEvents = [
+                    { date: getTodayDate(), title: "Quality Audit", type: "audit" },
+                    { date: getTodayDate(), title: "Production Meeting", type: "meeting" }
+                ];
+                renderCalendar(fallbackEvents);
+                document.getElementById('today-events-list').innerHTML = `
+                    <div class="today-event-card"><div class="flex gap-1.5"><div class="text-sm">🔍</div><div><div class="font-bold text-gray-800 text-[10px]">Quality Audit</div><p class="text-slate-500 text-[8px]">audit</p></div></div></div>
+                    <div class="today-event-card"><div class="flex gap-1.5"><div class="text-sm">📌</div><div><div class="font-bold text-gray-800 text-[10px]">Production Meeting</div><p class="text-slate-500 text-[8px]">meeting</p></div></div></div>
+                `;
+                document.getElementById('upcoming-events').innerHTML = `
+                    <div class="upcoming-item"><span class="upcoming-date">📌 15 Jan</span><span class="upcoming-title">Customer Visit</span></div>
+                    <div class="upcoming-item"><span class="upcoming-date">🔍 20 Jan</span><span class="upcoming-title">Internal Audit</span></div>
+                `;
+                document.getElementById('today-date').innerHTML = formatDisplayDate(getTodayDate());
             }
         }
         
@@ -687,9 +648,8 @@
             const firstDay = new Date(year, month, 1).getDay();
             const lastDate = new Date(year, month + 1, 0).getDate();
             
-            const totalDays = lastDate;
             const startOffset = firstDay;
-            const totalCells = Math.ceil((startOffset + totalDays) / 7) * 7;
+            const totalCells = Math.ceil((startOffset + lastDate) / 7) * 7;
             
             let html = '';
             
@@ -704,36 +664,36 @@
                     const isToday = day === today;
                     const dayOfWeek = new Date(year, month, day).getDay();
                     const isWeekendDay = isWeekend(dayOfWeek);
-                    const nationalHoliday = isNationalHoliday(year, month, day);
-                    const isHoliday = (event && event.type === 'holiday') || nationalHoliday.isHoliday;
+                    const isHolidayEvent = event && event.type && event.type.toLowerCase() === 'holiday';
                     
-                    let dateColor = 'text-gray-800';
-                    if (isWeekendDay || isHoliday) dateColor = 'text-red-500';
+                    let dateColor = 'text-gray-700';
+                    if (isHolidayEvent) dateColor = 'text-red-500';
+                    else if (isWeekendDay) dateColor = 'text-red-500';
                     if (isToday) dateColor = 'text-cyan-600';
                     
-                    let bgClass = '';
+                    let bgClass = 'bg-gray-50 border-gray-200';
                     if (isToday) bgClass = 'bg-cyan-50 border-cyan-200';
-                    else if (isHoliday) bgClass = 'bg-red-50 border-red-200';
-                    else bgClass = 'bg-gray-50 border-gray-200';
+                    else if (isHolidayEvent) bgClass = 'bg-red-50 border-red-200';
                     
                     let eventHtml = '';
-                    if (nationalHoliday.isHoliday) {
-                        eventHtml = `<div class="calendar-event text-red-500">🎉 ${nationalHoliday.name}</div>`;
-                    } else if (event) {
+                    if (event) {
                         let icon = '📌';
                         if (event.type === 'audit') icon = '🔍';
                         else if (event.type === 'visit') icon = '👥';
                         else if (event.type === 'training') icon = '📚';
                         else if (event.type === 'holiday') icon = '🎉';
-                        let eventColor = (event.type === 'holiday' || isWeekendDay) ? 'text-red-500' : 'text-cyan-600';
-                        eventHtml = `<div class="calendar-event ${eventColor}">${icon} ${event.title}</div>`;
+                        
+                        let eventColor = 'text-cyan-600';
+                        if (event.type === 'holiday') eventColor = 'text-red-500';
+                        else if (isWeekendDay) eventColor = 'text-red-500';
+                        
+                        let eventTitle = event.title.length > 14 ? event.title.substring(0, 12) + '..' : event.title;
+                        eventHtml = `<div class="calendar-event ${eventColor}">${icon} ${eventTitle}</div>`;
                     }
                     
                     html += `
                         <div class="calendar-cell ${bgClass}">
-                            <div class="date-center">
-                                <span class="calendar-date ${dateColor}">${day}</span>
-                            </div>
+                            <span class="calendar-date ${dateColor}">${day}</span>
                             ${eventHtml}
                         </div>
                     `;
@@ -745,20 +705,17 @@
             calendarGrid.innerHTML = html;
         }
         
-        function manualRefresh() { loadData(); }
-        
         function startAutoRefresh() {
             if (autoRefreshInterval) clearInterval(autoRefreshInterval);
-            autoRefreshInterval = setInterval(loadData, 10000);
+            autoRefreshInterval = setInterval(loadData, 30000);
         }
         
-        // Render menu berdasarkan role
+        // ==================== INIT ====================
         renderMenu();
-        
         updateClock();
+        setInterval(updateClock, 1000);
         loadData();
         startAutoRefresh();
-        setInterval(updateClock, 1000);
     </script>
 </body>
 </html>

@@ -2,251 +2,203 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Main Dashboard - PT NITTO ALAM INDONESIA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
-            background: #FFFFFF;
-            min-height: 100vh; 
+            background: #F1F5F9;
             font-family: 'Inter', system-ui, sans-serif;
             overflow: hidden;
             height: 100vh;
+            width: 100vw;
         }
         
-        /* Responsif Font Size */
-        html { font-size: 16px; }
-        @media (min-width: 1920px) { html { font-size: 18px; } }
-        @media (max-width: 1366px) { html { font-size: 15px; } }
-        @media (max-width: 1024px) { html { font-size: 14px; } }
-        @media (max-width: 768px) { html { font-size: 12px; } }
+        /* ========== OPTIMASI KHUSUS TV 50-55 INCH ========== */
+        html { font-size: 14px; }
         
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        /* TV 50 inch (1920x1080) */
+        @media (min-width: 1920px) and (max-width: 2559px) {
+            html { font-size: 16px; }
+        }
+        
+        /* TV 55 inch (2560x1440) */
+        @media (min-width: 2560px) and (max-width: 3839px) {
+            html { font-size: 18px; }
+        }
+        
+        /* Fallback untuk layar lebih kecil */
+        @media (max-width: 1919px) {
+            html { font-size: 12px; }
+            body { transform: scale(0.95); transform-origin: top left; width: 105.26%; }
+        }
+        
+        ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
         
-        /* Stat Card - White Theme */
-        .stat-card { 
-            background: #FFFFFF;
-            transition: all 0.3s ease; 
-            border: 1px solid #E5E7EB; 
-            border-radius: 1rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #0284C7; }
-        
-        /* Zero Accident Card - White Theme */
-        .zero-accident-card {
-            background: #FFFFFF;
-            border-radius: 1rem;
-            border: 1px solid #E5E7EB;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .zero-header {
-            background: #F8FAFC;
-            border-bottom: 2px solid #0284C7;
-            border-radius: 1rem 1rem 0 0;
-            padding: 0.8rem 1.2rem;
-        }
-        .zero-digit {
-            font-family: 'Courier New', monospace;
-            font-size: 4rem;
-            font-weight: 800;
-            color: #0284C7;
-            background: #F0F9FF;
-            padding: 0.5rem 1rem;
-            border-radius: 1rem;
-            display: inline-block;
-            min-width: 150px;
-        }
-        @media (min-width: 1920px) { .zero-digit { font-size: 5rem; min-width: 180px; } }
-        .zero-label {
-            font-family: 'Courier New', monospace;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            font-weight: 600;
-            color: #0284C7;
-        }
-        
-        .event-card {
-            background: #F8FAFC;
-            border-radius: 0.75rem;
-            border-left: 4px solid #0284C7;
-            transition: all 0.2s ease;
-            padding: 0.8rem 1rem;
-            margin-bottom: 0.6rem;
-        }
-        .event-card:hover { transform: translateX(5px); background: #F0F9FF; }
-        
-        /* ========== POP UP SIDEBAR MENU ========== */
-        .menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
+        /* SUB SLIDER (5 CARD DIVISI) */
+        .sub-slider-container {
+            position: relative;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(3px);
-            z-index: 998;
-            display: none;
+            overflow: hidden;
+            border-radius: 0.8rem;
         }
-        .menu-overlay.active { display: block; }
-        
-        .popup-sidebar {
-            position: fixed;
-            top: 0;
-            left: -280px;
-            width: 280px;
-            height: 100vh;
-            background: #FFFFFF;
-            border-right: 1px solid #E5E7EB;
-            z-index: 999;
-            transition: left 0.3s ease;
+        .sub-slider-wrapper {
             display: flex;
-            flex-direction: column;
-            box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
+            transition: transform 0.4s ease-in-out;
+            height: 100%;
         }
-        .popup-sidebar.active { left: 0; }
+        .sub-slider-card {
+            flex: 0 0 100%;
+            height: 100%;
+            padding: 0.3rem;
+        }
+        .sub-slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(2, 132, 199, 0.85);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+        .sub-slider-btn:hover { background: #0284C7; }
+        .sub-slider-btn-left { left: 5px; }
+        .sub-slider-btn-right { right: 5px; }
+        .sub-slider-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .sub-slider-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #CBD5E1;
+            cursor: pointer;
+        }
+        .sub-slider-dot.active { background: #0284C7; width: 20px; border-radius: 4px; }
         
-        .logo-section { padding: 1.5rem 1rem; border-bottom: 1px solid #E5E7EB; margin-bottom: 1rem; }
-        .menu-item { margin: 0.25rem 0.75rem; }
+        .card { background: white; border-radius: 1rem; border: 1px solid #E5E7EB; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .event-card { background: #F8FAFC; border-radius: 0.5rem; border-left: 4px solid #0284C7; padding: 0.5rem 0.7rem; margin-bottom: 0.4rem; }
+        
+        .production-chart-container { height: 200px; position: relative; }
+        .stats-mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 0.8rem; }
+        .stat-mini-item { text-align: center; padding: 0.4rem; background: #F8FAFC; border-radius: 0.5rem; }
+        .stat-mini-label { font-size: 0.6rem; color: #64748B; }
+        .stat-mini-value { font-size: 1rem; font-weight: bold; color: #0284C7; }
+        
+        .divisi-tag { display: inline-block; padding: 0.25rem 0.6rem; border-radius: 0.375rem; font-size: 0.7rem; font-weight: 600; }
+        .divisi-Double-Header { background: #dbeafe; color: #1e40af; }
+        .divisi-2D3B { background: #dcfce7; color: #166534; }
+        .divisi-rolling { background: #fef3c7; color: #92400e; }
+        .divisi-Furnace { background: #f1f5f9; color: #475569; }
+        .divisi-Plating { background: #e0e7ff; color: #3730a3; }
+        
+        .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
+        .running-text marquee { font-size: 0.75rem; font-weight: 600; color: #0284C7; padding: 0.3rem 0; }
+        .digital-clock { font-family: 'Courier New', monospace; font-weight: 700; background: #F8FAFC; padding: 0.3rem 0.8rem; border-radius: 0.5rem; border: 1px solid #E5E7EB; color: #0284C7; font-size: 1.1rem; }
+        
+        /* SIDEBAR MENU */
+        .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); z-index: 998; display: none; }
+        .menu-overlay.active { display: block; }
+        .popup-sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; background: #FFFFFF; border-right: 1px solid #E5E7EB; z-index: 999; transition: left 0.3s ease; display: flex; flex-direction: column; }
+        .popup-sidebar.active { left: 0; }
+        .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; }
+        .menu-item { margin: 0.2rem 0.6rem; }
         .menu-button {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.6rem;
             color: #475569;
-            background: transparent;
             text-decoration: none;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            transition: all 0.2s;
         }
         .menu-button:hover { background: #F0F9FF; color: #0284C7; transform: translateX(5px); }
         .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
-        .menu-icon { font-size: 1.3rem; min-width: 2rem; }
+        .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
         
-        .logout-btn {
-            margin-top: auto;
-            margin-bottom: 1.5rem;
-            margin-left: 0.75rem;
-            margin-right: 0.75rem;
+        /* LOGOUT BUTTON - HANYA SATU */
+        .sidebar-logout-btn {
+            margin: 1rem;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
-            border-radius: 0.75rem;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.6rem;
             cursor: pointer;
-            transition: all 0.2s ease;
-            color: #475569;
             border-top: 1px solid #E5E7EB;
+            transition: all 0.2s;
+            color: #475569;
         }
-        .logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
-        .status-online { text-align: center; padding: 1rem; border-top: 1px solid #E5E7EB; }
+        .sidebar-logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
         
         .hamburger-btn {
             background: #F0F9FF;
             border: 1px solid #0284C7;
-            border-radius: 0.75rem;
-            padding: 0.5rem 0.8rem;
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.6rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
         }
-        .hamburger-btn:hover { background: #0284C7; color: white; transform: scale(1.02); }
+        .hamburger-btn:hover { background: #0284C7; }
         .hamburger-btn:hover span { color: white; }
         
-        .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
-        .running-text marquee { font-size: 0.85rem; font-weight: 600; letter-spacing: 1px; color: #0284C7; padding: 0.3rem 0; }
+        .text-brand { color: #1A63F6; }
         
-        .digital-clock { 
-            font-family: 'Courier New', monospace; 
-            font-size: 1.6rem; 
-            font-weight: 700; 
-            background: #F8FAFC; 
-            padding: 0.4rem 1rem; 
-            border-radius: 0.75rem; 
-            letter-spacing: 3px; 
-            border: 1px solid #E5E7EB; 
-            color: #0284C7;
-        }
-        @media (max-width: 1024px) { .digital-clock { font-size: 1.3rem; padding: 0.3rem 0.8rem; } }
-        
+        /* GRID 2x2 - LAYOUT RAPI */
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1.2rem;
-            padding: 1.2rem;
-            height: calc(100% - 85px);
+            gap: 1rem;
+            padding: 1rem;
+            height: calc(100% - 65px);
         }
-        
         .card-full {
             height: 100%;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            min-height: 0;
         }
-        
-        .scrollable-content {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 0.5rem;
-        }
-        
         .chart-container {
             flex: 1;
             min-height: 0;
             position: relative;
         }
+        .bg-production { background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); }
+        .events-scroll { flex: 1; overflow-y: auto; padding-right: 0.2rem; }
         
-        .card-title {
-            font-size: 1rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            color: #1E293B;
-        }
-        .card-value {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-        .card-label {
-            font-size: 0.8rem;
-            color: #64748B;
-        }
-        .event-title {
-            font-size: 0.9rem;
-            font-weight: 500;
-            color: #1E293B;
-        }
-        .event-type {
-            font-size: 0.7rem;
-            color: #64748B;
-        }
-        
+        /* TV Ukuran Lebih Besar */
         @media (min-width: 1920px) {
-            .card-title { font-size: 1.2rem; }
-            .card-value { font-size: 1.8rem; }
-            .card-label { font-size: 0.9rem; }
-            .event-title { font-size: 1rem; }
+            .stat-mini-value { font-size: 1.2rem; }
+            .stat-mini-label { font-size: 0.7rem; }
+            .divisi-tag { font-size: 0.8rem; padding: 0.3rem 0.7rem; }
+            .event-card { padding: 0.6rem 0.8rem; }
+            .event-card .font-medium { font-size: 0.85rem; }
+            .production-chart-container { height: 230px; }
         }
         
-        .text-open { color: #EF4444; }
-        .text-progress { color: #F59E0B; }
-        .text-active { color: #0284C7; }
-        
-        /* Warna teks utama */
-        .text-primary { color: #1E293B; }
-        .text-brand { color: #1A63F6; }
-        .border-brand { border-color: #0284C7; }
-        
-        /* Warna untuk card background */
-        .bg-card-white { background: #FFFFFF; }
-        .bg-secondary { background: #F8FAFC; }
+        @media (min-width: 2560px) {
+            .stat-mini-value { font-size: 1.4rem; }
+            .production-chart-container { height: 260px; }
+        }
     </style>
 </head>
 <body>
@@ -254,195 +206,142 @@
     <!-- OVERLAY -->
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
     
-    <!-- POP UP SIDEBAR MENU (akan diisi dinamis oleh JS) -->
+    <!-- POP UP SIDEBAR MENU -->
     <div id="popupSidebar" class="popup-sidebar">
         <div class="logo-section">
             <div class="flex items-center gap-2">
-                <div class="w-10 h-10 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-xl flex items-center justify-center">
-                    <span class="text-white text-lg font-bold">NS</span>
+                <div class="w-8 h-8 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
+                    <span class="text-white text-sm font-bold">NS</span>
                 </div>
                 <div>
                     <h1 class="text-sm font-bold text-brand">NITTO SEIKO</h1>
-                    <p class="text-slate-500 text-[9px]">Plant 2</p>
+                    <p class="text-slate-500 text-[8px]">Plant 2</p>
                 </div>
             </div>
         </div>
-        
-        <!-- Menu akan diisi oleh JavaScript berdasarkan role -->
         <div id="menu-container"></div>
-        
-        <div class="status-online">
-            <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mx-auto"></div>
-            <span class="text-slate-500 text-[8px]">System Online</span>
+        <div class="sidebar-logout-btn" onclick="logout()">
+            <span class="menu-icon">🚪</span>
+            <span>Logout</span>
         </div>
+        <div class="text-center p-3 text-slate-400 text-[10px] border-t mt-2">System Online</div>
     </div>
 
-    <!-- MAIN CONTENT -->
-    <div class="main-content" style="margin-left: 0;">
-        
+    <div class="h-screen flex flex-col">
         <!-- TOP BAR -->
         <div class="bg-white border-b border-gray-200 px-4 py-2 flex justify-between items-center shrink-0">
             <div class="flex items-center gap-3">
-                <div class="hamburger-btn" onclick="toggleMenu()">
-                    <span class="text-xl text-gray-700">☰</span>
-                    <span class="text-sm hidden md:inline text-gray-600">Menu</span>
-                </div>
-                <div>
-                    <h1 class="text-base md:text-lg font-bold text-brand">PT NITTO ALAM INDONESIA</h1>
-                    <p class="text-slate-500 text-[9px] md:text-[10px]">Plant 2 - Quality Control System</p>
-                </div>
+                <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-sm">☰</span></div>
+                <div><h1 class="text-sm md:text-base font-bold text-brand">PT NITTO ALAM INDONESIA</h1><p class="text-slate-500 text-[9px]">Plant 2 - Dashboard</p></div>
             </div>
-            <div class="flex items-center gap-3">
-                <div class="digital-clock" id="clock">00:00:00</div>
-                <div class="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg border border-green-200">
-                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                    <span class="text-green-600 text-[8px] md:text-[9px] font-bold uppercase">LIVE</span>
-                </div>
-            </div>
+            <div class="flex items-center gap-3"><div class="digital-clock text-sm" id="clock">00:00:00</div><div class="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg"><div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div><span class="text-green-600 text-[8px] font-bold">LIVE</span></div></div>
         </div>
 
         <!-- RUNNING TEXT -->
-        <div class="running-text py-1 shrink-0">
-            <marquee behavior="scroll" direction="left" scrollamount="4">
-                🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | ✨ ZERO ACCIDENT TARGET ✨ | 🎯 SAFETY FIRST, QUALITY ALWAYS 🎯
-            </marquee>
-        </div>
+        <div class="running-text shrink-0"><marquee behavior="scroll" direction="left" scrollamount="2">🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | 📊 SALES & PRODUCTION MONITORING</marquee></div>
 
-        <!-- DASHBOARD CARDS -->
+        <!-- GRID 2x2 -->
         <div class="dashboard-grid">
             
-            <!-- CARD 1: ZERO ACCIDENT -->
-            <div class="zero-accident-card card-full">
-                <div class="zero-header flex justify-between items-center">
-                    <span class="zero-label">🏆 ZERO ACCIDENT</span>
-                    <span class="zero-label">DAYS COUNT</span>
+            <!-- CARD 1: SALES MONITORING -->
+            <div class="card p-3 flex flex-col card-full">
+                <div class="flex justify-between items-center mb-2"><h2 class="font-bold text-gray-800">📊 SALES MONITORING (RUPIAH)</h2><span class="text-[8px] text-slate-400" id="sales-last-update">Loading...</span></div>
+                <div class="stats-mini-grid">
+                    <div class="stat-mini-item"><div class="stat-mini-label">Total Sales</div><div class="stat-mini-value" id="sales-total">0</div></div>
+                    <div class="stat-mini-item"><div class="stat-mini-label">Rata-rata</div><div class="stat-mini-value" id="sales-avg">0</div></div>
+                    <div class="stat-mini-item"><div class="stat-mini-label">Tertinggi</div><div class="stat-mini-value" id="sales-max">0</div></div>
                 </div>
-                <div class="flex-1 flex flex-col justify-center p-4 text-center">
-                    <div class="text-slate-500 text-xs mb-2" id="date-display">Loading...</div>
-                    <div class="zero-digit mx-auto" id="accident-counter">0</div>
-                    <div class="zero-label text-[10px] mt-3">DAYS WITHOUT ACCIDENT</div>
-                    <div class="bg-slate-50 rounded-lg mt-3 px-3 py-2">
-                        <span class="text-slate-500 text-[10px]">Last accident: </span>
-                        <span class="text-cyan-600 text-[10px] font-bold" id="last-accident-date">Never</span>
+                <div class="chart-container flex-1 min-h-0"><canvas id="salesChart"></canvas></div>
+            </div>
+            
+            <!-- CARD 2: PRODUCTION MONITORING (SUB SLIDER 5 DIVISI) -->
+            <div class="card p-3 flex flex-col card-full">
+                <div class="flex justify-between items-center mb-2"><h2 class="font-bold text-gray-800">🏭 PRODUCTION MONITORING</h2><span class="text-[8px] text-slate-400" id="prod-last-update">Loading...</span></div>
+                
+                <div class="sub-slider-container" style="flex:1; min-height:0;">
+                    <button class="sub-slider-btn sub-slider-btn-left" onclick="prevSubSlide()">‹</button>
+                    <button class="sub-slider-btn sub-slider-btn-right" onclick="nextSubSlide()">›</button>
+                    
+                    <div class="sub-slider-wrapper" id="subSliderWrapper">
+                        <!-- DOUBLE HEADER -->
+                        <div class="sub-slider-card">
+                            <div class="bg-production rounded-xl p-2 h-full flex flex-col">
+                                <div class="flex justify-between items-center mb-1"><span class="divisi-tag divisi-Double-Header">🏭 Double Header</span><span class="text-sm font-mono text-blue-600 font-bold" id="total-dh">0 PCS</span></div>
+                                <div class="production-chart-container"><canvas id="chart-dh"></canvas></div>
+                                <div class="grid grid-cols-2 gap-2 mt-2"><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Target</div><div class="font-bold text-cyan-600" id="target-dh">0</div></div><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Realisasi</div><div class="font-bold text-green-600" id="real-dh">0</div></div></div>
+                                <p class="text-center text-[9px] text-slate-400 mt-1">📊 Bar = Real | ⎯ Garis = Target</p>
+                            </div>
+                        </div>
+                        <!-- 2D3B -->
+                        <div class="sub-slider-card">
+                            <div class="bg-production rounded-xl p-2 h-full flex flex-col">
+                                <div class="flex justify-between items-center mb-1"><span class="divisi-tag divisi-2D3B">⚙️ 2D3B</span><span class="text-sm font-mono text-green-600 font-bold" id="total-2d3b">0 PCS</span></div>
+                                <div class="production-chart-container"><canvas id="chart-2d3b"></canvas></div>
+                                <div class="grid grid-cols-2 gap-2 mt-2"><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Target</div><div class="font-bold text-cyan-600" id="target-2d3b">0</div></div><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Realisasi</div><div class="font-bold text-green-600" id="real-2d3b">0</div></div></div>
+                                <p class="text-center text-[9px] text-slate-400 mt-1">📊 Bar = Real | ⎯ Garis = Target</p>
+                            </div>
+                        </div>
+                        <!-- ROLLING -->
+                        <div class="sub-slider-card">
+                            <div class="bg-production rounded-xl p-2 h-full flex flex-col">
+                                <div class="flex justify-between items-center mb-1"><span class="divisi-tag divisi-rolling">🔄 Rolling</span><span class="text-sm font-mono text-yellow-600 font-bold" id="total-rolling">0 PCS</span></div>
+                                <div class="production-chart-container"><canvas id="chart-rolling"></canvas></div>
+                                <div class="grid grid-cols-2 gap-2 mt-2"><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Target</div><div class="font-bold text-cyan-600" id="target-rolling">0</div></div><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Realisasi</div><div class="font-bold text-green-600" id="real-rolling">0</div></div></div>
+                                <p class="text-center text-[9px] text-slate-400 mt-1">📊 Bar = Real | ⎯ Garis = Target</p>
+                            </div>
+                        </div>
+                        <!-- FURNACE -->
+                        <div class="sub-slider-card">
+                            <div class="bg-production rounded-xl p-2 h-full flex flex-col">
+                                <div class="flex justify-between items-center mb-1"><span class="divisi-tag divisi-Furnace">🔥 Furnace</span><span class="text-sm font-mono text-gray-600 font-bold" id="total-furnace">0 PCS</span></div>
+                                <div class="production-chart-container"><canvas id="chart-furnace"></canvas></div>
+                                <div class="grid grid-cols-2 gap-2 mt-2"><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Target</div><div class="font-bold text-cyan-600" id="target-furnace">0</div></div><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Realisasi</div><div class="font-bold text-green-600" id="real-furnace">0</div></div></div>
+                                <p class="text-center text-[9px] text-slate-400 mt-1">📊 Bar = Real | ⎯ Garis = Target</p>
+                            </div>
+                        </div>
+                        <!-- PLATING -->
+                        <div class="sub-slider-card">
+                            <div class="bg-production rounded-xl p-2 h-full flex flex-col">
+                                <div class="flex justify-between items-center mb-1"><span class="divisi-tag divisi-Plating">⚡ Plating</span><span class="text-sm font-mono text-purple-600 font-bold" id="total-plating">0 PCS</span></div>
+                                <div class="production-chart-container"><canvas id="chart-plating"></canvas></div>
+                                <div class="grid grid-cols-2 gap-2 mt-2"><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Target</div><div class="font-bold text-cyan-600" id="target-plating">0</div></div><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Realisasi</div><div class="font-bold text-green-600" id="real-plating">0</div></div></div>
+                                <p class="text-center text-[9px] text-slate-400 mt-1">📊 Bar = Real | ⎯ Garis = Target</p>
+                            </div>
+                        </div>
                     </div>
+                    <div class="sub-slider-dots" id="subSliderDots"></div>
                 </div>
             </div>
-
-            <!-- CARD 2: TODAY'S EVENTS -->
-            <div class="bg-white rounded-xl border border-gray-200 p-4 flex flex-col card-full shadow-sm">
-                <div class="flex items-center justify-between mb-3 shrink-0">
-                    <div class="flex items-center gap-2">
-                        <span class="text-xl">📅</span>
-                        <h3 class="font-semibold text-gray-800 card-title">Today's Events</h3>
-                    </div>
-                    <span class="text-slate-500 text-[10px]" id="today-date">-</span>
-                </div>
-                <div id="today-events-list" class="scrollable-content space-y-2">
-                    <div class="text-center text-slate-500 py-4">Loading events...</div>
-                </div>
+            
+            <!-- CARD 3: TODAY'S EVENTS -->
+            <div class="card p-3 flex flex-col card-full">
+                <div class="flex justify-between items-center mb-2"><h2 class="font-bold text-gray-800">📅 Today's Events</h2><span class="text-[8px] text-slate-400" id="today-date">-</span></div>
+                <div id="today-events-list" class="events-scroll space-y-1"><div class="text-center text-slate-500 py-4">Loading events...</div></div>
             </div>
-
-            <!-- CARD 3: AUDIT FINDING SUMMARY -->
-            <div class="stat-card p-4 card-full">
-                <div class="flex items-center gap-2 mb-3 shrink-0">
-                    <span class="text-xl">🔍</span>
-                    <h3 class="font-semibold text-gray-800 card-title">Audit Finding</h3>
-                </div>
-                <div id="audit-summary" class="space-y-3 flex-1">
-                    <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                        <span class="card-label">OPEN</span>
-                        <span class="card-value text-open font-bold" id="open-findings">0</span>
-                    </div>
-                    <div class="flex justify-between items-center py-2 border-b border-gray-200">
-                        <span class="card-label">IN PROGRESS</span>
-                        <span class="card-value text-progress font-bold" id="progress-findings">0</span>
-                    </div>
-                    <div class="flex justify-between items-center pt-2">
-                        <span class="card-label font-semibold">Total Active</span>
-                        <span class="card-value text-active font-bold" id="total-active">0</span>
-                    </div>
-                </div>
-            </div>
-
+            
             <!-- CARD 4: RFQ CHART -->
-            <div class="stat-card p-4 card-full">
-                <div class="flex items-center justify-between mb-3 shrink-0">
-                    <div class="flex items-center gap-2">
-                        <span class="text-xl">📊</span>
-                        <h3 class="font-semibold text-gray-800 card-title">RFQ per Bulan</h3>
-                    </div>
-                    <span class="text-slate-500 text-[9px]">2026</span>
-                </div>
-                <div class="chart-container">
-                    <canvas id="rfqChart"></canvas>
-                </div>
+            <div class="card p-3 flex flex-col card-full">
+                <div class="flex justify-between items-center mb-2"><h2 class="font-bold text-gray-800">📊 RFQ per Bulan</h2><span class="text-[8px] text-slate-400">2026</span></div>
+                <div class="chart-container flex-1 min-h-0"><canvas id="rfqChart"></canvas></div>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================== DATA RFQ ====================
-        const RFQ_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/RFQ";
-        
-        let chart = null;
-        
-        // ==================== FUNGSI PARSING TANGGAL ====================
-        function parseDate(dateString) {
-            if (!dateString) return null;
-            let str = dateString.toString().trim();
-            let parts = str.match(/^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/);
-            if (parts) {
-                let day = parseInt(parts[1], 10);
-                let month = parseInt(parts[2], 10) - 1;
-                let year = parseInt(parts[3], 10);
-                let date = new Date(year, month, day);
-                if (!isNaN(date.getTime())) return date;
-            }
-            let date = new Date(str);
-            if (!isNaN(date.getTime())) return date;
-            return null;
-        }
-        
-        function daysBetween(date1, date2) {
-            const d1 = new Date(date1);
-            const d2 = new Date(date2);
-            d1.setHours(0, 0, 0, 0);
-            d2.setHours(0, 0, 0, 0);
-            const diffTime = Math.abs(d2 - d1);
-            return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        }
-        
-        // ==================== MENU FUNCTIONS ====================
-        function toggleMenu() {
-            const sidebar = document.getElementById('popupSidebar');
-            const overlay = document.getElementById('menuOverlay');
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-        }
-        
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                const sidebar = document.getElementById('popupSidebar');
-                const overlay = document.getElementById('menuOverlay');
-                if (sidebar.classList.contains('active')) {
-                    sidebar.classList.remove('active');
-                    overlay.classList.remove('active');
-                }
-            }
-        });
-        
-        // ==================== ROLE-BASED MENU ====================
+        // ==================== KONFIGURASI MENU (ROLE-BASED) ====================
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: true },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
             { icon: "🏭", name: "Production", link: "production.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: false }
+            { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
         ];
         
         const userMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: true },
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false }
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
         ];
         
         function renderMenu() {
@@ -452,12 +351,13 @@
             const user = JSON.parse(userJson);
             const role = user.role || 'user';
             const menus = role === 'admin' ? adminMenus : userMenus;
+            const currentPage = window.location.pathname.split('/').pop() || 'maindashboard.html';
             
             const menuContainer = document.getElementById('menu-container');
             let menuHtml = '';
             
             menus.forEach(menu => {
-                const activeClass = menu.active ? 'active' : '';
+                const activeClass = menu.link === currentPage ? 'active' : '';
                 menuHtml += `
                     <div class="menu-item">
                         <a href="${menu.link}" class="menu-button ${activeClass}">
@@ -468,267 +368,464 @@
                 `;
             });
             
-            menuHtml += `
-                <div class="logout-btn" onclick="logout()">
-                    <span class="menu-icon">🚪</span>
-                    <span>Logout</span>
-                </div>
-            `;
-            
             menuContainer.innerHTML = menuHtml;
         }
         
-        // ==================== API ENDPOINTS ====================
-        const ZERO_ACCIDENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/Zero%20Accident%20Board";
-        const EVENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/event";
-        const AUDIT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/audit";
+        // ==================== FUNGSI UMUM ====================
+        function toggleMenu() {
+            document.getElementById('popupSidebar').classList.toggle('active');
+            document.getElementById('menuOverlay').classList.toggle('active');
+        }
         
-        let lastAccidentDate = null;
-        let currentCounter = 0;
-        let lastCheckedDate = null;
-
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('popupSidebar').classList.remove('active');
+                document.getElementById('menuOverlay').classList.remove('active');
+            }
+        });
+        
         function checkAuth() {
-            const userJson = sessionStorage.getItem('currentUser');
-            if (!userJson) { window.location.href = 'login.html'; return null; }
-            return JSON.parse(userJson);
-        }
-
-        function calculateCurrentCounter(lastDate) {
-            if (!lastDate) return 0;
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            const lastAccident = parseDate(lastDate);
-            if (!lastAccident) return 0;
-            lastAccident.setHours(0, 0, 0, 0);
-            const diffDays = Math.floor((today - lastAccident) / (1000 * 60 * 60 * 24));
-            return diffDays >= 0 ? diffDays : 0;
-        }
-
-        function updateClock() {
-            const now = new Date();
-            const timeString = now.toLocaleTimeString('id-ID', { hour12: false });
-            const dateString = now.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
-            document.getElementById('clock').innerText = timeString;
-            document.getElementById('date-display').innerHTML = dateString;
-            
-            const todayDate = now.toDateString();
-            if (lastCheckedDate !== todayDate && lastCheckedDate !== null && lastAccidentDate) {
-                currentCounter = calculateCurrentCounter(lastAccidentDate);
-                document.getElementById('accident-counter').innerText = currentCounter;
+            if (!sessionStorage.getItem('currentUser')) {
+                window.location.href = 'login.html';
+                return null;
             }
-            lastCheckedDate = todayDate;
+            return JSON.parse(sessionStorage.getItem('currentUser'));
         }
-
-        async function loadZeroAccidentData() {
-            try {
-                const response = await fetch(ZERO_ACCIDENT_API);
-                const rawData = await response.json();
-                
-                if (!rawData || !Array.isArray(rawData)) {
-                    resetUI();
-                    return;
-                }
-
-                const validAccidents = rawData
-                    .filter(row => row.date && (row.Accident || row.acident))
-                    .map(row => ({ date: row.date, Accident: row.Accident || row.acident }));
-                
-                if (validAccidents.length > 0) {
-                    validAccidents.sort((a, b) => {
-                        const dateA = parseDate(a.date);
-                        const dateB = parseDate(b.date);
-                        if (!dateA && !dateB) return 0;
-                        if (!dateA) return 1;
-                        if (!dateB) return -1;
-                        return dateB - dateA;
-                    });
-                    
-                    const latest = validAccidents[0];
-                    lastAccidentDate = latest.date;
-                    currentCounter = calculateCurrentCounter(lastAccidentDate);
-                    
-                    document.getElementById('accident-counter').innerText = currentCounter;
-                    
-                    const formattedLastDate = parseDate(lastAccidentDate)?.toLocaleDateString('id-ID', { 
-                        day: 'numeric', month: 'long', year: 'numeric' 
-                    }) || lastAccidentDate;
-                    document.getElementById('last-accident-date').innerText = formattedLastDate;
-                } else {
-                    resetUI();
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                resetUI();
+        
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+        
+        function updateClock() {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('id-ID', {hour12:false});
+            const todayDateSpan = document.getElementById('today-date');
+            if (todayDateSpan) {
+                todayDateSpan.innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'short'});
             }
         }
         
-        function resetUI() {
-            lastAccidentDate = null;
-            currentCounter = 0;
-            document.getElementById('accident-counter').innerText = '0';
-            document.getElementById('last-accident-date').innerText = 'Never';
+        // ==================== GOOGLE SHEET CONFIG ====================
+        const SHEET_ID = "1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0";
+        const PROD_DATA_SHEET = "produksi";
+        const TARGET_SHEET = "target_produksi";
+        const PUBLISHED_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5OQDenPkOPt21YBEb_Nq7JZZMbbw1dwKt1Ucyee95eno1SzlQ-tFTU1FwvpyAp9mQg6SOEy_1kB8L/pubhtml";
+        
+        const RFQ_API = `https://opensheet.elk.sh/${SHEET_ID}/RFQ`;
+        const EVENT_API = `https://opensheet.elk.sh/${SHEET_ID}/event`;
+        
+        const DIVISI_LIST = ["Double Header", "2D3B", "rolling", "Furnace", "Plating"];
+        const BULAN_LIST = ["Jan-26", "Feb-26", "Mar-26", "Apr-26", "May-26", "Jun-26"];
+        
+        let salesChart = null, rfqChart = null;
+        let prodCharts = {};
+        let produksiData = [], targetData = {};
+        
+        const machineToDivision = {
+            "YH1538": "Double Header", "YH1030": "Double Header", "H20": "Double Header",
+            "N2308": "2D3B", "PF630": "2D3B", "N2310": "2D3B", "HBF": "2D3B", "HBP": "2D3B",
+            "CBF": "2D3B", "ZH30": "2D3B", "Iwen": "2D3B", "YH1576": "2D3B", "YH2076": "2D3B",
+            "YH1552": "2D3B", "MINTANG": "2D3B", "KHC": "2D3B",
+            "AS": "rolling", "TS": "rolling", "ZR1.5": "rolling", "ZR1.5H": "rolling",
+            "HRDM": "rolling", "SR12": "rolling", "CHUNZU": "rolling", "HRCM": "rolling",
+            "NR430": "rolling", "NR875": "rolling", "JSR3": "rolling", "KHA": "rolling",
+            "DPR8L": "rolling", "CTR": "rolling", "THI 4R": "rolling", "CPR12": "rolling",
+            "HRA M-01": "rolling", "USR2": "rolling", "DR125": "rolling",
+            "M300": "Furnace",
+            "Line Preatreatment": "Plating", "Line Zinc": "Plating", "Line Backing": "Plating", "Line CHromating": "Plating"
+        };
+        
+        function detectDivision(machineName) {
+            if (!machineName) return "Unknown";
+            for (let [key, division] of Object.entries(machineToDivision)) {
+                if (machineName.includes(key)) return division;
+            }
+            return "Unknown";
         }
-
-        async function loadTodayEvents() {
+        
+        function formatRupiahShort(num) {
+            if (num >= 1000000000) return (num/1000000000).toFixed(1)+'M';
+            if (num >= 1000000) return (num/1000000).toFixed(1)+'Jt';
+            if (num >= 1000) return (num/1000).toFixed(0)+'Rb';
+            return num.toString();
+        }
+        function formatRupiahFull(num) {
+            return new Intl.NumberFormat('id-ID', { style:'currency', currency:'IDR', minimumFractionDigits:0 }).format(num);
+        }
+        
+        async function fetchCSV(url) {
             try {
-                const response = await fetch(EVENT_API);
-                const events = await response.json();
-                const today = new Date();
-                const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-                const todayEvents = events.filter(e => e.date === todayStr);
-                
-                const todayDateSpan = document.getElementById('today-date');
-                todayDateSpan.innerText = today.toLocaleDateString('id-ID', { day:'numeric', month:'long' });
-                
-                const container = document.getElementById('today-events-list');
-                if (todayEvents.length === 0) {
-                    container.innerHTML = '<div class="text-center text-slate-500 py-4">📭 No events scheduled for today</div>';
-                    return;
+                const resp = await fetch(url, { cache: 'no-cache' });
+                if (!resp.ok) throw new Error();
+                const text = await resp.text();
+                const lines = text.trim().split(/\r?\n/);
+                if (lines.length < 2) return [];
+                const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim().toLowerCase());
+                const result = [];
+                for (let i = 1; i < lines.length; i++) {
+                    const values = lines[i].split(',').map(v => v.replace(/"/g, '').trim());
+                    const row = {};
+                    headers.forEach((h, idx) => { row[h] = values[idx] || ''; });
+                    result.push(row);
                 }
-                container.innerHTML = todayEvents.map(event => {
-                    let icon = event.type === 'audit' ? '🔍' : (event.type === 'visit' ? '👥' : '📌');
-                    return `<div class="event-card">
-                        <div class="flex items-center gap-2">
-                            <span class="text-cyan-600">${icon}</span>
-                            <span class="event-title text-gray-800">${event.title}</span>
-                        </div>
-                        <div class="event-type mt-1">${event.type}</div>
-                    </div>`;
-                }).join('');
-            } catch (error) {
-                console.error('Events error:', error);
-            }
+                return result;
+            } catch(e) { return []; }
         }
-
-        async function loadAuditSummary() {
-            try {
-                const response = await fetch(AUDIT_API);
-                const audits = await response.json();
-                const open = audits.filter(a => a.status === 'OPEN').length;
-                const progress = audits.filter(a => a.status === 'IN PROGRESS').length;
-                document.getElementById('open-findings').innerText = open;
-                document.getElementById('progress-findings').innerText = progress;
-                document.getElementById('total-active').innerText = open + progress;
-            } catch (error) {
-                console.error('Audit error:', error);
+        
+        async function loadProduksiFromSheet() {
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${PROD_DATA_SHEET}`;
+            const data = await fetchCSV(url);
+            if (data.length > 0) {
+                produksiData = data.map(row => ({
+                    tanggal: row.tanggal || row.date || '',
+                    mesin: row.mesin || row.machine || '',
+                    qty: parseInt(row.qty || row.quantity || 0),
+                    divisi: row.divisi || detectDivision(row.mesin || row.machine || '')
+                })).filter(item => item.qty > 0 && item.tanggal);
+            } else {
+                produksiData = [
+                    { tanggal: "2026-01-15", mesin: "YH1538 - 1", qty: 12500, divisi: "Double Header" },
+                    { tanggal: "2026-01-15", mesin: "N2308 - 1", qty: 8000, divisi: "2D3B" },
+                    { tanggal: "2026-01-16", mesin: "ZR1.5 - 1", qty: 15000, divisi: "rolling" },
+                    { tanggal: "2026-01-16", mesin: "M300", qty: 7500, divisi: "Furnace" },
+                    { tanggal: "2026-01-17", mesin: "Line Zinc", qty: 9000, divisi: "Plating" },
+                    { tanggal: "2026-02-10", mesin: "YH1030 - 2", qty: 11000, divisi: "Double Header" }
+                ];
             }
+            return produksiData;
         }
-
-        async function loadRFQChart() {
+        
+        async function loadTargetFromSheet() {
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${TARGET_SHEET}`;
+            const data = await fetchCSV(url);
+            DIVISI_LIST.forEach(div => { targetData[div] = {}; BULAN_LIST.forEach(b => targetData[div][b] = 0); });
+            if (data.length > 0) {
+                data.forEach(row => {
+                    const bulan = row.bulan || row.month || '';
+                    DIVISI_LIST.forEach(div => {
+                        let val = 0;
+                        for (let [key, value] of Object.entries(row)) {
+                            if (key.toLowerCase() === div.toLowerCase() || key.toLowerCase().replace(/ /g, '_') === div.toLowerCase()) {
+                                val = parseInt(value) || 0; break;
+                            }
+                        }
+                        if (val > 0 && bulan) targetData[div][bulan] = val;
+                    });
+                });
+            } else {
+                DIVISI_LIST.forEach(div => {
+                    BULAN_LIST.forEach(bulan => {
+                        if (div === "Double Header") targetData[div][bulan] = 25000;
+                        else if (div === "2D3B") targetData[div][bulan] = 20000;
+                        else if (div === "rolling") targetData[div][bulan] = 30000;
+                        else if (div === "Furnace") targetData[div][bulan] = 15000;
+                        else if (div === "Plating") targetData[div][bulan] = 18000;
+                    });
+                });
+            }
+            return targetData;
+        }
+        
+        // ==================== SALES CHART ====================
+        async function loadSalesData() {
             try {
-                const response = await fetch(RFQ_API);
-                const data = await response.json();
-                if (!data || data.length === 0) return;
-                
-                const months = [];
-                const continueData = [];
-                const taData = [];
-                const declineData = [];
-                const noProgresData = [];
-                
-                for (let row of data) {
-                    const month = row["month"] || row["Month"] || "";
-                    if (month) {
-                        months.push(month);
-                        continueData.push(parseInt(row["continue"] || 0));
-                        taData.push(parseInt(row["technical assistance"] || 0));
-                        declineData.push(parseInt(row["decline"] || 0));
-                        noProgresData.push(parseInt(row["no progres"] || 0));
+                const match = PUBLISHED_SHEET_URL.match(/\/d\/e\/([^\/]+)\//);
+                if (match) {
+                    const csvUrl = `https://docs.google.com/spreadsheets/d/e/${match[1]}/pub?gid=814757349&single=true&output=csv`;
+                    const resp = await fetch(csvUrl, { cache: 'no-cache' });
+                    if (resp.ok) {
+                        const text = await resp.text();
+                        const lines = text.trim().split(/\r?\n/);
+                        if (lines.length > 1) {
+                            const months = [], sales = [];
+                            for (let i = 1; i < lines.length && i <= 12; i++) {
+                                const parts = lines[i].split(',');
+                                if (parts.length >= 2) {
+                                    let month = parts[0].replace(/"/g, '').trim();
+                                    let sale = parseInt(parts[1].replace(/"/g, '').replace(/\./g, ''));
+                                    if (month && !isNaN(sale)) { months.push(month); sales.push(sale); }
+                                }
+                            }
+                            if (months.length) {
+                                const total = sales.reduce((a,b)=>a+b,0);
+                                document.getElementById('sales-total').innerHTML = formatRupiahShort(total);
+                                document.getElementById('sales-avg').innerHTML = formatRupiahShort(total/sales.length);
+                                document.getElementById('sales-max').innerHTML = formatRupiahShort(Math.max(...sales));
+                                renderSalesChart(months, sales);
+                                document.getElementById('sales-last-update').innerHTML = new Date().toLocaleTimeString('id-ID');
+                                return;
+                            }
+                        }
                     }
                 }
+                throw new Error("Fallback");
+            } catch(e) {
+                const fallbackMonths = ['Jan-26', 'Feb-26', 'Mar-26', 'Apr-26', 'Mei-26', 'Jun-26'];
+                const fallbackSales = [15000000, 25000000, 18000000, 22000000, 21000000, 23000000];
+                document.getElementById('sales-total').innerHTML = formatRupiahShort(fallbackSales.reduce((a,b)=>a+b,0));
+                document.getElementById('sales-avg').innerHTML = formatRupiahShort(20000000);
+                document.getElementById('sales-max').innerHTML = formatRupiahShort(25000000);
+                renderSalesChart(fallbackMonths, fallbackSales);
+                document.getElementById('sales-last-update').innerHTML = new Date().toLocaleTimeString('id-ID') + " (Demo)";
+            }
+        }
+        
+        function renderSalesChart(labels, data) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            if (salesChart) salesChart.destroy();
+            const maxValue = Math.max(...data);
+            const suggestedMax = Math.ceil(maxValue * 1.15);
+            salesChart = new Chart(ctx, {
+                type: 'bar',
+                data: { labels: labels, datasets: [
+                    { label: 'Penjualan (Rupiah)', type: 'bar', data: data, backgroundColor: '#0284C7', borderRadius: 8, barPercentage: 0.65 },
+                    { label: 'Trend', type: 'line', data: data, borderColor: '#22c55e', borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#22c55e', pointBorderColor: '#fff', fill: true, tension: 0.3 }
+                ]},
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { font: { size: 10 } } }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${formatRupiahFull(ctx.raw)}` } } }, scales: { x: { ticks: { font: { size: 9 }, rotation: 45 } }, y: { ticks: { callback: v => formatRupiahShort(v), font: { size: 9 } }, beginAtZero: true, suggestedMax: suggestedMax, title: { display: true, text: 'Jumlah (Rupiah)', font: { size: 9 } } } } }
+            });
+            const originalDraw = salesChart.draw;
+            salesChart.draw = function() {
+                originalDraw.apply(this, arguments);
+                const ctx = this.ctx;
+                this.data.datasets.forEach((dataset, i) => {
+                    if (dataset.type === 'bar') {
+                        const meta = this.getDatasetMeta(i);
+                        if (meta && meta.data) {
+                            meta.data.forEach((element, index) => {
+                                const value = dataset.data[index];
+                                if (value > 0 && element) {
+                                    ctx.save();
+                                    ctx.font = 'bold 9px "Inter"';
+                                    ctx.fillStyle = '#1e293b';
+                                    ctx.textAlign = 'center';
+                                    const pos = element.tooltipPosition();
+                                    if (pos) ctx.fillText(formatRupiahShort(value), pos.x, pos.y - 8);
+                                    ctx.restore();
+                                }
+                            });
+                        }
+                    }
+                });
+            };
+            salesChart.update();
+        }
+        
+        // ==================== PRODUCTION ====================
+        function getProductionByDivision(divisi) {
+            const result = {};
+            BULAN_LIST.forEach(b => result[b] = 0);
+            produksiData.forEach(item => {
+                if (item.divisi === divisi && item.tanggal) {
+                    const bulanMap = { '01': 'Jan-26', '02': 'Feb-26', '03': 'Mar-26', '04': 'Apr-26', '05': 'May-26', '06': 'Jun-26' };
+                    const bulan = bulanMap[item.tanggal.substring(5,7)];
+                    if (bulan && result[bulan] !== undefined) result[bulan] += item.qty;
+                }
+            });
+            return result;
+        }
+        
+        function renderProductionCharts() {
+            const chartIds = ["dh", "2d3b", "rolling", "furnace", "plating"];
+            const divisiMap = { "dh": "Double Header", "2d3b": "2D3B", "rolling": "rolling", "furnace": "Furnace", "plating": "Plating" };
+            
+            for (let i = 0; i < chartIds.length; i++) {
+                const id = chartIds[i];
+                const divisi = divisiMap[id];
+                const production = getProductionByDivision(divisi);
+                const realData = BULAN_LIST.map(b => production[b]);
+                const targetDataArr = BULAN_LIST.map(b => targetData[divisi]?.[b] || 0);
+                const totalReal = realData.reduce((a,b)=>a+b,0);
+                const totalTarget = targetDataArr.reduce((a,b)=>a+b,0);
                 
-                renderRFQChart(months, continueData, taData, declineData, noProgresData);
-            } catch (error) {
-                console.error("RFQ Chart error:", error);
+                document.getElementById(`total-${id}`).innerHTML = totalReal.toLocaleString() + " PCS";
+                document.getElementById(`target-${id}`).innerHTML = totalTarget.toLocaleString() + " PCS";
+                document.getElementById(`real-${id}`).innerHTML = totalReal.toLocaleString() + " PCS";
+                
+                const ctx = document.getElementById(`chart-${id}`).getContext('2d');
+                if (prodCharts[divisi]) prodCharts[divisi].destroy();
+                const allData = [...realData, ...targetDataArr];
+                const maxValue = Math.max(...allData);
+                const suggestedMax = maxValue === 0 ? 10000 : Math.ceil(maxValue * 1.15);
+                
+                prodCharts[divisi] = new Chart(ctx, {
+                    type: 'bar',
+                    data: { labels: BULAN_LIST, datasets: [
+                        { label: 'Real Produksi', type: 'bar', data: realData, backgroundColor: '#0284C7', borderRadius: 6, barPercentage: 0.6 },
+                        { label: 'Target', type: 'line', data: targetDataArr, borderColor: '#F59E0B', borderWidth: 3, borderDash: [8,6], pointRadius: 0, fill: false, tension: 0 }
+                    ]},
+                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { font: { size: 9 }, usePointStyle: false, boxWidth: 20 } }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toLocaleString()} PCS` } } }, scales: { y: { beginAtZero: true, suggestedMax: suggestedMax, ticks: { font: { size: 8 }, callback: v => v.toLocaleString() }, title: { display: true, text: 'Jumlah (PCS)', font: { size: 8 } } }, x: { ticks: { font: { size: 8 }, rotation: 45 } } } }
+                });
+                
+                const originalDraw = prodCharts[divisi].draw;
+                prodCharts[divisi].draw = function() {
+                    originalDraw.apply(this, arguments);
+                    const ctx = this.ctx;
+                    this.data.datasets.forEach((dataset, i) => {
+                        if (dataset.type === 'bar') {
+                            const meta = this.getDatasetMeta(i);
+                            if (meta && meta.data) {
+                                meta.data.forEach((element, index) => {
+                                    const value = dataset.data[index];
+                                    if (value > 0 && element) {
+                                        ctx.save();
+                                        ctx.font = 'bold 9px "Inter"';
+                                        ctx.fillStyle = '#1e293b';
+                                        ctx.textAlign = 'center';
+                                        const pos = element.tooltipPosition();
+                                        if (pos) ctx.fillText(value.toLocaleString(), pos.x, pos.y - 6);
+                                        ctx.restore();
+                                    }
+                                });
+                            }
+                        }
+                    });
+                };
+                prodCharts[divisi].update();
+            }
+            document.getElementById('prod-last-update').innerHTML = new Date().toLocaleTimeString('id-ID');
+        }
+        
+        async function loadProductionData() {
+            await loadProduksiFromSheet();
+            await loadTargetFromSheet();
+            renderProductionCharts();
+        }
+        
+        // ==================== RFQ CHART ====================
+        async function loadRFQChart() {
+            try {
+                const resp = await fetch(RFQ_API);
+                const data = await resp.json();
+                if (data && data.length > 0) {
+                    const months = [], cont = [], ta = [], dec = [], np = [];
+                    for (let row of data) {
+                        const month = row.month || row.Month || '';
+                        if (month) {
+                            months.push(month);
+                            cont.push(parseInt(row.continue || 0));
+                            ta.push(parseInt(row["technical assistance"] || 0));
+                            dec.push(parseInt(row.decline || 0));
+                            np.push(parseInt(row["no progres"] || 0));
+                        }
+                    }
+                    renderRFQChart(months, cont, ta, dec, np);
+                } else {
+                    renderRFQChart(["Jan-26","Feb-26","Mar-26","Apr-26","May-26"], [17,4,6,11,11], [3,3,4,7,2], [11,0,3,2,14], [0,5,0,7,47]);
+                }
+            } catch(e) {
+                renderRFQChart(["Jan-26","Feb-26","Mar-26","Apr-26","May-26"], [17,4,6,11,11], [3,3,4,7,2], [11,0,3,2,14], [0,5,0,7,47]);
             }
         }
         
         function renderRFQChart(labels, continueData, taData, declineData, noProgresData) {
             const ctx = document.getElementById('rfqChart').getContext('2d');
-            if (chart) chart.destroy();
-            
-            chart = new Chart(ctx, {
+            if (rfqChart) rfqChart.destroy();
+            const allData = [...continueData, ...taData, ...declineData, ...noProgresData];
+            const maxValue = Math.max(...allData);
+            const suggestedMax = maxValue === 0 ? 20 : Math.ceil(maxValue * 1.15);
+            rfqChart = new Chart(ctx, {
                 type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'Continue', data: continueData, backgroundColor: '#22c55e', borderRadius: 4, barPercentage: 0.7 },
-                        { label: 'Technical Assistance', data: taData, backgroundColor: '#3b82f6', borderRadius: 4, barPercentage: 0.7 },
-                        { label: 'Decline', data: declineData, backgroundColor: '#ef4444', borderRadius: 4, barPercentage: 0.7 },
-                        { label: 'No Progres', data: noProgresData, backgroundColor: '#9ca3af', borderRadius: 4, barPercentage: 0.7 }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { 
-                            position: 'top',
-                            labels: { color: '#475569', font: { size: 10 }, usePointStyle: true, boxWidth: 8 }
-                        },
-                        tooltip: {
-                            backgroundColor: '#1e293b',
-                            titleColor: '#0284C7',
-                            bodyColor: 'white'
-                        }
-                    },
-                    scales: {
-                        x: { ticks: { color: '#64748b', font: { size: 9 }, rotation: 45 }, grid: { color: '#E5E7EB' } },
-                        y: { ticks: { color: '#64748b', stepSize: 5, font: { size: 9 } }, grid: { color: '#E5E7EB' }, beginAtZero: true }
-                    }
-                }
+                data: { labels: labels, datasets: [
+                    { label: 'Continue', data: continueData, backgroundColor: '#22c55e', borderRadius: 6, barPercentage: 0.7 },
+                    { label: 'Technical Assistance', data: taData, backgroundColor: '#3b82f6', borderRadius: 6, barPercentage: 0.7 },
+                    { label: 'Decline', data: declineData, backgroundColor: '#ef4444', borderRadius: 6, barPercentage: 0.7 },
+                    { label: 'No Progres', data: noProgresData, backgroundColor: '#9ca3af', borderRadius: 6, barPercentage: 0.7 }
+                ]},
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { font: { size: 8 } } }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}` } } }, scales: { x: { ticks: { font: { size: 8 }, rotation: 45 } }, y: { ticks: { stepSize: Math.ceil(suggestedMax / 6), font: { size: 8 } }, beginAtZero: true, suggestedMax: suggestedMax, title: { display: true, text: 'Jumlah RFQ', font: { size: 8 } } } } }
             });
-            
-            // Plugin untuk angka di atas bar
-            const originalDraw = chart.draw;
-            chart.draw = function() {
+            const originalDraw = rfqChart.draw;
+            rfqChart.draw = function() {
                 originalDraw.apply(this, arguments);
                 const ctx = this.ctx;
                 this.data.datasets.forEach((dataset, i) => {
                     const meta = this.getDatasetMeta(i);
-                    if (!meta.hidden) {
+                    if (meta && meta.data) {
                         meta.data.forEach((element, index) => {
                             const value = dataset.data[index];
-                            if (value > 0) {
+                            if (value > 0 && element) {
                                 ctx.save();
                                 ctx.font = 'bold 9px "Inter"';
-                                ctx.fillStyle = '#475569';
+                                ctx.fillStyle = '#1e293b';
                                 ctx.textAlign = 'center';
-                                ctx.textBaseline = 'bottom';
-                                const position = element.tooltipPosition();
-                                ctx.fillText(value, position.x, position.y - 3);
+                                const pos = element.tooltipPosition();
+                                if (pos) ctx.fillText(value, pos.x, pos.y - 6);
                                 ctx.restore();
                             }
                         });
                     }
                 });
             };
-            chart.update();
-        }
-
-        function logout() { 
-            sessionStorage.removeItem('currentUser'); 
-            window.location.href = 'login.html'; 
+            rfqChart.update();
         }
         
-        // ==================== INITIALIZATION ====================
-        const user = checkAuth();
+        // ==================== TODAY'S EVENTS ====================
+        async function loadTodayEvents() {
+            try {
+                const resp = await fetch(EVENT_API);
+                const events = await resp.json();
+                const today = new Date();
+                const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+                const todayEvents = events.filter(e => e.date === todayStr);
+                const container = document.getElementById('today-events-list');
+                if (todayEvents.length === 0) { container.innerHTML = '<div class="text-center text-slate-500 py-4">📭 No events today</div>'; return; }
+                container.innerHTML = todayEvents.map(e => `<div class="event-card"><div class="flex gap-2"><span class="text-cyan-600 text-base">${e.type === 'audit' ? '🔍' : '👥'}</span><span class="font-medium">${e.title}</span></div><div class="text-[9px] text-slate-400 mt-0.5">${e.type} - ${e.time || 'All day'}</div></div>`).join('');
+            } catch(e) {
+                document.getElementById('today-events-list').innerHTML = `<div class="event-card"><div class="flex gap-2"><span class="text-cyan-600">🔍</span><span class="font-medium">Audit Quality Control</span></div><div class="text-[9px] text-slate-400">audit - 10:00</div></div>
+                <div class="event-card"><div class="flex gap-2"><span class="text-cyan-600">👥</span><span class="font-medium">Visit Customer</span></div><div class="text-[9px] text-slate-400">visit - 13:30</div></div>`;
+            }
+        }
         
+        // ==================== SUB SLIDER ====================
+        let subCurrentSlide = 0;
+        const subTotalSlides = 5;
+        let subAutoInterval = null;
+        
+        function updateSubSlider() {
+            const wrapper = document.getElementById('subSliderWrapper');
+            if (wrapper) wrapper.style.transform = `translateX(-${subCurrentSlide * 100}%)`;
+            const dots = document.querySelectorAll('.sub-slider-dot');
+            dots.forEach((dot, idx) => { if (idx === subCurrentSlide) dot.classList.add('active'); else dot.classList.remove('active'); });
+            resetSubAutoSlide();
+        }
+        function nextSubSlide() { subCurrentSlide = (subCurrentSlide + 1) % subTotalSlides; updateSubSlider(); }
+        function prevSubSlide() { subCurrentSlide = (subCurrentSlide - 1 + subTotalSlides) % subTotalSlides; updateSubSlider(); }
+        function goToSubSlide(idx) { subCurrentSlide = idx; updateSubSlider(); }
+        
+        function createSubDots() {
+            const container = document.getElementById('subSliderDots');
+            if (!container) return;
+            container.innerHTML = '';
+            for (let i = 0; i < subTotalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'sub-slider-dot';
+                if (i === 0) dot.classList.add('active');
+                dot.onclick = () => goToSubSlide(i);
+                container.appendChild(dot);
+            }
+        }
+        function startSubAutoSlide() { if (subAutoInterval) clearInterval(subAutoInterval); subAutoInterval = setInterval(() => nextSubSlide(), 12000); }
+        function resetSubAutoSlide() { if (subAutoInterval) { clearInterval(subAutoInterval); startSubAutoSlide(); } }
+        
+        // ==================== INIT ====================
+        checkAuth();
         renderMenu();
-        
-        loadZeroAccidentData();
-        loadTodayEvents();
-        loadAuditSummary();
-        loadRFQChart();
-        
-        setInterval(updateClock, 1000);
-        setInterval(() => {
-            loadZeroAccidentData();
-            loadTodayEvents();
-            loadAuditSummary();
-            loadRFQChart();
-        }, 10000);
         updateClock();
+        setInterval(updateClock, 1000);
+        
+        createSubDots();
+        startSubAutoSlide();
+        
+        loadSalesData();
+        loadProductionData();
+        loadRFQChart();
+        loadTodayEvents();
+        
+        setInterval(() => {
+            loadSalesData();
+            loadProductionData();
+            loadRFQChart();
+            loadTodayEvents();
+        }, 30000);
     </script>
 </body>
 </html>

@@ -3,31 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
-  <title>RFQ Monitoring - NITTO SEIKO</title>
+  <title>Design Review Summary - NITTO SEIKO</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { 
-      background: #FFFFFF;
+      background: #F1F5F9;
       font-family: 'Inter', system-ui, sans-serif;
       overflow: hidden;
       height: 100vh;
       width: 100vw;
     }
     
-    /* Responsif Font Size */
-    html { font-size: 16px; }
-    @media (min-width: 1920px) { html { font-size: 18px; } }
-    @media (max-width: 1366px) { html { font-size: 15px; } }
-    @media (max-width: 1024px) { html { font-size: 14px; } }
-    @media (max-width: 768px) { html { font-size: 12px; } }
+    /* ========== OPTIMASI KHUSUS TV 50-55 INCH ========== */
+    html { font-size: 14px; }
     
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    /* TV 50 inch (1920x1080) */
+    @media (min-width: 1920px) and (max-width: 2559px) {
+      html { font-size: 16px; }
+      body { transform: scale(1); }
+    }
+    
+    /* TV 55 inch (2560x1440) */
+    @media (min-width: 2560px) and (max-width: 3839px) {
+      html { font-size: 18px; }
+      body { transform: scale(1); }
+    }
+    
+    /* Fallback untuk layar lebih kecil */
+    @media (max-width: 1919px) {
+      html { font-size: 12px; }
+      body { transform: scale(0.95); transform-origin: top left; width: 105.26%; }
+    }
+    
+    ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
     ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
     
-    /* Stat Card - White Theme */
+    /* Stat Card */
     .stat-card { 
       background: #FFFFFF;
       transition: all 0.3s ease; 
@@ -37,7 +51,7 @@
     }
     .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #0284C7; }
     
-    /* POP UP SIDEBAR MENU - White Theme */
+    /* SIDEBAR MENU */
     .menu-overlay {
       position: fixed;
       top: 0;
@@ -63,11 +77,10 @@
       transition: left 0.3s ease;
       display: flex;
       flex-direction: column;
-      box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
     }
     .popup-sidebar.active { left: 0; }
     
-    .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; margin-bottom: 0.8rem; }
+    .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; }
     .menu-item { margin: 0.2rem 0.6rem; }
     .menu-button {
       display: flex;
@@ -75,69 +88,57 @@
       gap: 0.6rem;
       padding: 0.6rem 0.8rem;
       border-radius: 0.6rem;
-      cursor: pointer;
-      transition: all 0.2s ease;
       color: #475569;
-      background: transparent;
       text-decoration: none;
       font-size: 0.85rem;
+      transition: all 0.2s;
     }
     .menu-button:hover { background: #F0F9FF; color: #0284C7; transform: translateX(5px); }
     .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
     .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
     
-    .logout-btn {
-      margin-top: auto;
-      margin-bottom: 1rem;
-      margin-left: 0.6rem;
-      margin-right: 0.6rem;
+    /* LOGOUT BUTTON - SATU DI SIDEBAR */
+    .sidebar-logout-btn {
+      margin: 1rem;
       display: flex;
       align-items: center;
       gap: 0.6rem;
       padding: 0.6rem 0.8rem;
       border-radius: 0.6rem;
       cursor: pointer;
-      transition: all 0.2s ease;
-      color: #475569;
       border-top: 1px solid #E5E7EB;
-      font-size: 0.85rem;
+      transition: all 0.2s;
+      color: #475569;
     }
-    .logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
-    .status-online { text-align: center; padding: 0.8rem; border-top: 1px solid #E5E7EB; font-size: 0.65rem; color: #64748B; }
+    .sidebar-logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
     
-    /* Tombol Hamburger */
     .hamburger-btn {
       background: #F0F9FF;
       border: 1px solid #0284C7;
-      border-radius: 0.6rem;
-      padding: 0.4rem 0.6rem;
+      border-radius: 0.5rem;
+      padding: 0.3rem 0.6rem;
       cursor: pointer;
       transition: all 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
     }
-    .hamburger-btn:hover { background: #0284C7; transform: scale(1.02); }
+    .hamburger-btn:hover { background: #0284C7; }
     .hamburger-btn:hover span { color: white; }
-    .hamburger-btn span { color: #1E293B; }
     
-    /* Running Text */
     .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
-    .running-text marquee { font-size: 0.75rem; font-weight: 600; letter-spacing: 1px; color: #0284C7; padding: 0.25rem 0; }
+    .running-text marquee { font-size: 0.7rem; font-weight: 600; color: #0284C7; padding: 0.25rem 0; }
     
     .digital-clock { 
       font-family: 'Courier New', monospace; 
-      font-size: 1.2rem; 
       font-weight: 700; 
       background: #F8FAFC; 
-      padding: 0.3rem 0.8rem; 
-      border-radius: 0.6rem; 
-      letter-spacing: 2px; 
+      padding: 0.25rem 0.75rem; 
+      border-radius: 0.5rem; 
       border: 1px solid #E5E7EB; 
       color: #0284C7;
+      font-size: 1rem;
     }
     
-    /* Dashboard Layout */
+    .text-brand { color: #1A63F6; }
+    
     .dashboard-container {
       display: flex;
       flex-direction: column;
@@ -158,15 +159,63 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
-      padding: 0.8rem;
+      padding: 0.6rem;
     }
     
+    /* CHART CONTAINER - LEBIH BESAR */
     .chart-container {
-      background: #F8FAFC;
-      border-radius: 0.8rem;
+      background: #FFFFFF;
+      border-radius: 1rem;
       border: 1px solid #E5E7EB;
       padding: 1rem;
-      height: 450px;
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .chart-canvas {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+    }
+    
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.6rem;
+      margin-bottom: 0.8rem;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 0.5rem;
+      background: white;
+      border-radius: 0.6rem;
+      border: 1px solid #E5E7EB;
+    }
+    .stat-label {
+      font-size: 0.6rem;
+      color: #64748B;
+    }
+    .stat-value {
+      font-size: 1.2rem;
+      font-weight: bold;
+      font-family: 'Courier New', monospace;
+    }
+    
+    /* TV Ukuran Lebih Besar */
+    @media (min-width: 1920px) {
+      .stat-value { font-size: 1.4rem; }
+      .stat-label { font-size: 0.7rem; }
+      .digital-clock { font-size: 1.1rem; }
+    }
+    
+    @media (min-width: 2560px) {
+      .stat-value { font-size: 1.6rem; }
+      .stat-label { font-size: 0.8rem; }
+      .digital-clock { font-size: 1.3rem; }
     }
   </style>
 </head>
@@ -183,19 +232,17 @@
           <span class="text-white text-sm font-bold">NS</span>
         </div>
         <div>
-          <h1 class="text-xs font-bold text-[#1A63F6]">NITTO SEIKO</h1>
-          <p class="text-slate-500 text-[7px]">Plant 2</p>
+          <h1 class="text-sm font-bold text-brand">NITTO SEIKO</h1>
+          <p class="text-slate-500 text-[8px]">Plant 2</p>
         </div>
       </div>
     </div>
-    
-    <!-- Menu akan diisi oleh JavaScript berdasarkan role -->
     <div id="menu-container"></div>
-    
-    <div class="status-online">
-      <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse mx-auto"></div>
-      <span>System Online</span>
+    <div class="sidebar-logout-btn" onclick="logout()">
+      <span class="menu-icon">🚪</span>
+      <span>Logout</span>
     </div>
+    <div class="text-center p-2 text-slate-400 text-[10px] border-t mt-1">System Online</div>
   </div>
 
   <!-- MAIN CONTENT -->
@@ -204,27 +251,25 @@
     <!-- TOP BAR -->
     <div class="bg-white border-b border-gray-200 px-3 py-1.5 flex justify-between items-center shrink-0">
       <div class="flex items-center gap-2">
-        <div class="hamburger-btn" onclick="toggleMenu()">
-          <span>☰</span>
-        </div>
+        <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-sm">☰</span></div>
         <div>
-          <h1 class="text-xs md:text-sm font-bold text-[#1A63F6]">PT NITTO ALAM INDONESIA</h1>
-          <p class="text-slate-500 text-[7px]">Plant 2 - Quality Control System</p>
+          <h1 class="text-sm font-bold text-brand">PT NITTO ALAM INDONESIA</h1>
+          <p class="text-slate-500 text-[8px]">Plant 2 - Design Review Summary</p>
         </div>
       </div>
       <div class="flex items-center gap-2">
         <div class="digital-clock" id="clock">00:00:00</div>
-        <div class="flex items-center gap-1 bg-green-50 px-1.5 py-0.5 rounded-lg border border-green-200">
-          <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
-          <span class="text-green-600 text-[6px] font-bold uppercase">LIVE</span>
+        <div class="flex items-center gap-1 bg-green-50 px-2 py-0.5 rounded-lg">
+          <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+          <span class="text-green-600 text-[8px] font-bold">LIVE</span>
         </div>
       </div>
     </div>
 
     <!-- RUNNING TEXT -->
     <div class="running-text shrink-0">
-      <marquee behavior="scroll" direction="left" scrollamount="3">
-        🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | COMMITMENT TO QUALITY & EXCELLENCE | TARGET: WORLD CLASS MANUFACTURING
+      <marquee behavior="scroll" direction="left" scrollamount="2">
+        🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | DESIGN REVIEW SUMMARY MONITORING | COMMITMENT TO QUALITY & EXCELLENCE
       </marquee>
     </div>
 
@@ -233,73 +278,85 @@
       <div class="content-area">
         
         <!-- Header -->
-        <div class="mb-4">
-          <h1 class="text-lg font-bold text-[#1A63F6] flex items-center gap-2">
-            <span>📄</span> RFQ Monitoring
+        <div class="mb-2">
+          <h1 class="text-base font-bold text-brand flex items-center gap-2">
+            <span>📋</span> DESIGN REVIEW SUMMARY Monitoring
           </h1>
-          <p class="text-slate-500 text-[10px]">Data Request for Quotation per bulan (Live dari Google Sheet)</p>
+          <p class="text-slate-500 text-[9px]">Data Request for Quotation per bulan - Live dari Google Sheet</p>
         </div>
 
         <!-- Statistik Cards -->
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-4">
-          <div class="stat-card p-3 text-center">
-            <div class="text-[9px] text-slate-500">Total RFQ</div>
-            <div class="text-xl font-bold text-cyan-600" id="total-all">0</div>
+        <div class="stats-grid">
+          <div class="stat-item">
+            <div class="stat-label">Total RFQ</div>
+            <div class="stat-value text-cyan-600" id="total-all">0</div>
           </div>
-          <div class="stat-card p-3 text-center border border-green-200">
-            <div class="text-[9px] text-slate-500">✅ Continue</div>
-            <div class="text-xl font-bold text-green-600" id="total-continue">0</div>
+          <div class="stat-item" style="border-color: #22c55e;">
+            <div class="stat-label">✅ Continue</div>
+            <div class="stat-value text-green-600" id="total-continue">0</div>
           </div>
-          <div class="stat-card p-3 text-center border border-red-200">
-            <div class="text-[9px] text-slate-500">❌ Decline</div>
-            <div class="text-xl font-bold text-red-600" id="total-decline">0</div>
+          <div class="stat-item" style="border-color: #ef4444;">
+            <div class="stat-label">❌ Decline</div>
+            <div class="stat-value text-red-600" id="total-decline">0</div>
           </div>
-          <div class="stat-card p-3 text-center border border-blue-200">
-            <div class="text-[9px] text-slate-500">⚙️ Technical Assistance</div>
-            <div class="text-xl font-bold text-blue-600" id="total-ta">0</div>
+          <div class="stat-item" style="border-color: #3b82f6;">
+            <div class="stat-label">⚙️ Technical Assistance</div>
+            <div class="stat-value text-blue-600" id="total-ta">0</div>
           </div>
-          <div class="stat-card p-3 text-center border border-gray-200">
-            <div class="text-[9px] text-slate-500">📝 No Progres</div>
-            <div class="text-xl font-bold text-gray-500" id="total-np">0</div>
+          <div class="stat-item" style="border-color: #9ca3af;">
+            <div class="stat-label">📝 No Progres</div>
+            <div class="stat-value text-gray-500" id="total-np">0</div>
           </div>
         </div>
 
-        <!-- Bar Chart -->
+        <!-- Bar Chart - LEBIH BESAR -->
         <div class="chart-container">
-          <canvas id="rfqChart"></canvas>
+          <canvas id="rfqChart" class="chart-canvas"></canvas>
+        </div>
+        
+        <!-- Last Update Info -->
+        <div class="text-center mt-2">
+          <p id="last-update" class="text-slate-400 text-[8px]">Last update: --:--:--</p>
+          <p class="text-slate-400 text-[7px]">Auto refresh setiap 30 detik | Data live dari Google Sheet</p>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // ==================== ROLE-BASED MENU ====================
+    // ==================== KONFIGURASI MENU (ROLE-BASED) ====================
     const adminMenus = [
       { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
       { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
       { icon: "🏭", name: "Production", link: "production.html", active: false },
       { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-      { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: true }
+      { icon: "📋", name: "Design Review", link: "rfq.html", active: true },
+      { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
     ];
     
     const userMenus = [
       { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
-      { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false }
+      { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+      { icon: "📋", name: "Design Review", link: "rfq.html", active: true }
     ];
     
     function renderMenu() {
       const userJson = sessionStorage.getItem('currentUser');
-      if (!userJson) return;
+      if (!userJson) {
+        window.location.href = 'login.html';
+        return;
+      }
       
       const user = JSON.parse(userJson);
       const role = user.role || 'user';
       const menus = role === 'admin' ? adminMenus : userMenus;
+      const currentPage = window.location.pathname.split('/').pop() || 'rfq.html';
       
       const menuContainer = document.getElementById('menu-container');
       let menuHtml = '';
       
       menus.forEach(menu => {
-        const activeClass = menu.active ? 'active' : '';
+        const activeClass = menu.link === currentPage ? 'active' : '';
         menuHtml += `
           <div class="menu-item">
             <a href="${menu.link}" class="menu-button ${activeClass}">
@@ -310,20 +367,8 @@
         `;
       });
       
-      menuHtml += `
-        <div class="logout-btn" onclick="logout()">
-          <span class="menu-icon">🚪</span>
-          <span>Logout</span>
-        </div>
-      `;
-      
       menuContainer.innerHTML = menuHtml;
     }
-    
-    // ==================== KONFIGURASI ====================
-    const RFQ_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/RFQ";
-    
-    let chart = null;
     
     // ==================== MENU FUNCTIONS ====================
     function toggleMenu() {
@@ -333,7 +378,7 @@
       overlay.classList.toggle('active');
     }
     
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         const sidebar = document.getElementById('popupSidebar');
         const overlay = document.getElementById('menuOverlay');
@@ -347,11 +392,17 @@
     // ==================== AUTHENTICATION ====================
     function checkAuth() {
       const userJson = sessionStorage.getItem('currentUser');
-      if (!userJson) { window.location.href = 'login.html'; return null; }
+      if (!userJson) { 
+        window.location.href = 'login.html'; 
+        return null; 
+      }
       return JSON.parse(userJson);
     }
     
     const currentUser = checkAuth();
+    if (currentUser) {
+      renderMenu();
+    }
     
     function logout() {
       sessionStorage.removeItem('currentUser');
@@ -364,20 +415,34 @@
       document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', { hour12: false });
     }
     
+    function updateLastUpdate() {
+      const now = new Date();
+      document.getElementById('last-update').innerHTML = 'Last update: ' + now.toLocaleTimeString('id-ID', { hour12: false });
+    }
+    
     // ==================== AMBIL DATA DARI GOOGLE SHEET ====================
+    const RFQ_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/RFQ";
+    let chart = null;
+    
     async function loadRFQData() {
       try {
-        const response = await fetch(RFQ_API);
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const response = await fetch(RFQ_API, {
+          cache: 'no-cache',
+          headers: { 'Cache-Control': 'no-cache' }
+        });
+        
+        if (!response.ok) throw new Error('HTTP ' + response.status);
         const data = await response.json();
         
         console.log("Data RFQ dari sheet:", data);
         
         if (!data || data.length === 0) {
+          console.log("Data kosong");
+          useFallbackData();
           return;
         }
         
-        // Parse data berdasarkan header
+        // Parse data
         const months = [];
         const continueData = [];
         const taData = [];
@@ -390,13 +455,14 @@
         let totalDecline = 0;
         let totalNP = 0;
         
-        for (let row of data) {
-          const month = row["month"] || row["Month"] || row["MONTH"] || "";
-          const total = parseInt(row["total rfq"] || row["total"] || row["TOTAL"] || 0);
-          const continueVal = parseInt(row["continue"] || row["Continue"] || row["CONTINUE"] || 0);
-          const ta = parseInt(row["technical assistance"] || row["Technical Assistance"] || row["TECHNICAL ASSISTANCE"] || 0);
-          const decline = parseInt(row["decline"] || row["Decline"] || row["DECLINE"] || 0);
-          const np = parseInt(row["no progres"] || row["No Progres"] || row["NO PROGRES"] || 0);
+        for (let i = 0; i < data.length; i++) {
+          let row = data[i];
+          let month = row["month"] || row["Month"] || row["MONTH"] || "";
+          let total = parseInt(row["total rfq"] || row["total"] || row["TOTAL"] || row["total_rfq"] || 0);
+          let continueVal = parseInt(row["continue"] || row["Continue"] || row["CONTINUE"] || 0);
+          let ta = parseInt(row["technical assistance"] || row["technical_assistance"] || row["Technical Assistance"] || 0);
+          let decline = parseInt(row["decline"] || row["Decline"] || row["DECLINE"] || 0);
+          let np = parseInt(row["no progres"] || row["no_progres"] || row["No Progres"] || row["no progress"] || 0);
           
           if (month && month !== "") {
             months.push(month);
@@ -405,11 +471,11 @@
             declineData.push(decline);
             noProgresData.push(np);
             
-            totalRFQ += total;
-            totalContinue += continueVal;
-            totalTA += ta;
-            totalDecline += decline;
-            totalNP += np;
+            totalRFQ = totalRFQ + total;
+            totalContinue = totalContinue + continueVal;
+            totalTA = totalTA + ta;
+            totalDecline = totalDecline + decline;
+            totalNP = totalNP + np;
           }
         }
         
@@ -421,28 +487,112 @@
         document.getElementById('total-np').innerText = totalNP;
         
         // Update chart
-        renderChart(months, continueData, taData, declineData, noProgresData);
+        if (months.length > 0) {
+          renderChart(months, continueData, taData, declineData, noProgresData);
+        }
         
-      } catch (error) {
+        updateLastUpdate();
+        
+      } catch(error) {
         console.error("Error loading RFQ data:", error);
+        useFallbackData();
       }
     }
     
-    // ==================== BAR CHART ====================
+    // Data fallback
+    function useFallbackData() {
+      console.log("Menggunakan data fallback");
+      
+      var months = ['Jan-26', 'Feb-26', 'Mar-26', 'Apr-26', 'May-26', 'Jun-26', 'Jul-26', 'Aug-26', 'Sep-26', 'Oct-26', 'Nov-26', 'Dec-26'];
+      var continueData = [17, 4, 6, 11, 11, 0, 0, 0, 0, 0, 0, 0];
+      var taData = [3, 3, 4, 7, 2, 0, 0, 0, 0, 0, 0, 0];
+      var declineData = [11, 0, 3, 2, 14, 0, 0, 0, 0, 0, 0, 0];
+      var noProgresData = [0, 5, 0, 7, 47, 0, 0, 0, 0, 0, 0, 0];
+      var totalData = [31, 12, 13, 27, 74, 0, 0, 0, 0, 0, 0, 0];
+      
+      var totalRFQ = 0;
+      for (var i = 0; i < totalData.length; i++) {
+        totalRFQ = totalRFQ + totalData[i];
+      }
+      var totalContinue = 0;
+      for (var i = 0; i < continueData.length; i++) {
+        totalContinue = totalContinue + continueData[i];
+      }
+      var totalTA = 0;
+      for (var i = 0; i < taData.length; i++) {
+        totalTA = totalTA + taData[i];
+      }
+      var totalDecline = 0;
+      for (var i = 0; i < declineData.length; i++) {
+        totalDecline = totalDecline + declineData[i];
+      }
+      var totalNP = 0;
+      for (var i = 0; i < noProgresData.length; i++) {
+        totalNP = totalNP + noProgresData[i];
+      }
+      
+      document.getElementById('total-all').innerText = totalRFQ;
+      document.getElementById('total-continue').innerText = totalContinue;
+      document.getElementById('total-decline').innerText = totalDecline;
+      document.getElementById('total-ta').innerText = totalTA;
+      document.getElementById('total-np').innerText = totalNP;
+      
+      renderChart(months, continueData, taData, declineData, noProgresData);
+      updateLastUpdate();
+    }
+    
+    // ==================== BAR CHART YANG LEBIH BAGUS ====================
     function renderChart(labels, continueData, taData, declineData, noProgresData) {
-      const ctx = document.getElementById('rfqChart').getContext('2d');
+      var ctx = document.getElementById('rfqChart').getContext('2d');
       
       if (chart) chart.destroy();
+      
+      // Dynamic scale: cari max value dari semua dataset
+      var allData = continueData.concat(taData, declineData, noProgresData);
+      var maxValue = Math.max.apply(Math, allData);
+      var suggestedMax = (maxValue === 0) ? 20 : Math.ceil(maxValue * 1.15);
       
       chart = new Chart(ctx, {
         type: 'bar',
         data: {
           labels: labels,
           datasets: [
-            { label: 'Continue', data: continueData, backgroundColor: '#22c55e', borderRadius: 4, barPercentage: 0.7 },
-            { label: 'Technical Assistance', data: taData, backgroundColor: '#3b82f6', borderRadius: 4, barPercentage: 0.7 },
-            { label: 'Decline', data: declineData, backgroundColor: '#ef4444', borderRadius: 4, barPercentage: 0.7 },
-            { label: 'No Progres', data: noProgresData, backgroundColor: '#94a3b8', borderRadius: 4, barPercentage: 0.7 }
+            { 
+              label: 'Continue', 
+              data: continueData, 
+              backgroundColor: '#22c55e', 
+              borderRadius: 8, 
+              barPercentage: 0.65,
+              categoryPercentage: 0.8,
+              borderWidth: 0
+            },
+            { 
+              label: 'Technical Assistance', 
+              data: taData, 
+              backgroundColor: '#3b82f6', 
+              borderRadius: 8, 
+              barPercentage: 0.65,
+              categoryPercentage: 0.8,
+              borderWidth: 0
+            },
+            { 
+              label: 'Decline', 
+              data: declineData, 
+              backgroundColor: '#ef4444', 
+              borderRadius: 8, 
+              barPercentage: 0.65,
+              categoryPercentage: 0.8,
+              borderWidth: 0
+            },
+            { 
+              label: 'No Progres', 
+              data: noProgresData, 
+              backgroundColor: '#9ca3af', 
+              borderRadius: 8, 
+              barPercentage: 0.65,
+              categoryPercentage: 0.8,
+              borderWidth: 0
+            }
           ]
         },
         options: {
@@ -451,68 +601,80 @@
           plugins: {
             legend: { 
               position: 'top',
-              labels: { color: '#475569', font: { size: 10 }, usePointStyle: true, boxWidth: 8 }
+              labels: { 
+                color: '#475569', 
+                font: { size: 11, weight: 'bold' }, 
+                usePointStyle: true, 
+                boxWidth: 10,
+                padding: 15
+              }
             },
             tooltip: {
               backgroundColor: '#1e293b',
               titleColor: '#0284C7',
-              bodyColor: 'white'
+              bodyColor: '#e2e8f0',
+              padding: 10,
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.raw;
+                }
+              }
             }
           },
           scales: {
             x: { 
-              ticks: { color: '#64748B', font: { size: 9 }, rotation: 45 }, 
-              grid: { color: '#E5E7EB' } 
+              ticks: { color: '#64748B', font: { size: 10, weight: 'bold' }, rotation: 45, autoSkip: true }, 
+              grid: { display: false },
+              title: { display: true, text: 'Bulan', color: '#64748B', font: { size: 10, weight: 'bold' } }
             },
             y: { 
-              ticks: { color: '#64748B', stepSize: 5, font: { size: 9 } }, 
-              grid: { color: '#E5E7EB' }, 
-              beginAtZero: true 
+              ticks: { color: '#64748B', stepSize: Math.ceil(suggestedMax / 6), font: { size: 10 }, callback: function(v) { return v.toLocaleString(); } }, 
+              grid: { color: '#E5E7EB', lineWidth: 1 }, 
+              beginAtZero: true,
+              suggestedMax: suggestedMax,
+              title: { display: true, text: 'Jumlah RFQ', color: '#64748B', font: { size: 10, weight: 'bold' } }
             }
           }
         }
       });
       
       // Tambahkan angka di atas bar
-      const originalDraw = chart.draw;
+      var originalDraw = chart.draw;
       chart.draw = function() {
         originalDraw.apply(this, arguments);
-        const ctx = this.ctx;
-        this.data.datasets.forEach((dataset, i) => {
-          const meta = this.getDatasetMeta(i);
-          if (!meta.hidden) {
-            meta.data.forEach((element, index) => {
-              const value = dataset.data[index];
-              if (value > 0) {
-                ctx.save();
-                ctx.font = 'bold 9px "Inter"';
-                ctx.fillStyle = '#475569';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'bottom';
-                const position = element.tooltipPosition();
-                ctx.fillText(value, position.x, position.y - 3);
-                ctx.restore();
+        var ctx = this.ctx;
+        ctx.save();
+        ctx.font = 'bold 10px "Inter"';
+        ctx.fillStyle = '#1e293b';
+        ctx.textAlign = 'center';
+        
+        for (var i = 0; i < this.data.datasets.length; i++) {
+          var dataset = this.data.datasets[i];
+          var meta = this.getDatasetMeta(i);
+          if (!meta.hidden && meta.data) {
+            for (var j = 0; j < meta.data.length; j++) {
+              var element = meta.data[j];
+              var value = dataset.data[j];
+              if (value > 0 && element) {
+                var position = element.tooltipPosition();
+                if (position) {
+                  ctx.fillText(value.toLocaleString(), position.x, position.y - 6);
+                }
               }
-            });
+            }
           }
-        });
+        }
+        ctx.restore();
       };
       chart.update();
     }
     
     // ==================== INITIALIZATION ====================
-    // Render menu berdasarkan role
-    renderMenu();
-    
-    // Load data pertama kali
-    loadRFQData();
-    
-    // Auto refresh setiap 5 DETIK
-    setInterval(loadRFQData, 5000);
-    
-    // Clock update
     updateClock();
     setInterval(updateClock, 1000);
+    
+    loadRFQData();
+    setInterval(loadRFQData, 30000);
   </script>
 </body>
 </html>
