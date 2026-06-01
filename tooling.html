@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Tooling Schedule - PT NITTO ALAM INDONESIA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #F1F5F9;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        /* ========== OPTIMASI UNTUK TV 50-55 INCH ========== */
+        html { font-size: 14px; }
+        
+        @media (min-width: 1920px) and (max-width: 2559px) {
+            html { font-size: 16px; }
+            .timeline-card { padding: 1rem; }
+            .tooling-item { padding: 0.8rem; }
+        }
+        
+        @media (min-width: 2560px) and (max-width: 3839px) {
+            html { font-size: 18px; }
+            .timeline-card { padding: 1.2rem; }
+            .tooling-item { padding: 1rem; }
+        }
+        
+        @media (max-width: 1919px) {
+            html { font-size: 12px; }
+            body { transform: scale(0.95); transform-origin: top left; width: 105.26%; }
+        }
+        
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
+        
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 1rem;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 0.8rem;
+            border: 1px solid #E5E7EB;
+            padding: 0.8rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #0284C7; }
+        
+        .stat-value { font-size: 1.8rem; font-weight: bold; font-family: 'Courier New', monospace; }
+        .stat-label { font-size: 0.6rem; color: #64748B; font-weight: 600; letter-spacing: 0.5px; }
+        
+        /* Timeline Styles */
+        .timeline-container {
+            position: relative;
+            padding: 1rem 0;
+        }
+        
+        .timeline-line {
+            position: absolute;
+            left: 120px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #0284C7 0%, #22c55e 100%);
+            border-radius: 3px;
+        }
+        
+        .timeline-item {
+            position: relative;
+            display: flex;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .timeline-item:hover { transform: translateX(5px); }
+        
+        .timeline-date {
+            width: 110px;
+            text-align: right;
+            padding-right: 1.5rem;
+            flex-shrink: 0;
+        }
+        .timeline-date .date-day { font-size: 1rem; font-weight: bold; color: #1E293B; }
+        .timeline-date .date-month { font-size: 0.65rem; color: #64748B; }
+        
+        .timeline-dot {
+            position: relative;
+            width: 16px;
+            height: 16px;
+            background: #0284C7;
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px #0284C7;
+            z-index: 2;
+            margin-top: 0.2rem;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+        .timeline-item:hover .timeline-dot {
+            transform: scale(1.3);
+            background: #22c55e;
+            box-shadow: 0 0 0 2px #22c55e;
+        }
+        
+        .timeline-content {
+            flex: 1;
+            margin-left: 1rem;
+            background: #F8FAFC;
+            border-radius: 0.8rem;
+            padding: 0.8rem 1rem;
+            border-left: 4px solid #0284C7;
+            transition: all 0.3s ease;
+        }
+        .timeline-item:hover .timeline-content {
+            background: #F0F9FF;
+            border-left-color: #22c55e;
+        }
+        
+        .tooling-name {
+            font-weight: bold;
+            font-size: 0.85rem;
+            color: #1E293B;
+            margin-bottom: 0.25rem;
+        }
+        .tooling-detail {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.3rem;
+            flex-wrap: wrap;
+        }
+        .tooling-detail span {
+            font-size: 0.65rem;
+            color: #64748B;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        .eta-badge {
+            background: #22c55e;
+            color: white;
+            padding: 0.15rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.6rem;
+            font-weight: bold;
+        }
+        
+        /* Gantt Chart View */
+        .gantt-container {
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+        
+        .gantt-chart {
+            min-width: 800px;
+        }
+        
+        .gantt-header {
+            display: flex;
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .gantt-label { width: 180px; font-weight: bold; font-size: 0.7rem; color: #1E293B; }
+        .gantt-timeline { flex: 1; display: flex; position: relative; height: 30px; }
+        .gantt-month { flex: 1; text-align: center; font-size: 0.6rem; color: #64748B; border-left: 1px solid #E5E7EB; }
+        
+        .gantt-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            padding: 0.3rem 0;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        .gantt-row:hover { background: #F8FAFC; }
+        
+        .gantt-row-label {
+            width: 180px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #1E293B;
+            padding-right: 0.5rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .gantt-bars {
+            flex: 1;
+            position: relative;
+            height: 32px;
+        }
+        
+        .gantt-bar {
+            position: absolute;
+            height: 28px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.55rem;
+            font-weight: bold;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .gantt-bar:hover { transform: scaleY(1.05); opacity: 0.9; }
+        
+        .bar-po { background: linear-gradient(90deg, #0284C7, #3b82f6); }
+        .bar-eta { background: linear-gradient(90deg, #22c55e, #16a34a); }
+        
+        /* Sidebar Menu */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+            display: none;
+        }
+        .menu-overlay.active { display: block; }
+        
+        .popup-sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: #FFFFFF;
+            border-right: 1px solid #E5E7EB;
+            z-index: 999;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .popup-sidebar.active { left: 0; }
+        
+        .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; }
+        .menu-item { margin: 0.2rem 0.6rem; }
+        .menu-button {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.6rem;
+            color: #475569;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .menu-button:hover { background: #F0F9FF; color: #0284C7; transform: translateX(5px); }
+        .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
+        .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
+        
+        .sidebar-logout-btn {
+            margin: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            border-top: 1px solid #E5E7EB;
+            transition: all 0.2s;
+            color: #475569;
+        }
+        .sidebar-logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
+        
+        .hamburger-btn {
+            background: #F0F9FF;
+            border: 1px solid #0284C7;
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+        }
+        .hamburger-btn:hover { background: #0284C7; }
+        .hamburger-btn:hover span { color: white; }
+        
+        .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
+        .running-text marquee { font-size: 0.7rem; font-weight: 600; color: #0284C7; padding: 0.25rem 0; }
+        
+        .digital-clock { 
+            font-family: 'Courier New', monospace; 
+            font-weight: 700; 
+            background: #F8FAFC; 
+            padding: 0.25rem 0.75rem; 
+            border-radius: 0.5rem; 
+            border: 1px solid #E5E7EB; 
+            color: #0284C7;
+            font-size: 1rem;
+        }
+        
+        .text-brand { color: #1A63F6; }
+        
+        /* Layout */
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .main-layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 0.6rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+        
+        /* Tab Styles */
+        .tab-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        .tab-btn {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748B;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .tab-btn:hover { color: #0284C7; }
+        .tab-btn.active {
+            color: #0284C7;
+        }
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #0284C7;
+        }
+        
+        .tab-content {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+        }
+        
+        .tab-pane { display: none; height: 100%; }
+        .tab-pane.active { display: block; }
+        
+        /* Tooling Table */
+        .tooling-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .tooling-table th, .tooling-table td {
+            padding: 0.6rem;
+            text-align: left;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        .tooling-table th {
+            font-size: 0.7rem;
+            font-weight: bold;
+            color: #64748B;
+            background: #F8FAFC;
+        }
+        .tooling-table td {
+            font-size: 0.7rem;
+            color: #1E293B;
+        }
+        .tooling-table tr:hover { background: #F8FAFC; }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.15rem 0.5rem;
+            border-radius: 1rem;
+            font-size: 0.6rem;
+            font-weight: bold;
+        }
+        .status-order { background: #DBEAFE; color: #1E40AF; }
+        .status-shipped { background: #DCFCE7; color: #166534; }
+        .status-delayed { background: #FEE2E2; color: #991B1B; }
+        
+        /* Modal Detail */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: white;
+            border-radius: 1rem;
+            max-width: 400px;
+            width: 90%;
+            padding: 1.5rem;
+            border-top: 4px solid #0284C7;
+        }
+        
+        .tooling-countdown {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0284C7;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+    <div id="popupSidebar" class="popup-sidebar">
+        <div class="logo-section">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
+                    <span class="text-white text-sm font-bold">NS</span>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold text-brand">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-[8px]">Plant 2</p>
+                </div>
+            </div>
+        </div>
+        <div id="menu-container"></div>
+        <div class="sidebar-logout-btn" onclick="logout()">
+            <span class="menu-icon">🚪</span>
+            <span>Logout</span>
+        </div>
+        <div class="text-center p-2 text-slate-400 text-[10px] border-t mt-1">System Online</div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- TOP BAR -->
+        <div class="bg-white border-b border-gray-200 px-3 py-1.5 flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-2">
+                <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-sm">☰</span></div>
+                <div><h1 class="text-sm font-bold text-brand">PT NITTO ALAM INDONESIA</h1><p class="text-slate-500 text-[8px]">Plant 2 - Tooling Schedule</p></div>
+            </div>
+            <div class="flex items-center gap-2">
+                <div class="digital-clock" id="clock">00:00:00</div>
+                <div class="flex items-center gap-1 bg-green-50 px-2 py-0.5 rounded-lg">
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-green-600 text-[8px] font-bold">LIVE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RUNNING TEXT -->
+        <div class="running-text shrink-0">
+            <marquee behavior="scroll" direction="left" scrollamount="2">
+                🏆 TOOLING SCHEDULE MONITORING 🏆 | Visualisasi PO & ETA | Pantau Jadwal Pemesanan Tooling
+            </marquee>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="main-layout">
+            <div class="content-area">
+                <!-- STATISTICS -->
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-label">Total Tooling</div><div class="stat-value text-cyan-600" id="total-tooling">0</div></div>
+                    <div class="stat-card"><div class="stat-label">Total PO</div><div class="stat-value text-blue-600" id="total-po">0</div></div>
+                    <div class="stat-card"><div class="stat-label">Menunggu ETA</div><div class="stat-value text-yellow-600" id="waiting-eta">0</div></div>
+                    <div class="stat-card"><div class="stat-label">Akan Datang (≤30 hari)</div><div class="stat-value text-green-600" id="coming-soon">0</div></div>
+                </div>
+
+                <!-- TABS -->
+                <div class="card" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+                    <div class="tab-container px-3 pt-2">
+                        <button class="tab-btn active" onclick="showTab('timeline')">📅 Timeline View</button>
+                        <button class="tab-btn" onclick="showTab('gantt')">📊 Gantt Chart</button>
+                        <button class="tab-btn" onclick="showTab('table')">📋 Table View</button>
+                    </div>
+                    
+                    <div class="tab-content px-3 pb-3">
+                        <!-- TIMELINE VIEW -->
+                        <div id="tab-timeline" class="tab-pane active">
+                            <div class="timeline-container" id="timeline-container">
+                                <div class="timeline-line"></div>
+                                <div id="timeline-list" class="space-y-3">Loading...</div>
+                            </div>
+                        </div>
+                        
+                        <!-- GANTT CHART VIEW -->
+                        <div id="tab-gantt" class="tab-pane">
+                            <div class="gantt-container" id="gantt-container">
+                                <div id="gantt-chart" class="gantt-chart">Loading...</div>
+                            </div>
+                        </div>
+                        
+                        <!-- TABLE VIEW -->
+                        <div id="tab-table" class="tab-pane">
+                            <div class="overflow-x-auto">
+                                <table class="tooling-table" id="tooling-table">
+                                    <thead>
+                                        <tr><th>No</th><th>Part Name</th><th>Tooling</th><th>PO Date</th><th>ETA</th><th>Status</th><th>Countdown</th></tr>
+                                    </thead>
+                                    <tbody id="table-body">
+                                        <tr><td colspan="7" class="text-center">Loading...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DETAIL -->
+    <div id="detailModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 class="font-bold text-cyan-600 mb-2">📦 Tooling Detail</h3>
+            <div id="modal-body"></div>
+            <button class="mt-3 text-sm text-slate-500 hover:text-cyan-600" onclick="closeModal()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== KONFIGURASI MENU ====================
+        const adminMenus = [
+            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🏭", name: "Production", link: "production.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔧", name: "Tooling Schedule", link: "tooling.html", active: true }
+        ];
+        
+        const userMenus = [
+            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔧", name: "Tooling Schedule", link: "tooling.html", active: true }
+        ];
+        
+        function renderMenu() {
+            const userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) return;
+            const user = JSON.parse(userJson);
+            const role = user.role || 'user';
+            const menus = role === 'admin' ? adminMenus : userMenus;
+            const currentPage = window.location.pathname.split('/').pop() || 'tooling.html';
+            const container = document.getElementById('menu-container');
+            let html = '';
+            menus.forEach(menu => {
+                const activeClass = menu.link === currentPage ? 'active' : '';
+                html += `<div class="menu-item"><a href="${menu.link}" class="menu-button ${activeClass}"><span class="menu-icon">${menu.icon}</span><span>${menu.name}</span></a></div>`;
+            });
+            container.innerHTML = html;
+        }
+        
+        // ==================== DATA TOOLING ====================
+        let toolingData = [
+            { no: 1, partName: "ØØbtp4 x15.7", tooling: "Ukekoma", poDate: "2026-05-26", etaDate: "2026-07-26" },
+            { no: 2, partName: "ØØbtp4 x15.8", tooling: "Ukekoma", poDate: "2026-05-27", etaDate: "2026-07-27" },
+            { no: 3, partName: "ØØbtp4 x15.9", tooling: "Ukekoma", poDate: "2026-05-28", etaDate: "2026-07-28" },
+            { no: 4, partName: "ØØbtp4 x15.10", tooling: "Ukekoma", poDate: "2026-05-29", etaDate: "2026-07-29" },
+            { no: 5, partName: "ØØbtp4 x15.11", tooling: "Ukekoma", poDate: "2026-05-30", etaDate: "2026-07-30" },
+            { no: 6, partName: "ØØbtp4 x15.12", tooling: "Ukekoma", poDate: "2026-05-31", etaDate: "2026-07-31" },
+            { no: 7, partName: "ØØbtp4 x15.13", tooling: "Ukekoma", poDate: "2026-06-01", etaDate: "2026-08-01" },
+            { no: 8, partName: "ØØbtp4 x15.14", tooling: "Ukekoma", poDate: "2026-06-02", etaDate: "2026-08-02" },
+            { no: 9, partName: "ØØbtp4 x15.15", tooling: "Ukekoma", poDate: "2026-06-03", etaDate: "2026-08-03" },
+            { no: 10, partName: "ØØbtp4 x15.16", tooling: "Ukekoma", poDate: "2026-06-04", etaDate: "2026-08-04" }
+        ];
+        
+        function formatDate(dateStr) {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+        
+        function formatShortDate(dateStr) {
+            const d = new Date(dateStr);
+            return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+        }
+        
+        function getDaysRemaining(dateStr) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const target = new Date(dateStr);
+            target.setHours(0, 0, 0, 0);
+            const diff = Math.ceil((target - today) / (1000 * 60 * 60 * 24));
+            return diff;
+        }
+        
+        function getStatus(etaDate) {
+            const days = getDaysRemaining(etaDate);
+            if (days < 0) return { text: "Delayed", class: "status-delayed", icon: "⚠️" };
+            if (days <= 30) return { text: "Coming Soon", class: "status-shipped", icon: "🚚" };
+            return { text: "On Order", class: "status-order", icon: "📦" };
+        }
+        
+        function updateStatistics() {
+            document.getElementById('total-tooling').innerText = toolingData.length;
+            document.getElementById('total-po').innerText = toolingData.length;
+            const waiting = toolingData.filter(t => getDaysRemaining(t.etaDate) > 0).length;
+            const coming = toolingData.filter(t => getDaysRemaining(t.etaDate) <= 30 && getDaysRemaining(t.etaDate) >= 0).length;
+            document.getElementById('waiting-eta').innerText = waiting;
+            document.getElementById('coming-soon').innerText = coming;
+        }
+        
+        function renderTimeline() {
+            const container = document.getElementById('timeline-list');
+            const sorted = [...toolingData].sort((a,b) => new Date(a.poDate) - new Date(b.poDate));
+            container.innerHTML = sorted.map(item => {
+                const poDate = new Date(item.poDate);
+                const etaDate = new Date(item.etaDate);
+                const status = getStatus(item.etaDate);
+                return `
+                    <div class="timeline-item" onclick="showDetail(${item.no})">
+                        <div class="timeline-date">
+                            <div class="date-day">${poDate.getDate()}</div>
+                            <div class="date-month">${poDate.toLocaleString('default', { month: 'short' })} ${poDate.getFullYear()}</div>
+                        </div>
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <div class="tooling-name">🔧 ${item.partName}</div>
+                            <div class="tooling-detail">
+                                <span>🏭 ${item.tooling}</span>
+                                <span>📅 PO: ${formatDate(item.poDate)}</span>
+                                <span>🎯 ETA: ${formatDate(item.etaDate)}</span>
+                                <span class="${status.class} status-badge">${status.icon} ${status.text}</span>
+                            </div>
+                            <div class="tooling-countdown mt-1" id="countdown-${item.no}">Loading...</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            updateCountdowns();
+        }
+        
+        function updateCountdowns() {
+            toolingData.forEach(item => {
+                const el = document.getElementById(`countdown-${item.no}`);
+                if (el) {
+                    const days = getDaysRemaining(item.etaDate);
+                    if (days < 0) el.innerHTML = `⏰ Telat ${Math.abs(days)} hari`;
+                    else if (days === 0) el.innerHTML = `⏰ Hari ini!`;
+                    else el.innerHTML = `⏰ ${days} hari menuju ETA`;
+                }
+            });
+        }
+        
+        function renderGantt() {
+            const months = ['May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'];
+            const startDate = new Date(2026, 4, 1);
+            const endDate = new Date(2026, 9, 31);
+            const totalDays = Math.ceil((endDate - startDate) / (1000 * 60 * 60 * 24));
+            
+            let html = `<div class="gantt-header"><div class="gantt-label">Tooling</div><div class="gantt-timeline">`;
+            months.forEach(month => { html += `<div class="gantt-month">${month}</div>`; });
+            html += `</div></div>`;
+            
+            toolingData.forEach(item => {
+                const poDate = new Date(item.poDate);
+                const etaDate = new Date(item.etaDate);
+                const poOffset = Math.max(0, Math.ceil((poDate - startDate) / (1000 * 60 * 60 * 24)));
+                const etaOffset = Math.max(0, Math.ceil((etaDate - startDate) / (1000 * 60 * 60 * 24)));
+                const duration = etaOffset - poOffset;
+                const poPercent = (poOffset / totalDays) * 100;
+                const etaPercent = (etaOffset / totalDays) * 100;
+                const durationPercent = (duration / totalDays) * 100;
+                
+                html += `
+                    <div class="gantt-row" onclick="showDetail(${item.no})">
+                        <div class="gantt-row-label" title="${item.partName}">${item.partName}</div>
+                        <div class="gantt-bars">
+                            <div class="gantt-bar bar-po" style="left: ${poPercent}%; width: ${durationPercent}%;" title="PO: ${formatDate(item.poDate)}">
+                                📦
+                            </div>
+                            <div class="gantt-bar bar-eta" style="left: ${etaPercent}%; width: 8px; border-radius: 4px;" title="ETA: ${formatDate(item.etaDate)}">
+                                🎯
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            document.getElementById('gantt-chart').innerHTML = html;
+        }
+        
+        function renderTable() {
+            const tbody = document.getElementById('table-body');
+            tbody.innerHTML = toolingData.map(item => {
+                const status = getStatus(item.etaDate);
+                const days = getDaysRemaining(item.etaDate);
+                const countdown = days < 0 ? `Telat ${Math.abs(days)} hari` : (days === 0 ? 'Hari ini!' : `${days} hari lagi`);
+                return `
+                    <tr onclick="showDetail(${item.no})" style="cursor:pointer">
+                        <td>${item.no}</td>
+                        <td>${item.partName}</td>
+                        <td>${item.tooling}</td>
+                        <td>${formatDate(item.poDate)}</td>
+                        <td>${formatDate(item.etaDate)}</td>
+                        <td><span class="status-badge ${status.class}">${status.icon} ${status.text}</span></td>
+                        <td class="tooling-countdown">${countdown}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function showDetail(no) {
+            const item = toolingData.find(t => t.no === no);
+            if (!item) return;
+            const status = getStatus(item.etaDate);
+            const days = getDaysRemaining(item.etaDate);
+            const modalBody = document.getElementById('modal-body');
+            modalBody.innerHTML = `
+                <div class="space-y-2">
+                    <p><strong>🔧 Part Name:</strong> ${item.partName}</p>
+                    <p><strong>🏭 Tooling:</strong> ${item.tooling}</p>
+                    <p><strong>📅 PO Date:</strong> ${formatDate(item.poDate)}</p>
+                    <p><strong>🎯 ETA Date:</strong> ${formatDate(item.etaDate)}</p>
+                    <p><strong>⏰ Status:</strong> <span class="status-badge ${status.class}">${status.icon} ${status.text}</span></p>
+                    <p><strong>📊 Countdown:</strong> <span class="tooling-countdown">${days < 0 ? `Telat ${Math.abs(days)} hari` : (days === 0 ? 'Hari ini!' : `${days} hari lagi`)}</span></p>
+                </div>
+            `;
+            document.getElementById('detailModal').classList.add('active');
+        }
+        
+        function closeModal() { document.getElementById('detailModal').classList.remove('active'); }
+        
+        function showTab(tabName) {
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            event.target.classList.add('active');
+            if (tabName === 'gantt') renderGantt();
+        }
+        
+        function refreshAll() {
+            updateStatistics();
+            renderTimeline();
+            renderTable();
+            renderGantt();
+        }
+        
+        // ==================== MENU & CLOCK ====================
+        function toggleMenu() {
+            document.getElementById('popupSidebar').classList.toggle('active');
+            document.getElementById('menuOverlay').classList.toggle('active');
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('popupSidebar').classList.remove('active');
+                document.getElementById('menuOverlay').classList.remove('active');
+                closeModal();
+            }
+        });
+        
+        function checkAuth() {
+            if (!sessionStorage.getItem('currentUser')) window.location.href = 'login.html';
+        }
+        function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString('id-ID', { hour12: false }); }
+        function logout() { sessionStorage.removeItem('currentUser'); window.location.href = 'login.html'; }
+        
+        checkAuth();
+        renderMenu();
+        updateClock();
+        setInterval(updateClock, 1000);
+        
+        refreshAll();
+        setInterval(() => { updateStatistics(); updateCountdowns(); }, 60000);
+    </script>
+</body>
+</html>

@@ -6,97 +6,362 @@
     <title>Activity Schedule - PT NITTO ALAM INDONESIA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             background: #F1F5F9;
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             overflow: hidden;
             height: 100vh;
             width: 100vw;
         }
-        
-        /* ========== OPTIMASI KHUSUS TV 50-55 INCH ========== */
-        html { font-size: 15px; }
-        
+
+        /* ========== BASE RESPONSIVE UNTUK TV 50-55 INCH ========== */
+        html {
+            font-size: 14px;
+        }
+
         /* TV 50 inch (1920x1080) */
         @media (min-width: 1920px) and (max-width: 2559px) {
-            html { font-size: 18px; }
-            body { transform: scale(1); }
+            html {
+                font-size: 16px;
+            }
+            .calendar-cell {
+                padding: 0.2rem 0.15rem;
+            }
+            .calendar-date {
+                font-size: 0.85rem;
+            }
+            .calendar-event {
+                font-size: 0.55rem;
+                padding: 0.05rem 0.1rem;
+            }
+            .today-event-card {
+                padding: 0.5rem 0.6rem;
+            }
+            .today-event-card .event-title {
+                font-size: 0.85rem;
+            }
+            .today-event-card .event-time {
+                font-size: 0.7rem;
+            }
+            .upcoming-date {
+                font-size: 0.7rem;
+            }
+            .upcoming-title {
+                font-size: 0.7rem;
+            }
+            .day-header {
+                font-size: 0.7rem;
+            }
         }
-        
+
         /* TV 55 inch (2560x1440) */
-        @media (min-width: 2560px) and (max-width: 3839px) {
-            html { font-size: 22px; }
-            body { transform: scale(1); }
+        @media (min-width: 2560px) {
+            html {
+                font-size: 20px;
+            }
+            .calendar-cell {
+                padding: 0.3rem 0.2rem;
+            }
+            .calendar-date {
+                font-size: 0.95rem;
+            }
+            .calendar-event {
+                font-size: 0.6rem;
+                padding: 0.08rem 0.15rem;
+            }
+            .today-event-card {
+                padding: 0.6rem 0.7rem;
+            }
+            .today-event-card .event-title {
+                font-size: 0.95rem;
+            }
+            .today-event-card .event-time {
+                font-size: 0.8rem;
+            }
+            .upcoming-date {
+                font-size: 0.8rem;
+            }
+            .upcoming-title {
+                font-size: 0.8rem;
+            }
+            .day-header {
+                font-size: 0.8rem;
+            }
+            .digital-clock {
+                font-size: 1.2rem;
+            }
         }
-        
-        /* Fallback untuk layar lebih kecil */
-        @media (max-width: 1919px) {
-            html { font-size: 13px; }
-            body { transform: scale(0.95); transform-origin: top left; width: 105.26%; }
+
+        ::-webkit-scrollbar {
+            width: 4px;
         }
-        
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
-        
-        /* Card styles */
-        .stat-card { 
+        ::-webkit-scrollbar-track {
+            background: #E5E7EB;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #0284C7;
+            border-radius: 10px;
+        }
+
+        .stat-card {
             background: #FFFFFF;
-            transition: all 0.3s ease; 
-            border: 1px solid #E5E7EB; 
+            transition: all 0.2s ease;
+            border: 1px solid #E5E7EB;
             border-radius: 0.8rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
         }
-        
+
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .main-layout {
+            flex: 1;
+            display: flex;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 0.5rem 0.6rem 0.5rem 0.6rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 0.75rem;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .card-container {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .card-header {
+            flex-shrink: 0;
+            padding-bottom: 0.3rem;
+            margin-bottom: 0.3rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .card-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        /* KALENDER - FLEXIBLE GRID TANPA EMPTY CELL DI BAWAH */
+        .calendar-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            width: 100%;
+        }
+
+        .days-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.15rem;
+            margin-bottom: 0.25rem;
+            flex-shrink: 0;
+        }
+
+        .day-header {
+            text-align: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.1rem 0;
+        }
+
+        .calendar-grid-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        /* Grid dinamis: auto-fit rows, tidak ada empty cells di akhir baris */
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.2rem;
+            grid-auto-rows: minmax(0, 1fr);
+            flex: 1;
+        }
+
+        .calendar-cell {
+            background: #F8FAFC;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.4rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 0.2rem 0.1rem;
+            transition: all 0.1s ease;
+            min-width: 0;
+            overflow: hidden;
+        }
+
+        /* Hapus empty-cell styling, kita tidak akan render sel kosong di luar tanggal aktif */
+        .calendar-date {
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 0.15rem;
+            line-height: 1.2;
+        }
+
+        .calendar-events-container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.05rem;
+            align-items: flex-start;
+            overflow: hidden;
+        }
+
+        .calendar-event {
+            font-size: 0.45rem;
+            line-height: 1.2;
+            font-weight: 500;
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            text-align: left;
+            width: 100%;
+            border-radius: 0.2rem;
+            padding: 0.02rem 0.1rem;
+        }
+
+        .today-events-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .today-events-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.45rem;
+            padding-right: 0.2rem;
+        }
+
         .today-event-card {
             background: #F8FAFC;
             border-left: 4px solid #0284C7;
             border-radius: 0.5rem;
             padding: 0.5rem 0.6rem;
-            margin-bottom: 0.4rem;
+            flex-shrink: 0;
+            transition: all 0.2s;
         }
-        
-        .calendar-cell {
-            background: #F8FAFC;
-            border: 1px solid #E5E7EB;
-            border-radius: 0.5rem;
-            padding: 0.25rem;
-            transition: all 0.15s ease;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 0;
-            height: 100%;
-            aspect-ratio: 1 / 0.85;
-        }
-        .calendar-cell:hover {
-            transform: translateY(-2px);
-            border-color: #0284C7;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        
-        .calendar-date {
-            font-size: 0.9rem;
-            font-weight: bold;
-            text-align: center;
+
+        .today-event-card .event-title {
+            font-size: 0.8rem;
+            font-weight: 700;
             color: #1E293B;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-bottom: 0.2rem;
         }
-        
-        .calendar-event {
+
+        .today-event-card .event-time {
+            font-size: 0.65rem;
+            color: #0284C7;
+            font-weight: 600;
+            background: #E0F2FE;
+            padding: 0.1rem 0.4rem;
+            border-radius: 1rem;
+        }
+
+        .today-event-card .event-type {
+            font-size: 0.65rem;
+            color: #475569;
+            margin-bottom: 0.15rem;
+        }
+
+        .today-event-card .event-pic {
             font-size: 0.6rem;
-            margin-top: 0.1rem;
-            line-height: 1.2;
+            color: #0284C7;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .upcoming-scroll {
+            max-height: 145px;
+            overflow-y: auto;
+            padding-right: 0.2rem;
+        }
+
+        .upcoming-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.35rem 0;
+            border-bottom: 1px solid #E5E7EB;
+            gap: 0.4rem;
+        }
+
+        .upcoming-date {
+            font-size: 0.65rem;
+            color: #0284C7;
+            font-weight: 600;
+            min-width: 75px;
+            white-space: nowrap;
+        }
+
+        .upcoming-title {
+            font-size: 0.65rem;
+            color: #1E293B;
+            font-weight: 500;
+            flex: 1;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            text-align: center;
-            max-width: 100%;
-            font-weight: 500;
         }
-        
-        /* SIDEBAR MENU */
+
+        .upcoming-pic {
+            font-size: 0.6rem;
+            color: #64748B;
+            min-width: 65px;
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         .menu-overlay {
             position: fixed;
             top: 0;
@@ -108,8 +373,11 @@
             z-index: 998;
             display: none;
         }
-        .menu-overlay.active { display: block; }
-        
+
+        .menu-overlay.active {
+            display: block;
+        }
+
         .popup-sidebar {
             position: fixed;
             top: 0;
@@ -123,224 +391,71 @@
             display: flex;
             flex-direction: column;
         }
-        .popup-sidebar.active { left: 0; }
-        
-        .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; }
-        .menu-item { margin: 0.2rem 0.6rem; }
-        .menu-button {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.6rem 0.8rem;
-            border-radius: 0.6rem;
-            color: #475569;
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.2s;
+
+        .popup-sidebar.active {
+            left: 0;
         }
-        .menu-button:hover { background: #F0F9FF; color: #0284C7; transform: translateX(5px); }
-        .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
-        .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
-        
-        /* LOGOUT BUTTON - SATU DI SIDEBAR */
-        .sidebar-logout-btn {
-            margin: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            padding: 0.6rem 0.8rem;
-            border-radius: 0.6rem;
-            cursor: pointer;
-            border-top: 1px solid #E5E7EB;
-            transition: all 0.2s;
-            color: #475569;
-        }
-        .sidebar-logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
-        
+
         .hamburger-btn {
             background: #F0F9FF;
             border: 1px solid #0284C7;
             border-radius: 0.5rem;
-            padding: 0.35rem 0.65rem;
+            padding: 0.3rem 0.6rem;
             cursor: pointer;
+            transition: 0.2s;
         }
-        .hamburger-btn:hover { background: #0284C7; }
-        .hamburger-btn:hover span { color: white; }
-        
-        .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
-        .running-text marquee { font-size: 0.85rem; font-weight: 600; color: #0284C7; padding: 0.3rem 0; }
-        
-        .digital-clock { 
-            font-family: 'Courier New', monospace; 
-            font-weight: 700; 
-            background: #F8FAFC; 
-            padding: 0.3rem 0.8rem; 
-            border-radius: 0.5rem; 
-            border: 1px solid #E5E7EB; 
-            color: #0284C7;
-            font-size: 1.2rem;
+
+        .hamburger-btn:hover {
+            background: #0284C7;
         }
-        
-        .text-brand { color: #1A63F6; }
-        
-        /* LAYOUT UTAMA - FIT ONE PAGE */
-        .dashboard-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100%;
-            overflow: hidden;
+
+        .hamburger-btn:hover span {
+            color: white;
         }
-        
-        .main-layout {
-            display: flex;
-            flex: 1;
-            min-height: 0;
-            overflow: hidden;
-        }
-        
-        .content-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            padding: 0.6rem;
-        }
-        
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 0.8rem;
-            flex: 1;
-            min-height: 0;
-        }
-        
-        .card-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            min-height: 0;
-            overflow: hidden;
-        }
-        
-        .card-header {
-            flex-shrink: 0;
-            padding-bottom: 0.3rem;
-            margin-bottom: 0.3rem;
-            border-bottom: 1px solid #E5E7EB;
-        }
-        
-        .card-body {
-            flex: 1;
-            overflow-y: auto;
-            min-height: 0;
-            padding-right: 0.2rem;
-        }
-        
-        /* Calendar Grid */
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.25rem;
-        }
-        
-        .days-header {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 0.25rem;
-            margin-bottom: 0.25rem;
-            flex-shrink: 0;
-        }
-        
-        .day-header {
-            text-align: center;
-            font-size: 0.7rem;
-            font-weight: bold;
-            padding: 0.15rem;
-        }
-        
-        .upcoming-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.35rem 0;
-            border-bottom: 1px solid #E5E7EB;
-        }
-        .upcoming-date {
-            font-size: 0.7rem;
-            color: #0284C7;
-            font-weight: 600;
-        }
-        .upcoming-title {
-            font-size: 0.7rem;
-            color: #1E293B;
-            font-weight: 500;
-            max-width: 65%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        
-        .empty-cell {
+
+        .digital-clock {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
             background: #F8FAFC;
-            border: 1px solid #E5E7EB;
+            padding: 0.2rem 0.7rem;
             border-radius: 0.5rem;
-            height: 100%;
-            aspect-ratio: 1 / 0.85;
+            border: 1px solid #E5E7EB;
+            color: #0284C7;
+            font-size: 0.9rem;
         }
-        
-        /* Scroll events terbatas */
-        .events-scroll {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 0.2rem;
-            max-height: 100%;
+
+        .running-text marquee {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #0284C7;
+            padding: 0.2rem 0;
         }
-        
-        .upcoming-scroll {
-            max-height: 130px;
-            overflow-y: auto;
-            padding-right: 0.2rem;
-        }
-        
-        /* TV Ukuran Lebih Besar */
+
         @media (min-width: 1920px) {
-            .calendar-date { font-size: 1rem; }
-            .calendar-event { font-size: 0.7rem; }
-            .day-header { font-size: 0.8rem; }
-            .upcoming-date { font-size: 0.8rem; }
-            .upcoming-title { font-size: 0.8rem; }
-            .digital-clock { font-size: 1.3rem; }
-            .running-text marquee { font-size: 0.95rem; }
-            .upcoming-scroll { max-height: 150px; }
-            .today-event-card { padding: 0.6rem 0.7rem; }
-            .today-event-card .font-bold { font-size: 0.85rem; }
-            .today-event-card .text-slate-500 { font-size: 0.75rem; }
+            .upcoming-scroll {
+                max-height: 160px;
+            }
+            .calendar-event {
+                font-size: 0.5rem;
+            }
         }
-        
+
         @media (min-width: 2560px) {
-            .calendar-date { font-size: 1.1rem; }
-            .calendar-event { font-size: 0.8rem; }
-            .day-header { font-size: 0.9rem; }
-            .upcoming-date { font-size: 0.9rem; }
-            .upcoming-title { font-size: 0.9rem; }
-            .digital-clock { font-size: 1.5rem; }
-            .running-text marquee { font-size: 1.05rem; }
-            .upcoming-scroll { max-height: 170px; }
-            .today-event-card { padding: 0.7rem 0.8rem; }
-            .today-event-card .font-bold { font-size: 0.95rem; }
-            .today-event-card .text-slate-500 { font-size: 0.85rem; }
+            .upcoming-scroll {
+                max-height: 180px;
+            }
+            .calendar-event {
+                font-size: 0.6rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- OVERLAY -->
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
-    
-    <!-- POP UP SIDEBAR MENU -->
+
     <div id="popupSidebar" class="popup-sidebar">
-        <div class="logo-section">
+        <div class="logo-section p-4 border-b border-gray-200">
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
                     <span class="text-white text-sm font-bold">NS</span>
@@ -351,18 +466,15 @@
                 </div>
             </div>
         </div>
-        <div id="menu-container"></div>
-        <div class="sidebar-logout-btn" onclick="logout()">
+        <div id="menu-container" class="flex-1"></div>
+        <div class="sidebar-logout-btn flex items-center gap-2 p-3 m-2 rounded-lg cursor-pointer border-t border-gray-200 text-slate-600 hover:bg-red-50" onclick="logout()">
             <span class="menu-icon">🚪</span>
             <span>Logout</span>
         </div>
-        <div class="text-center p-2 text-slate-400 text-[10px] border-t mt-1">System Online</div>
+        <div class="text-center p-2 text-slate-400 text-[10px] border-t">System Online</div>
     </div>
 
-    <!-- MAIN CONTENT -->
     <div class="dashboard-container">
-        
-        <!-- TOP BAR -->
         <div class="bg-white border-b border-gray-200 px-3 py-1.5 flex justify-between items-center shrink-0">
             <div class="flex items-center gap-2">
                 <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-sm">☰</span></div>
@@ -380,22 +492,17 @@
             </div>
         </div>
 
-        <!-- RUNNING TEXT -->
-        <div class="running-text shrink-0">
+        <div class="running-text shrink-0 bg-white">
             <marquee behavior="scroll" direction="left" scrollamount="2">
                 🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | COMMITMENT TO QUALITY & EXCELLENCE
             </marquee>
         </div>
 
-        <!-- MAIN LAYOUT -->
         <div class="main-layout">
             <div class="content-area">
-                
-                <!-- DASHBOARD GRID -->
                 <div class="dashboard-grid">
-                    
-                    <!-- LEFT: CALENDAR SECTION -->
-                    <div class="stat-card card-container p-2">
+                    <!-- LEFT: KALENDER TANPA EMPTY CELL DI BAWAH -->
+                    <div class="stat-card p-1.5">
                         <div class="card-header flex justify-between items-center">
                             <div class="flex items-center gap-1">
                                 <span class="text-sm">📅</span>
@@ -406,8 +513,7 @@
                                 <span>Live</span>
                             </div>
                         </div>
-                        
-                        <!-- Days Header -->
+
                         <div class="days-header">
                             <div class="day-header text-red-500">Sun</div>
                             <div class="day-header text-slate-500">Mon</div>
@@ -417,17 +523,18 @@
                             <div class="day-header text-slate-500">Fri</div>
                             <div class="day-header text-red-500">Sat</div>
                         </div>
-                        
-                        <!-- Calendar Grid -->
-                        <div class="card-body" style="overflow-y: visible;">
-                            <div id="calendar-grid" class="calendar-grid">
-                                <div class="col-span-full text-center text-slate-500 py-3 text-[10px]">Loading calendar...</div>
+
+                        <div class="card-body">
+                            <div class="calendar-grid-container">
+                                <div id="calendar-grid" class="calendar-grid">
+                                    <div class="col-span-full text-center text-slate-500 py-3 text-[10px]">Memuat kalender...</div>
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <!-- RIGHT: TODAY'S EVENTS + UPCOMING -->
-                    <div class="stat-card card-container p-2">
+                    <div class="stat-card p-1.5">
                         <div class="card-header">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-1">
@@ -437,13 +544,13 @@
                                 <span id="today-date" class="text-slate-500 text-[9px]">-</span>
                             </div>
                         </div>
-                        <div class="events-scroll">
-                            <div id="today-events-list">
-                                <div class="text-center text-slate-500 py-2 text-[9px]">Loading events...</div>
+
+                        <div class="today-events-wrapper">
+                            <div id="today-events-list" class="today-events-list">
+                                <div class="text-center text-slate-500 py-3 text-[9px]">Loading events...</div>
                             </div>
                         </div>
-                        
-                        <!-- UPCOMING EVENTS -->
+
                         <div class="mt-2 pt-2 border-t border-gray-200 shrink-0">
                             <div class="flex items-center gap-1 mb-1">
                                 <span class="text-sm">⏰</span>
@@ -460,58 +567,54 @@
     </div>
 
     <script>
-        // ==================== KONFIGURASI MENU (ROLE-BASED) ====================
+        // ==================== MENU ====================
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
             { icon: "🏭", name: "Production", link: "production.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
-        
+
         const userMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
-        
+
         function renderMenu() {
             const userJson = sessionStorage.getItem('currentUser');
             if (!userJson) return;
-            
             const user = JSON.parse(userJson);
             const role = user.role || 'user';
             const menus = role === 'admin' ? adminMenus : userMenus;
             const currentPage = window.location.pathname.split('/').pop() || 'activityschedule.html';
-            
             const menuContainer = document.getElementById('menu-container');
             let menuHtml = '';
-            
             menus.forEach(menu => {
                 const activeClass = menu.link === currentPage ? 'active' : '';
                 menuHtml += `
-                    <div class="menu-item">
-                        <a href="${menu.link}" class="menu-button ${activeClass}">
-                            <span class="menu-icon">${menu.icon}</span>
-                            <span>${menu.name}</span>
+                    <div class="menu-item mx-2 my-1">
+                        <a href="${menu.link}" class="flex items-center gap-3 p-2 rounded-lg text-slate-600 hover:bg-sky-50 transition ${activeClass === 'active' ? 'bg-sky-100 text-cyan-700 border-l-3 border-cyan-600' : ''}">
+                            <span class="text-lg">${menu.icon}</span>
+                            <span class="text-sm">${menu.name}</span>
                         </a>
                     </div>
                 `;
             });
-            
             menuContainer.innerHTML = menuHtml;
         }
-        
-        function isWeekend(dayIndex) { return dayIndex === 0 || dayIndex === 6; }
-        
+
         function toggleMenu() {
             const sidebar = document.getElementById('popupSidebar');
             const overlay = document.getElementById('menuOverlay');
             sidebar.classList.toggle('active');
             overlay.classList.toggle('active');
         }
-        
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 const sidebar = document.getElementById('popupSidebar');
@@ -522,28 +625,26 @@
                 }
             }
         });
-        
+
         function checkAuth() {
             const userJson = sessionStorage.getItem('currentUser');
             if (!userJson) { window.location.href = 'login.html'; return null; }
             return JSON.parse(userJson);
         }
-        
         const currentUser = checkAuth();
-        
         function logout() {
             sessionStorage.removeItem('currentUser');
             window.location.href = 'login.html';
         }
-        
+
         const EVENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/event";
         let autoRefreshInterval;
-        
+
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', { hour12: false });
         }
-        
+
         function getTodayDate() {
             const today = new Date();
             const year = today.getFullYear();
@@ -551,166 +652,187 @@
             const day = String(today.getDate()).padStart(2, '0');
             return `${year}-${month}-${day}`;
         }
-        
+
         function formatDisplayDate(dateString) {
             const date = new Date(dateString);
             return date.toLocaleDateString('id-ID', { weekday: 'short', day: 'numeric', month: 'short' });
         }
-        
-        async function loadData() {
-            try {
-                const eventResponse = await fetch(EVENT_API);
-                const events = await eventResponse.json();
-                
-                renderCalendar(events);
-                
-                const todayDate = getTodayDate();
-                const todayEvents = events.filter(e => e.date === todayDate);
-                const todayEventsDiv = document.getElementById('today-events-list');
-                const todayDateSpan = document.getElementById('today-date');
-                
-                todayDateSpan.innerHTML = formatDisplayDate(todayDate);
-                
-                if (todayEvents.length > 0) {
-                    todayEventsDiv.innerHTML = todayEvents.map(event => {
-                        let icon = '📌';
-                        if (event.type === 'audit') icon = '🔍';
-                        else if (event.type === 'visit') icon = '👥';
-                        else if (event.type === 'training') icon = '📚';
-                        else if (event.type === 'holiday') icon = '🎉';
-                        return `
-                            <div class="today-event-card">
-                                <div class="flex items-start gap-1.5">
-                                    <div class="text-sm">${icon}</div>
-                                    <div class="flex-1">
-                                        <div class="font-bold text-gray-800 text-[10px]">${event.title}</div>
-                                        <p class="text-slate-500 text-[8px]">${event.type}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    }).join('');
-                } else {
-                    todayEventsDiv.innerHTML = '<div class="text-center text-slate-500 py-2 text-[9px]">📭 No events today</div>';
-                }
-                
-                const upcomingEvents = events.filter(e => new Date(e.date) > new Date()).slice(0, 4);
-                const upcomingDiv = document.getElementById('upcoming-events');
-                if (upcomingEvents.length > 0) {
-                    upcomingDiv.innerHTML = upcomingEvents.map(event => {
-                        const eventDate = new Date(event.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-                        let icon = '📌';
-                        if (event.type === 'holiday') icon = '🎉';
-                        else if (event.type === 'audit') icon = '🔍';
-                        else if (event.type === 'visit') icon = '👥';
-                        return `
-                            <div class="upcoming-item">
-                                <span class="upcoming-date">${icon} ${eventDate}</span>
-                                <span class="upcoming-title" title="${event.title}">${event.title}</span>
-                            </div>
-                        `;
-                    }).join('');
-                } else {
-                    upcomingDiv.innerHTML = '<div class="text-center text-slate-500 py-1 text-[9px]">No upcoming events</div>';
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                const fallbackEvents = [
-                    { date: getTodayDate(), title: "Quality Audit", type: "audit" },
-                    { date: getTodayDate(), title: "Production Meeting", type: "meeting" }
-                ];
-                renderCalendar(fallbackEvents);
-                document.getElementById('today-events-list').innerHTML = `
-                    <div class="today-event-card"><div class="flex gap-1.5"><div class="text-sm">🔍</div><div><div class="font-bold text-gray-800 text-[10px]">Quality Audit</div><p class="text-slate-500 text-[8px]">audit</p></div></div></div>
-                    <div class="today-event-card"><div class="flex gap-1.5"><div class="text-sm">📌</div><div><div class="font-bold text-gray-800 text-[10px]">Production Meeting</div><p class="text-slate-500 text-[8px]">meeting</p></div></div></div>
-                `;
-                document.getElementById('upcoming-events').innerHTML = `
-                    <div class="upcoming-item"><span class="upcoming-date">📌 15 Jan</span><span class="upcoming-title">Customer Visit</span></div>
-                    <div class="upcoming-item"><span class="upcoming-date">🔍 20 Jan</span><span class="upcoming-title">Internal Audit</span></div>
-                `;
-                document.getElementById('today-date').innerHTML = formatDisplayDate(getTodayDate());
-            }
+
+        function groupEventsByDate(events) {
+            const grouped = {};
+            events.forEach(event => { if (event.date) { if (!grouped[event.date]) grouped[event.date] = []; grouped[event.date].push(event); } });
+            return grouped;
         }
-        
-        function renderCalendar(events) {
+
+        function getDaysInMonth(year, month) { return new Date(year, month + 1, 0).getDate(); }
+        function getFirstDayOfMonth(year, month) { return new Date(year, month, 1).getDay(); }
+        function isWeekend(dayIndex) { return dayIndex === 0 || dayIndex === 6; }
+
+        // RENDER KALENDER TANPA EMPTY CELL DI BAWAH: hanya render cell untuk tanggal aktif, tanpa placeholder kosong setelah akhir bulan
+        function renderCalendar(events, groupedEvents) {
             const calendarGrid = document.getElementById('calendar-grid');
             const calendarMonthSpan = document.getElementById('calendar-month');
-            
             const now = new Date();
             const year = now.getFullYear();
             const month = now.getMonth();
             const today = now.getDate();
             const monthName = now.toLocaleString('default', { month: 'long' });
-            
             calendarMonthSpan.innerText = `${monthName} ${year}`;
+
+            const firstDay = getFirstDayOfMonth(year, month);
+            const daysInMonth = getDaysInMonth(year, month);
             
-            const firstDay = new Date(year, month, 1).getDay();
-            const lastDate = new Date(year, month + 1, 0).getDate();
+            // Hitung total cell yang dibutuhkan: mulai dari hari pertama (minggu) sampai tanggal terakhir bulan
+            // Kita buat grid hanya dengan cell yang benar-benar isi (tanggal aktif), tidak ada empty cells di luar rentang.
+            // Pendekatan: buat array cells, di mana indeks 0 adalah hari minggu pertama bulan. Total sel = (firstDay + daysInMonth)
+            // Namun kita butuh bentuk grid rapi (7 kolom), kita akan buat rows secara fleksibel, dan sisa akhir tidak perlu ditambahkan empty cell.
+            const totalActiveCells = firstDay + daysInMonth;
+            // Hitung berapa baris yang terisi penuh atau tidak: kita akan looping sesuai totalActiveCells, lalu setiap 7 kolom pindah baris.
+            // Tidak menambahkan empty cells setelah hari terakhir.
             
-            const startOffset = firstDay;
-            const totalCells = Math.ceil((startOffset + lastDate) / 7) * 7;
-            
-            let html = '';
-            
-            for (let i = 0; i < totalCells; i++) {
-                const dayNumber = i - startOffset + 1;
-                const isValidDay = dayNumber >= 1 && dayNumber <= lastDate;
-                
-                if (isValidDay) {
-                    const day = dayNumber;
+            let cellsHtml = '';
+            let dayCounter = 1;
+            // offset: kita perlu menampilkan cell kosong di awal (sebelum tanggal 1) sesuai firstDay
+            for (let i = 0; i < totalActiveCells; i++) {
+                if (i < firstDay) {
+                    // Sel kosong di awal minggu (sebelum tanggal 1)
+                    cellsHtml += `<div class="calendar-cell empty-placeholder bg-gray-50 opacity-50 border-dashed" style="background: #F9FAFB;"><span class="calendar-date text-gray-300"></span></div>`;
+                } else {
+                    const day = dayCounter;
                     const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
-                    const event = events.find(e => e.date === fullDate);
+                    const dayEvents = groupedEvents[fullDate] || [];
                     const isToday = day === today;
                     const dayOfWeek = new Date(year, month, day).getDay();
                     const isWeekendDay = isWeekend(dayOfWeek);
-                    const isHolidayEvent = event && event.type && event.type.toLowerCase() === 'holiday';
+                    const hasHoliday = dayEvents.some(e => e.type && e.type.toLowerCase() === 'holiday');
                     
                     let dateColor = 'text-gray-700';
-                    if (isHolidayEvent) dateColor = 'text-red-500';
+                    if (hasHoliday) dateColor = 'text-red-500';
                     else if (isWeekendDay) dateColor = 'text-red-500';
-                    if (isToday) dateColor = 'text-cyan-600';
+                    if (isToday) dateColor = 'text-cyan-600 font-bold';
                     
                     let bgClass = 'bg-gray-50 border-gray-200';
                     if (isToday) bgClass = 'bg-cyan-50 border-cyan-200';
-                    else if (isHolidayEvent) bgClass = 'bg-red-50 border-red-200';
+                    else if (hasHoliday) bgClass = 'bg-red-50 border-red-200';
                     
-                    let eventHtml = '';
-                    if (event) {
+                    let eventsHtml = '';
+                    if (dayEvents.length > 0) {
+                        eventsHtml = '<div class="calendar-events-container">';
+                        for (let ev of dayEvents) {
+                            let icon = '📌';
+                            if (ev.type === 'audit') icon = '🔍';
+                            else if (ev.type === 'visit') icon = '👥';
+                            else if (ev.type === 'training') icon = '📚';
+                            else if (ev.type === 'holiday') icon = '🎉';
+                            let eventColor = 'text-cyan-700';
+                            if (ev.type === 'holiday') eventColor = 'text-red-600';
+                            eventsHtml += `<div class="calendar-event ${eventColor}" title="${ev.title || ''}">${icon} ${ev.title?.substring(0, 22) || ''}</div>`;
+                        }
+                        eventsHtml += '</div>';
+                    }
+                    cellsHtml += `<div class="calendar-cell ${bgClass}"><span class="calendar-date ${dateColor}">${day}</span>${eventsHtml}</div>`;
+                    dayCounter++;
+                }
+            }
+            
+            // Set grid template rows secara implisit menggunakan css grid auto, kita hanya mengisi cells tanpa menambah empty di akhir
+            calendarGrid.style.display = 'grid';
+            calendarGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+            calendarGrid.innerHTML = cellsHtml;
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch(EVENT_API);
+                const events = await response.json();
+                const grouped = groupEventsByDate(events);
+                renderCalendar(events, grouped);
+
+                const todayDate = getTodayDate();
+                const todayEvents = events.filter(e => e.date === todayDate);
+                const todayEventsDiv = document.getElementById('today-events-list');
+                const todayDateSpan = document.getElementById('today-date');
+                todayDateSpan.innerHTML = formatDisplayDate(todayDate);
+
+                if (todayEvents.length > 0) {
+                    let eventsHtml = '';
+                    for (let event of todayEvents) {
                         let icon = '📌';
                         if (event.type === 'audit') icon = '🔍';
                         else if (event.type === 'visit') icon = '👥';
                         else if (event.type === 'training') icon = '📚';
                         else if (event.type === 'holiday') icon = '🎉';
-                        
-                        let eventColor = 'text-cyan-600';
-                        if (event.type === 'holiday') eventColor = 'text-red-500';
-                        else if (isWeekendDay) eventColor = 'text-red-500';
-                        
-                        let eventTitle = event.title.length > 14 ? event.title.substring(0, 12) + '..' : event.title;
-                        eventHtml = `<div class="calendar-event ${eventColor}">${icon} ${eventTitle}</div>`;
+                        let timeHtml = event.time ? `<span class="event-time">🕘 ${event.time}</span>` : '';
+                        eventsHtml += `
+                            <div class="today-event-card">
+                                <div class="event-title"><span>${icon} ${event.title || '-'}</span>${timeHtml}</div>
+                                <div class="event-type">${event.type || 'activity'}</div>
+                                ${event.pic ? `<div class="event-pic">👤 PIC: ${event.pic}</div>` : ''}
+                            </div>
+                        `;
                     }
-                    
-                    html += `
-                        <div class="calendar-cell ${bgClass}">
-                            <span class="calendar-date ${dateColor}">${day}</span>
-                            ${eventHtml}
-                        </div>
-                    `;
+                    todayEventsDiv.innerHTML = eventsHtml;
                 } else {
-                    html += `<div class="empty-cell"></div>`;
+                    todayEventsDiv.innerHTML = '<div class="text-center text-slate-500 py-3 text-[9px]">📭 No events today</div>';
                 }
+
+                const todayMidnight = new Date();
+                todayMidnight.setHours(0, 0, 0, 0);
+                const upcomingEvents = events.filter(e => {
+                    const evDate = new Date(e.date);
+                    evDate.setHours(0, 0, 0, 0);
+                    return evDate > todayMidnight;
+                }).sort((a, b) => new Date(a.date) - new Date(b.date)).slice(0, 5);
+
+                const upcomingDiv = document.getElementById('upcoming-events');
+                if (upcomingEvents.length) {
+                    upcomingDiv.innerHTML = upcomingEvents.map(ev => {
+                        const evDate = new Date(ev.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                        let icon = '📌';
+                        if (ev.type === 'holiday') icon = '🎉';
+                        else if (ev.type === 'audit') icon = '🔍';
+                        else if (ev.type === 'visit') icon = '👥';
+                        return `<div class="upcoming-item"><span class="upcoming-date">${icon} ${evDate}</span><span class="upcoming-title" title="${ev.title}">${ev.title || '-'}</span><span class="upcoming-pic">${ev.pic ? '👤 ' + ev.pic : ''}</span></div>`;
+                    }).join('');
+                } else {
+                    upcomingDiv.innerHTML = '<div class="text-center text-slate-500 py-1 text-[9px]">No upcoming events</div>';
+                }
+            } catch (error) {
+                console.warn("API error or fallback triggered", error);
+                const fallbackEvents = [
+                    { date: getTodayDate(), title: "NSJ PRESIDENT VISIT", type: "visit", pic: "habib", time: "09:00" },
+                    { date: getTodayDate(), title: "INTERNAL AUDIT : BEKASI", type: "audit", pic: "quality team", time: "13:30" },
+                    { date: "2026-06-18", title: "IAT AUDIT : TANGGRANG", type: "audit", pic: "external", time: "" },
+                    { date: "2026-06-23", title: "IAT AUDIT : BEKASI", type: "audit", pic: "auditor", time: "" },
+                    { date: "2026-06-24", title: "IAT AUDIT : BEKASI", type: "audit", pic: "auditor", time: "" },
+                    { date: "2026-06-25", title: "IAT AUDIT : BEKASI", type: "audit", pic: "auditor", time: "" }
+                ];
+                const groupedFallback = groupEventsByDate(fallbackEvents);
+                renderCalendar(fallbackEvents, groupedFallback);
+                const todayDate2 = getTodayDate();
+                const todayEventsFallback = fallbackEvents.filter(e => e.date === todayDate2);
+                let fallbackHtml = '';
+                for (let ev of todayEventsFallback) {
+                    let icon = ev.type === 'visit' ? '👥' : '🔍';
+                    fallbackHtml += `<div class="today-event-card"><div class="event-title"><span>${icon} ${ev.title}</span><span class="event-time">🕘 ${ev.time || 'All day'}</span></div><div class="event-type">${ev.type}</div><div class="event-pic">👤 PIC: ${ev.pic}</div></div>`;
+                }
+                if (!fallbackHtml) fallbackHtml = '<div class="text-center text-slate-500 py-3 text-[9px]">📭 No events today</div>';
+                document.getElementById('today-events-list').innerHTML = fallbackHtml;
+                document.getElementById('today-date').innerHTML = formatDisplayDate(todayDate2);
+                document.getElementById('upcoming-events').innerHTML = `
+                    <div class="upcoming-item"><span class="upcoming-date">🔍 18 Jun</span><span class="upcoming-title">IAT AUDIT : TANGGRANG</span><span class="upcoming-pic">👤 external</span></div>
+                    <div class="upcoming-item"><span class="upcoming-date">🔍 23 Jun</span><span class="upcoming-title">IAT AUDIT : BEKASI</span><span class="upcoming-pic">👤 auditor</span></div>
+                    <div class="upcoming-item"><span class="upcoming-date">🔍 24 Jun</span><span class="upcoming-title">IAT AUDIT : BEKASI</span><span class="upcoming-pic">👤 auditor</span></div>
+                    <div class="upcoming-item"><span class="upcoming-date">🔍 25 Jun</span><span class="upcoming-title">IAT AUDIT : BEKASI</span><span class="upcoming-pic">👤 auditor</span></div>
+                `;
             }
-            
-            calendarGrid.innerHTML = html;
         }
-        
+
         function startAutoRefresh() {
             if (autoRefreshInterval) clearInterval(autoRefreshInterval);
             autoRefreshInterval = setInterval(loadData, 30000);
         }
-        
-        // ==================== INIT ====================
+
         renderMenu();
         updateClock();
         setInterval(updateClock, 1000);

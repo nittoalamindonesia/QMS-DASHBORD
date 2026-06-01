@@ -329,19 +329,23 @@
 
     <script>
         // ==================== KONFIGURASI MENU (ROLE-BASED) ====================
+        // ADMIN MENU - Ditambahkan Schedule Tooling (🔧)
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: true },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
             { icon: "🏭", name: "Production", link: "production.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
         
+        // USER MENU - Ditambahkan Schedule Tooling (🔧)
         const userMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: true },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
         
         function renderMenu() {
