@@ -227,7 +227,6 @@
             overflow: hidden;
         }
 
-        /* Hapus empty-cell styling, kita tidak akan render sel kosong di luar tanggal aktif */
         .calendar-date {
             font-size: 0.75rem;
             font-weight: bold;
@@ -682,20 +681,12 @@
             const firstDay = getFirstDayOfMonth(year, month);
             const daysInMonth = getDaysInMonth(year, month);
             
-            // Hitung total cell yang dibutuhkan: mulai dari hari pertama (minggu) sampai tanggal terakhir bulan
-            // Kita buat grid hanya dengan cell yang benar-benar isi (tanggal aktif), tidak ada empty cells di luar rentang.
-            // Pendekatan: buat array cells, di mana indeks 0 adalah hari minggu pertama bulan. Total sel = (firstDay + daysInMonth)
-            // Namun kita butuh bentuk grid rapi (7 kolom), kita akan buat rows secara fleksibel, dan sisa akhir tidak perlu ditambahkan empty cell.
             const totalActiveCells = firstDay + daysInMonth;
-            // Hitung berapa baris yang terisi penuh atau tidak: kita akan looping sesuai totalActiveCells, lalu setiap 7 kolom pindah baris.
-            // Tidak menambahkan empty cells setelah hari terakhir.
             
             let cellsHtml = '';
             let dayCounter = 1;
-            // offset: kita perlu menampilkan cell kosong di awal (sebelum tanggal 1) sesuai firstDay
             for (let i = 0; i < totalActiveCells; i++) {
                 if (i < firstDay) {
-                    // Sel kosong di awal minggu (sebelum tanggal 1)
                     cellsHtml += `<div class="calendar-cell empty-placeholder bg-gray-50 opacity-50 border-dashed" style="background: #F9FAFB;"><span class="calendar-date text-gray-300"></span></div>`;
                 } else {
                     const day = dayCounter;
@@ -735,7 +726,6 @@
                 }
             }
             
-            // Set grid template rows secara implisit menggunakan css grid auto, kita hanya mengisi cells tanpa menambah empty di akhir
             calendarGrid.style.display = 'grid';
             calendarGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
             calendarGrid.innerHTML = cellsHtml;
@@ -778,10 +768,14 @@
 
                 const todayMidnight = new Date();
                 todayMidnight.setHours(0, 0, 0, 0);
+                // FILTER: EXCLUDE HOLIDAY type from upcoming events
                 const upcomingEvents = events.filter(e => {
+                    if (!e.date) return false;
                     const evDate = new Date(e.date);
                     evDate.setHours(0, 0, 0, 0);
-                    return evDate > todayMidnight;
+                    // exclude holiday type (case insensitive)
+                    const isHoliday = e.type && e.type.toLowerCase() === 'holiday';
+                    return evDate > todayMidnight && !isHoliday;
                 }).sort((a, b) => new Date(a.date) - new Date(b.date)).slice(0, 5);
 
                 const upcomingDiv = document.getElementById('upcoming-events');
@@ -789,9 +783,11 @@
                     upcomingDiv.innerHTML = upcomingEvents.map(ev => {
                         const evDate = new Date(ev.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
                         let icon = '📌';
-                        if (ev.type === 'holiday') icon = '🎉';
-                        else if (ev.type === 'audit') icon = '🔍';
+                        if (ev.type === 'audit') icon = '🔍';
                         else if (ev.type === 'visit') icon = '👥';
+                        else if (ev.type === 'training') icon = '📚';
+                        // holiday sudah di-filter, tidak akan ada di sini, tapi tetap safety
+                        if (ev.type === 'holiday') icon = '🎉';
                         return `<div class="upcoming-item"><span class="upcoming-date">${icon} ${evDate}</span><span class="upcoming-title" title="${ev.title}">${ev.title || '-'}</span><span class="upcoming-pic">${ev.pic ? '👤 ' + ev.pic : ''}</span></div>`;
                     }).join('');
                 } else {
@@ -799,13 +795,16 @@
                 }
             } catch (error) {
                 console.warn("API error or fallback triggered", error);
+                // FALLBACK data - exclude holiday items from upcoming
                 const fallbackEvents = [
                     { date: getTodayDate(), title: "NSJ PRESIDENT VISIT", type: "visit", pic: "habib", time: "09:00" },
                     { date: getTodayDate(), title: "INTERNAL AUDIT : BEKASI", type: "audit", pic: "quality team", time: "13:30" },
                     { date: "2026-06-18", title: "IAT AUDIT : TANGGRANG", type: "audit", pic: "external", time: "" },
                     { date: "2026-06-23", title: "IAT AUDIT : BEKASI", type: "audit", pic: "auditor", time: "" },
                     { date: "2026-06-24", title: "IAT AUDIT : BEKASI", type: "audit", pic: "auditor", time: "" },
-                    { date: "2026-06-25", title: "IAT AUDIT : BEKASI", type: "audit", pic: "auditor", time: "" }
+                    { date: "2026-06-25", title: "IAT AUDIT : BEKASI", type: "audit", pic: "auditor", time: "" },
+                    // HOLIDAY example (will be excluded from upcoming)
+                    { date: "2026-12-25", title: "CHRISTMAS", type: "holiday", pic: "", time: "" }
                 ];
                 const groupedFallback = groupEventsByDate(fallbackEvents);
                 renderCalendar(fallbackEvents, groupedFallback);
@@ -819,12 +818,23 @@
                 if (!fallbackHtml) fallbackHtml = '<div class="text-center text-slate-500 py-3 text-[9px]">📭 No events today</div>';
                 document.getElementById('today-events-list').innerHTML = fallbackHtml;
                 document.getElementById('today-date').innerHTML = formatDisplayDate(todayDate2);
-                document.getElementById('upcoming-events').innerHTML = `
-                    <div class="upcoming-item"><span class="upcoming-date">🔍 18 Jun</span><span class="upcoming-title">IAT AUDIT : TANGGRANG</span><span class="upcoming-pic">👤 external</span></div>
-                    <div class="upcoming-item"><span class="upcoming-date">🔍 23 Jun</span><span class="upcoming-title">IAT AUDIT : BEKASI</span><span class="upcoming-pic">👤 auditor</span></div>
-                    <div class="upcoming-item"><span class="upcoming-date">🔍 24 Jun</span><span class="upcoming-title">IAT AUDIT : BEKASI</span><span class="upcoming-pic">👤 auditor</span></div>
-                    <div class="upcoming-item"><span class="upcoming-date">🔍 25 Jun</span><span class="upcoming-title">IAT AUDIT : BEKASI</span><span class="upcoming-pic">👤 auditor</span></div>
-                `;
+                // Upcoming fallback WITHOUT holidays
+                const upcomingFallback = fallbackEvents.filter(e => {
+                    const evDate = new Date(e.date);
+                    const todayF = new Date();
+                    todayF.setHours(0,0,0,0);
+                    return evDate > todayF && e.type !== 'holiday';
+                }).sort((a,b) => new Date(a.date) - new Date(b.date)).slice(0,5);
+                
+                if (upcomingFallback.length) {
+                    document.getElementById('upcoming-events').innerHTML = upcomingFallback.map(ev => {
+                        const evDate = new Date(ev.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                        let icon = ev.type === 'audit' ? '🔍' : (ev.type === 'visit' ? '👥' : '📌');
+                        return `<div class="upcoming-item"><span class="upcoming-date">${icon} ${evDate}</span><span class="upcoming-title">${ev.title}</span><span class="upcoming-pic">${ev.pic ? '👤 ' + ev.pic : ''}</span></div>`;
+                    }).join('');
+                } else {
+                    document.getElementById('upcoming-events').innerHTML = '<div class="text-center text-slate-500 py-1 text-[9px]">No upcoming events</div>';
+                }
             }
         }
 
