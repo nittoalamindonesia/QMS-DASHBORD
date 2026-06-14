@@ -2,27 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Login - QMS System</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Menggunakan unit rem yang konsisten, ukuran font base ditetapkan -->
     <style>
+        /* RESET & BASE FIXED TYPOGRAPHY - Konsisten di semua device */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
+        /* Ukuran font dasar ditetapkan 16px (1rem = 16px) 
+           Agar teks tidak terpengaruh oleh scaling device, kita lock base font */
+        html {
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%; /* Mencegah auto zoom text di Safari */
+            text-size-adjust: 100%;
+        }
+        
         body {
             background: #FFFFFF;
             min-height: 100vh;
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 1rem; /* 16px base */
+            line-height: 1.5;
+            color: #1E293B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
         }
         
+        /* Container width fixed dengan max-width, padding responsif tapi teks tetap */
+        .login-container {
+            width: 100%;
+            max-width: 28rem; /* 448px */
+            margin: 0 auto;
+            padding: 0;
+        }
+        
+        /* Card styling */
         .login-card {
             background: #FFFFFF;
             border: 1px solid #E5E7EB;
+            border-radius: 1rem; /* 16px */
             transition: all 0.3s ease;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 2rem; /* 32px - konsisten */
         }
         
         .login-card:hover {
@@ -31,11 +58,47 @@
             border-color: #0284C7;
         }
         
+        /* Ukuran teks tetap menggunakan rem */
+        .company-title {
+            font-size: 1.5rem; /* 24px */
+            font-weight: 700;
+            color: #1A63F6;
+            line-height: 1.3;
+            letter-spacing: -0.01em;
+        }
+        
+        .subtitle {
+            font-size: 0.875rem; /* 14px tetap */
+            color: #64748B;
+            margin-top: 0.25rem;
+        }
+        
+        .welcome-text {
+            font-size: 1.25rem; /* 20px */
+            font-weight: 700;
+            color: #1E293B;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.875rem; /* 14px */
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 0.5rem;
+        }
+        
         .input-field {
-            transition: all 0.3s ease;
+            width: 100%;
             background: #F8FAFC;
             border: 1px solid #E5E7EB;
+            border-radius: 0.75rem; /* 12px */
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            font-size: 0.9375rem; /* 15px stabil */
+            transition: all 0.3s ease;
             color: #1E293B;
+            font-family: inherit;
         }
         
         .input-field:focus {
@@ -47,11 +110,25 @@
         
         .input-field::placeholder {
             color: #94A3B8;
+            font-size: 0.875rem;
         }
         
         .login-btn {
-            transition: all 0.3s ease;
+            width: 100%;
             background: linear-gradient(135deg, #0284C7, #1A63F6);
+            color: white;
+            font-weight: 700;
+            font-size: 1rem; /* 16px */
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-family: inherit;
         }
         
         .login-btn:hover {
@@ -59,6 +136,50 @@
             box-shadow: 0 5px 15px rgba(2,132,199,0.3);
         }
         
+        .footer-text {
+            font-size: 0.75rem; /* 12px konsisten */
+            color: #94A3B8;
+            text-align: center;
+        }
+        
+        .footer-status {
+            font-size: 0.75rem;
+            color: #0284C7;
+            margin-top: 0.25rem;
+        }
+        
+        .error-message {
+            font-size: 0.875rem;
+            color: #EF4444;
+            text-align: center;
+            margin-top: 1rem;
+            padding: 0.5rem;
+            background: #FEF2F2;
+            border-radius: 0.5rem;
+        }
+        
+        /* Logo container konsisten */
+        .logo-wrapper {
+            width: 7rem;  /* 112px */
+            height: 7rem;
+            margin: 0 auto 1rem auto;
+        }
+        
+        .logo-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        /* Divider */
+        .divider {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #E2E8F0;
+            text-align: center;
+        }
+        
+        /* Animations */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -68,20 +189,20 @@
             animation: fadeIn 0.5s ease;
         }
         
-        .error-message {
-            animation: shake 0.3s ease;
-        }
-        
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             25% { transform: translateX(-5px); }
             75% { transform: translateX(5px); }
         }
         
+        .error-message.shake {
+            animation: shake 0.3s ease;
+        }
+        
         .loading-spinner {
             display: inline-block;
-            width: 16px;
-            height: 16px;
+            width: 1rem;
+            height: 1rem;
             border: 2px solid rgba(255,255,255,0.3);
             border-radius: 50%;
             border-top-color: white;
@@ -91,73 +212,133 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+        
+        /* Relative wrapper untuk icon input */
+        .input-icon-wrapper {
+            position: relative;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            color: #94A3B8;
+            pointer-events: none;
+        }
+        
+        /* Responsif: memastikan di layar sangat kecil (max-width 480px) padding card masih proporsional tapi teks tetap ukuran sama */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 1.5rem; /* sedikit kurang tapi font-size tidak berubah */
+            }
+            .company-title {
+                font-size: 1.375rem; /* sedikit kompromi agar tidak pecah tapi tetap stabil */
+            }
+            .welcome-text {
+                font-size: 1.125rem;
+            }
+            /* Tetap base font size 16px tidak berubah */
+            body {
+                padding: 0.75rem;
+            }
+        }
+        
+        /* Untuk tablet dan desktop font tetap sama, hanya spacing yang mungkin berbeda */
+        @media (min-width: 640px) {
+            .login-card {
+                padding: 2rem;
+            }
+        }
+        
+        /* Mencegah scaling berlebihan pada landscape mode */
+        @media (max-height: 600px) {
+            body {
+                padding: 0.5rem;
+            }
+            .logo-wrapper {
+                width: 5rem;
+                height: 5rem;
+                margin-bottom: 0.5rem;
+            }
+            .login-card {
+                padding: 1.25rem;
+            }
+            .welcome-text {
+                margin-bottom: 1rem;
+            }
+        }
     </style>
 </head>
-<body class="flex items-center justify-center">
-
-    <div class="w-full max-w-md p-6 animate-fade-in">
-        <!-- Logo dengan gambar maskotnitto.png -->
-        <div class="text-center mb-8">
-            <div class="w-28 h-28 mx-auto mb-4">
-                <img src="maskotnitto.png" alt="NITTO MASKOT" class="w-full h-full object-contain">
-            </div>
-            <h1 class="text-2xl font-bold text-[#1A63F6]">PT NITTO ALAM INDONESIA</h1>
-            <p class="text-slate-500 text-sm mt-1">Plant 2 - Quality Management System</p>
+<body>
+    <div class="login-container animate-fade-in">
+        <!-- Logo -->
+        <div class="logo-wrapper">
+            <img src="maskotnitto.png" alt="NITTO MASKOT" id="logo-img" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%230284C7\'/%3E%3Ctext x=\'50\' y=\'67\' text-anchor=\'middle\' fill=\'white\' font-size=\'40\' font-weight=\'bold\'%3EN%3C/text%3E%3C/svg%3E';">
+        </div>
+        
+        <!-- Company Info - teks tetap -->
+        <div class="text-center mb-6">
+            <h1 class="company-title">PT NITTO ALAM INDONESIA</h1>
+            <p class="subtitle">Plant 2 - Quality Management System</p>
         </div>
         
         <!-- Login Card -->
-        <div class="login-card rounded-2xl p-8">
-            <h2 class="text-xl font-bold text-[#1E293B] mb-6 text-center">Welcome Back</h2>
+        <div class="login-card">
+            <h2 class="welcome-text">Welcome Back</h2>
             
             <form onsubmit="handleLogin(event); return false;">
-                <div class="mb-5">
-                    <label class="block text-slate-600 text-sm mb-2">Username</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">👤</span>
+                <div class="mb-4">
+                    <label class="form-label">Username</label>
+                    <div class="input-icon-wrapper">
+                        <span class="input-icon">👤</span>
                         <input type="text" id="username" 
-                               class="input-field w-full border rounded-xl pl-10 pr-4 py-3 focus:border-cyan-500"
-                               placeholder="Enter your username" required>
+                               class="input-field"
+                               placeholder="Enter your username" 
+                               autocomplete="off"
+                               required>
                     </div>
                 </div>
                 
-                <div class="mb-6">
-                    <label class="block text-slate-600 text-sm mb-2">Password</label>
-                    <div class="relative">
-                        <span class="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400">🔒</span>
+                <div class="mb-5">
+                    <label class="form-label">Password</label>
+                    <div class="input-icon-wrapper">
+                        <span class="input-icon">🔒</span>
                         <input type="password" id="password" 
-                               class="input-field w-full border rounded-xl pl-10 pr-4 py-3 focus:border-cyan-500"
-                               placeholder="Enter your password" required>
+                               class="input-field"
+                               placeholder="Enter your password" 
+                               autocomplete="off"
+                               required>
                     </div>
                 </div>
                 
-                <button type="submit" id="login-btn" class="login-btn w-full text-white font-bold py-3 rounded-xl transition flex items-center justify-center gap-2">
+                <button type="submit" id="login-btn" class="login-btn">
                     <span>Sign In</span>
                 </button>
             </form>
             
-            <div id="error-message" class="mt-4 text-center text-red-500 text-sm hidden">
-                Invalid username or password
-            </div>
+            <div id="error-message" class="error-message hidden"></div>
             
-            <div class="mt-6 pt-4 border-t border-gray-200 text-center">
-                <p class="text-slate-500 text-xs">PT NITTO ALAM INDONESIA Quality System PLANT 2</p>
-                <div id="account-status" class="text-cyan-600 text-xs mt-1">⏳ Connecting to database...</div>
+            <div class="divider">
+                <p class="footer-text">PT NITTO ALAM INDONESIA Quality System PLANT 2</p>
+                <div id="account-status" class="footer-status">⏳ Connecting to database...</div>
             </div>
         </div>
         
-        <div class="text-center mt-6">
-            <p class="text-slate-400 text-xs">© 2026 NITTO SEIKO - Quality Management System</p>
+        <div class="text-center mt-5">
+            <p class="footer-text">© 2026 NITTO SEIKO - Quality Management System</p>
         </div>
     </div>
 
     <script>
-        // API Endpoint untuk data akun (sheet "akun")
+        // API Endpoint - tetap menggunakan sheet yang sama
         const ACCOUNT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/akun";
         
         let usersData = [];
         let isLoading = true;
         
-        // Load data akun dari spreadsheet
+        // Fungsi load data dari sheet (sama seperti sebelumnya)
         async function loadUsersFromSheet() {
             const statusDiv = document.getElementById('account-status');
             
@@ -202,7 +383,7 @@
             }
         }
         
-        // Check if already logged in - redirect to maindashboard.html
+        // Check if already logged in
         function checkAlreadyLoggedIn() {
             const user = sessionStorage.getItem('currentUser');
             if (user) {
@@ -229,37 +410,38 @@
             loginBtn.innerHTML = '<span class="loading-spinner"></span><span> Signing in...</span>';
             loginBtn.disabled = true;
             
-            const user = usersData.find(u => 
-                u.username === username && u.password === password
-            );
-            
-            loginBtn.innerHTML = originalBtnText;
-            loginBtn.disabled = false;
-            
-            if (user) {
-                sessionStorage.setItem('currentUser', JSON.stringify({
-                    id: user.id,
-                    username: user.username,
-                    role: user.role
-                }));
+            // Simulasi sedikit delay untuk feedback
+            setTimeout(() => {
+                const user = usersData.find(u => 
+                    u.username === username && u.password === password
+                );
                 
-                console.log('Login successful:', user.username, 'Role:', user.role);
+                loginBtn.innerHTML = originalBtnText;
+                loginBtn.disabled = false;
                 
-                // Redirect ke maindashboard.html
-                window.location.href = 'maindashboard.html';
-            } else {
-                showError("Invalid username or password");
-                document.getElementById('password').value = '';
-            }
+                if (user) {
+                    sessionStorage.setItem('currentUser', JSON.stringify({
+                        id: user.id,
+                        username: user.username,
+                        role: user.role
+                    }));
+                    
+                    console.log('Login successful:', user.username, 'Role:', user.role);
+                    window.location.href = 'maindashboard.html';
+                } else {
+                    showError("Invalid username or password");
+                    document.getElementById('password').value = '';
+                }
+            }, 500);
         }
         
         function showError(message) {
             const errorDiv = document.getElementById('error-message');
             errorDiv.innerHTML = message;
             errorDiv.classList.remove('hidden');
-            errorDiv.classList.add('error-message');
+            errorDiv.classList.add('shake');
             setTimeout(() => {
-                errorDiv.classList.remove('error-message');
+                errorDiv.classList.remove('shake');
             }, 300);
         }
         
@@ -269,6 +451,8 @@
         }
         
         init();
+        
+        // Optional: tambahkan event listener untuk tombol enter (bawaan form sudah support)
     </script>
 </body>
 </html>

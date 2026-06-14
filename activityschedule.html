@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
     <title>Activity Schedule - PT NITTO ALAM INDONESIA</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -20,81 +21,22 @@
             width: 100vw;
         }
 
-        /* ========== BASE RESPONSIVE UNTUK TV 50-55 INCH ========== */
         html {
-            font-size: 14px;
+            font-size: 16px;
         }
 
-        /* TV 50 inch (1920x1080) */
         @media (min-width: 1920px) and (max-width: 2559px) {
-            html {
-                font-size: 16px;
-            }
-            .calendar-cell {
-                padding: 0.2rem 0.15rem;
-            }
-            .calendar-date {
-                font-size: 0.85rem;
-            }
-            .calendar-event {
-                font-size: 0.55rem;
-                padding: 0.05rem 0.1rem;
-            }
-            .today-event-card {
-                padding: 0.5rem 0.6rem;
-            }
-            .today-event-card .event-title {
-                font-size: 0.85rem;
-            }
-            .today-event-card .event-time {
-                font-size: 0.7rem;
-            }
-            .upcoming-date {
-                font-size: 0.7rem;
-            }
-            .upcoming-title {
-                font-size: 0.7rem;
-            }
-            .day-header {
-                font-size: 0.7rem;
-            }
+            html { font-size: 18px; }
         }
 
-        /* TV 55 inch (2560x1440) */
         @media (min-width: 2560px) {
-            html {
-                font-size: 20px;
-            }
-            .calendar-cell {
-                padding: 0.3rem 0.2rem;
-            }
-            .calendar-date {
-                font-size: 0.95rem;
-            }
-            .calendar-event {
-                font-size: 0.6rem;
-                padding: 0.08rem 0.15rem;
-            }
-            .today-event-card {
-                padding: 0.6rem 0.7rem;
-            }
-            .today-event-card .event-title {
-                font-size: 0.95rem;
-            }
-            .today-event-card .event-time {
-                font-size: 0.8rem;
-            }
-            .upcoming-date {
-                font-size: 0.8rem;
-            }
-            .upcoming-title {
-                font-size: 0.8rem;
-            }
-            .day-header {
-                font-size: 0.8rem;
-            }
-            .digital-clock {
-                font-size: 1.2rem;
+            html { font-size: 22px; }
+        }
+
+        @media (max-width: 768px) {
+            html { font-size: 12px; }
+            .dashboard-grid {
+                grid-template-columns: 1fr !important;
             }
         }
 
@@ -112,7 +54,6 @@
 
         .stat-card {
             background: #FFFFFF;
-            transition: all 0.2s ease;
             border: 1px solid #E5E7EB;
             border-radius: 0.8rem;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -141,7 +82,7 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            padding: 0.5rem 0.6rem 0.5rem 0.6rem;
+            padding: 0.5rem 0.6rem;
         }
 
         .dashboard-grid {
@@ -150,13 +91,6 @@
             gap: 0.75rem;
             flex: 1;
             min-height: 0;
-        }
-
-        .card-container {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
         }
 
         .card-header {
@@ -174,19 +108,11 @@
             overflow: hidden;
         }
 
-        /* KALENDER - FLEXIBLE GRID TANPA EMPTY CELL DI BAWAH */
-        .calendar-wrapper {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            width: 100%;
-        }
-
         .days-header {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 0.15rem;
-            margin-bottom: 0.25rem;
+            gap: 0.2rem;
+            margin-bottom: 0.3rem;
             flex-shrink: 0;
         }
 
@@ -194,7 +120,9 @@
             text-align: center;
             font-size: 0.7rem;
             font-weight: 700;
-            padding: 0.1rem 0;
+            padding: 0.2rem 0;
+            background: #F1F5F9;
+            border-radius: 0.4rem;
         }
 
         .calendar-grid-container {
@@ -204,57 +132,78 @@
             min-height: 0;
         }
 
-        /* Grid dinamis: auto-fit rows, tidak ada empty cells di akhir baris */
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 0.2rem;
-            grid-auto-rows: minmax(0, 1fr);
+            gap: 0.25rem;
             flex: 1;
         }
 
         .calendar-cell {
             background: #F8FAFC;
             border: 1px solid #E5E7EB;
-            border-radius: 0.4rem;
+            border-radius: 0.5rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 0.2rem 0.1rem;
+            padding: 0.3rem 0.15rem;
             transition: all 0.1s ease;
             min-width: 0;
-            overflow: hidden;
+            overflow-y: auto;
+            height: 100%;
+            min-height: 80px;
+        }
+
+        /* Style untuk weekend cell (Sabtu & Minggu) TANPA EVENT */
+        .calendar-cell.weekend-cell {
+            background: #FEE2E2 !important;
+            border-color: #FCA5A5 !important;
+        }
+
+        /* Style untuk hari ini (TODAY) */
+        .calendar-cell.today-cell {
+            background: #CFFAFE !important;
+            border-color: #06B6D4 !important;
         }
 
         .calendar-date {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 0.15rem;
+            margin-bottom: 0.2rem;
             line-height: 1.2;
+            padding-bottom: 0.15rem;
+            border-bottom: 1px solid #E5E7EB;
+            width: 100%;
+            flex-shrink: 0;
         }
 
         .calendar-events-container {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 0.05rem;
+            gap: 0.15rem;
             align-items: flex-start;
-            overflow: hidden;
+            flex: 1;
         }
 
         .calendar-event {
-            font-size: 0.45rem;
-            line-height: 1.2;
+            font-size: 0.5rem;
+            line-height: 1.3;
             font-weight: 500;
             white-space: normal;
-            word-break: break-word;
+            word-wrap: break-word;
             overflow-wrap: break-word;
             text-align: left;
             width: 100%;
             border-radius: 0.2rem;
-            padding: 0.02rem 0.1rem;
+            padding: 0.1rem 0.2rem;
+            color: #0369A1;
+        }
+
+        .calendar-event.holiday {
+            color: #DC2626;
         }
 
         .today-events-wrapper {
@@ -284,7 +233,7 @@
         }
 
         .today-event-card .event-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
             color: #1E293B;
             display: flex;
@@ -319,7 +268,7 @@
         }
 
         .upcoming-scroll {
-            max-height: 145px;
+            max-height: 140px;
             overflow-y: auto;
             padding-right: 0.2rem;
         }
@@ -346,19 +295,17 @@
             color: #1E293B;
             font-weight: 500;
             flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            white-space: normal;
+            word-break: break-word;
         }
 
         .upcoming-pic {
             font-size: 0.6rem;
             color: #64748B;
-            min-width: 65px;
+            min-width: 60px;
             text-align: right;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            white-space: normal;
+            word-break: break-word;
         }
 
         .menu-overlay {
@@ -373,9 +320,7 @@
             display: none;
         }
 
-        .menu-overlay.active {
-            display: block;
-        }
+        .menu-overlay.active { display: block; }
 
         .popup-sidebar {
             position: fixed;
@@ -391,9 +336,7 @@
             flex-direction: column;
         }
 
-        .popup-sidebar.active {
-            left: 0;
-        }
+        .popup-sidebar.active { left: 0; }
 
         .hamburger-btn {
             background: #F0F9FF;
@@ -404,13 +347,8 @@
             transition: 0.2s;
         }
 
-        .hamburger-btn:hover {
-            background: #0284C7;
-        }
-
-        .hamburger-btn:hover span {
-            color: white;
-        }
+        .hamburger-btn:hover { background: #0284C7; }
+        .hamburger-btn:hover span { color: white; }
 
         .digital-clock {
             font-family: 'Courier New', monospace;
@@ -420,7 +358,7 @@
             border-radius: 0.5rem;
             border: 1px solid #E5E7EB;
             color: #0284C7;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
 
         .running-text marquee {
@@ -430,22 +368,72 @@
             padding: 0.2rem 0;
         }
 
+        /* FLOATING BUTTON ADMIN */
+        .floating-download-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #0284C7, #0369A1);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floating-download-btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(135deg, #0369A1, #0284C7);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        .floating-download-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Toast notification */
+        .toast-notification {
+            position: fixed;
+            bottom: 90px;
+            right: 20px;
+            background: #10B981;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toast-notification.show {
+            opacity: 1;
+        }
+
         @media (min-width: 1920px) {
-            .upcoming-scroll {
-                max-height: 160px;
-            }
-            .calendar-event {
-                font-size: 0.5rem;
-            }
+            .calendar-date { font-size: 0.9rem; }
+            .calendar-event { font-size: 0.6rem; }
+            .today-event-card .event-title { font-size: 0.85rem; }
+            .upcoming-scroll { max-height: 160px; }
+            .calendar-cell { min-height: 100px; }
         }
 
         @media (min-width: 2560px) {
-            .upcoming-scroll {
-                max-height: 180px;
-            }
-            .calendar-event {
-                font-size: 0.6rem;
-            }
+            .calendar-date { font-size: 1rem; }
+            .calendar-event { font-size: 0.7rem; }
+            .today-event-card .event-title { font-size: 0.95rem; }
+            .upcoming-scroll { max-height: 180px; }
+            .calendar-cell { min-height: 120px; }
         }
     </style>
 </head>
@@ -460,7 +448,7 @@
                     <span class="text-white text-sm font-bold">NS</span>
                 </div>
                 <div>
-                    <h1 class="text-sm font-bold text-brand">NITTO SEIKO</h1>
+                    <h1 class="text-sm font-bold">NITTO SEIKO</h1>
                     <p class="text-slate-500 text-[8px]">Plant 2</p>
                 </div>
             </div>
@@ -478,7 +466,7 @@
             <div class="flex items-center gap-2">
                 <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-sm">☰</span></div>
                 <div>
-                    <h1 class="text-sm font-bold text-brand">PT NITTO ALAM INDONESIA</h1>
+                    <h1 class="text-sm font-bold">PT NITTO ALAM INDONESIA</h1>
                     <p class="text-slate-500 text-[8px]">Plant 2 - Activity Schedule</p>
                 </div>
             </div>
@@ -500,8 +488,8 @@
         <div class="main-layout">
             <div class="content-area">
                 <div class="dashboard-grid">
-                    <!-- LEFT: KALENDER TANPA EMPTY CELL DI BAWAH -->
-                    <div class="stat-card p-1.5">
+                    <!-- LEFT: KALENDER -->
+                    <div class="stat-card p-1.5" id="calendar-card">
                         <div class="card-header flex justify-between items-center">
                             <div class="flex items-center gap-1">
                                 <span class="text-sm">📅</span>
@@ -515,19 +503,17 @@
 
                         <div class="days-header">
                             <div class="day-header text-red-500">Sun</div>
-                            <div class="day-header text-slate-500">Mon</div>
-                            <div class="day-header text-slate-500">Tue</div>
-                            <div class="day-header text-slate-500">Wed</div>
-                            <div class="day-header text-slate-500">Thu</div>
-                            <div class="day-header text-slate-500">Fri</div>
+                            <div class="day-header">Mon</div>
+                            <div class="day-header">Tue</div>
+                            <div class="day-header">Wed</div>
+                            <div class="day-header">Thu</div>
+                            <div class="day-header">Fri</div>
                             <div class="day-header text-red-500">Sat</div>
                         </div>
 
                         <div class="card-body">
                             <div class="calendar-grid-container">
-                                <div id="calendar-grid" class="calendar-grid">
-                                    <div class="col-span-full text-center text-slate-500 py-3 text-[10px]">Memuat kalender...</div>
-                                </div>
+                                <div id="calendar-grid" class="calendar-grid"></div>
                             </div>
                         </div>
                     </div>
@@ -555,7 +541,7 @@
                                 <span class="text-sm">⏰</span>
                                 <h3 class="font-bold text-cyan-600 text-xs uppercase tracking-wide">Upcoming Events</h3>
                             </div>
-                            <div id="upcoming-events" class="upcoming-scroll space-y-0.5">
+                            <div id="upcoming-events" class="upcoming-scroll">
                                 <div class="text-center text-slate-500 py-1 text-[9px]">Loading...</div>
                             </div>
                         </div>
@@ -565,8 +551,16 @@
         </div>
     </div>
 
+    <!-- Floating Download Button (hanya untuk admin) -->
+    <div id="floatingDownloadBtn" class="floating-download-btn" style="display: none;" onclick="downloadCalendarAsImage()">
+        📸
+    </div>
+    <div id="toastNotification" class="toast-notification">
+        ✅ Downloading calendar...
+    </div>
+
     <script>
-        // ==================== MENU ====================
+        // ============ MENU DATA ============
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
@@ -584,11 +578,78 @@
             { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
 
+        // ============ VARIABLES ============
+        const EVENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/event";
+        let autoRefreshInterval = null;
+        let currentUserRole = 'user';
+
+        // ============ DOWNLOAD CALENDAR AS IMAGE ============
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toastNotification');
+            toast.textContent = message || (isError ? '❌ Failed to download' : '✅ Downloading calendar...');
+            toast.style.background = isError ? '#EF4444' : '#10B981';
+            toast.classList.add('show');
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        async function downloadCalendarAsImage() {
+            const calendarCard = document.getElementById('calendar-card');
+            if (!calendarCard) {
+                showToast('❌ Calendar not found', true);
+                return;
+            }
+
+            showToast('📸 Capturing calendar...');
+
+            try {
+                const originalOverflow = calendarCard.style.overflow;
+                const originalHeight = calendarCard.style.height;
+                
+                calendarCard.style.overflow = 'visible';
+                calendarCard.style.height = 'auto';
+                
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                const canvas = await html2canvas(calendarCard, {
+                    scale: 2,
+                    backgroundColor: '#FFFFFF',
+                    logging: false,
+                    useCORS: true,
+                    allowTaint: false
+                });
+                
+                calendarCard.style.overflow = originalOverflow;
+                calendarCard.style.height = originalHeight;
+                
+                const link = document.createElement('a');
+                const now = new Date();
+                const fileName = 'calendar_' + now.getFullYear() + '_' + String(now.getMonth() + 1).padStart(2, '0') + '.png';
+                link.download = fileName;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                showToast('✅ Calendar downloaded!');
+            } catch (error) {
+                console.error('Download error:', error);
+                showToast('❌ Failed to download calendar', true);
+            }
+        }
+
+        // ============ MENU FUNCTIONS ============
         function renderMenu() {
             const userJson = sessionStorage.getItem('currentUser');
             if (!userJson) return;
             const user = JSON.parse(userJson);
             const role = user.role || 'user';
+            currentUserRole = role;
+            
+            const floatingBtn = document.getElementById('floatingDownloadBtn');
+            if (floatingBtn) {
+                floatingBtn.style.display = role === 'admin' ? 'flex' : 'none';
+            }
+            
             const menus = role === 'admin' ? adminMenus : userMenus;
             const currentPage = window.location.pathname.split('/').pop() || 'activityschedule.html';
             const menuContainer = document.getElementById('menu-container');
@@ -597,7 +658,7 @@
                 const activeClass = menu.link === currentPage ? 'active' : '';
                 menuHtml += `
                     <div class="menu-item mx-2 my-1">
-                        <a href="${menu.link}" class="flex items-center gap-3 p-2 rounded-lg text-slate-600 hover:bg-sky-50 transition ${activeClass === 'active' ? 'bg-sky-100 text-cyan-700 border-l-3 border-cyan-600' : ''}">
+                        <a href="${menu.link}" class="flex items-center gap-3 p-2 rounded-lg text-slate-600 hover:bg-sky-50 transition ${activeClass === 'active' ? 'bg-sky-100 text-cyan-700' : ''}">
                             <span class="text-lg">${menu.icon}</span>
                             <span class="text-sm">${menu.name}</span>
                         </a>
@@ -614,7 +675,7 @@
             overlay.classList.toggle('active');
         }
 
-        document.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 const sidebar = document.getElementById('popupSidebar');
                 const overlay = document.getElementById('menuOverlay');
@@ -627,21 +688,26 @@
 
         function checkAuth() {
             const userJson = sessionStorage.getItem('currentUser');
-            if (!userJson) { window.location.href = 'login.html'; return null; }
+            if (!userJson) { 
+                window.location.href = 'login.html'; 
+                return null; 
+            }
             return JSON.parse(userJson);
         }
+
         const currentUser = checkAuth();
+
         function logout() {
             sessionStorage.removeItem('currentUser');
             window.location.href = 'login.html';
         }
 
-        const EVENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/event";
-        let autoRefreshInterval;
-
         function updateClock() {
             const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', { hour12: false });
+            const clockElement = document.getElementById('clock');
+            if (clockElement) {
+                clockElement.innerText = now.toLocaleTimeString('id-ID', { hour12: false });
+            }
         }
 
         function getTodayDate() {
@@ -659,15 +725,15 @@
 
         function groupEventsByDate(events) {
             const grouped = {};
-            events.forEach(event => { if (event.date) { if (!grouped[event.date]) grouped[event.date] = []; grouped[event.date].push(event); } });
+            events.forEach(function(event) { 
+                if (event.date) { 
+                    if (!grouped[event.date]) grouped[event.date] = []; 
+                    grouped[event.date].push(event); 
+                } 
+            });
             return grouped;
         }
 
-        function getDaysInMonth(year, month) { return new Date(year, month + 1, 0).getDate(); }
-        function getFirstDayOfMonth(year, month) { return new Date(year, month, 1).getDay(); }
-        function isWeekend(dayIndex) { return dayIndex === 0 || dayIndex === 6; }
-
-        // RENDER KALENDER TANPA EMPTY CELL DI BAWAH: hanya render cell untuk tanggal aktif, tanpa placeholder kosong setelah akhir bulan
         function renderCalendar(events, groupedEvents) {
             const calendarGrid = document.getElementById('calendar-grid');
             const calendarMonthSpan = document.getElementById('calendar-month');
@@ -676,35 +742,68 @@
             const month = now.getMonth();
             const today = now.getDate();
             const monthName = now.toLocaleString('default', { month: 'long' });
-            calendarMonthSpan.innerText = `${monthName} ${year}`;
-
-            const firstDay = getFirstDayOfMonth(year, month);
-            const daysInMonth = getDaysInMonth(year, month);
             
-            const totalActiveCells = firstDay + daysInMonth;
+            if (calendarMonthSpan) calendarMonthSpan.innerText = monthName + ' ' + year;
+
+            const firstDayOfMonth = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            const totalCells = firstDayOfMonth + daysInMonth;
+            const totalRows = Math.ceil(totalCells / 7);
+            const totalGridCells = totalRows * 7;
             
             let cellsHtml = '';
             let dayCounter = 1;
-            for (let i = 0; i < totalActiveCells; i++) {
-                if (i < firstDay) {
-                    cellsHtml += `<div class="calendar-cell empty-placeholder bg-gray-50 opacity-50 border-dashed" style="background: #F9FAFB;"><span class="calendar-date text-gray-300"></span></div>`;
+            
+            for (let i = 0; i < totalGridCells; i++) {
+                if (i < firstDayOfMonth || dayCounter > daysInMonth) {
+                    cellsHtml += `<div class="calendar-cell empty-cell" style="background: #F9FAFB; opacity:0.6;">
+                                    <span class="calendar-date text-gray-300" style="border-bottom-color: #E5E7EB;"></span>
+                                  </div>`;
                 } else {
                     const day = dayCounter;
-                    const fullDate = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+                    const fullDate = year + '-' + String(month + 1).padStart(2, "0") + '-' + String(day).padStart(2, "0");
                     const dayEvents = groupedEvents[fullDate] || [];
-                    const isToday = day === today;
+                    const isToday = (day === today);
                     const dayOfWeek = new Date(year, month, day).getDay();
-                    const isWeekendDay = isWeekend(dayOfWeek);
-                    const hasHoliday = dayEvents.some(e => e.type && e.type.toLowerCase() === 'holiday');
+                    const isWeekendDay = (dayOfWeek === 0 || dayOfWeek === 6);
+                    const hasHoliday = dayEvents.some(function(e) { return e.type && e.type.toLowerCase() === 'holiday'; });
+                    const hasEvent = dayEvents.length > 0;
+                    
+                    // PRIORITAS WARNA:
+                    // 1. HARI INI (TODAY) -> background biru, tulisan biru (MENGESAMPINGKAN weekend)
+                    // 2. Weekend TANPA EVENT -> background merah, tulisan merah
+                    // 3. Weekend ADA EVENT -> background PUTIH (seperti biasa), tulisan HITAM
+                    // 4. Holiday (bukan hari ini, bukan weekend) -> background merah muda, tulisan merah
+                    // 5. Weekday biasa -> background putih, tulisan hitam
                     
                     let dateColor = 'text-gray-700';
-                    if (hasHoliday) dateColor = 'text-red-500';
-                    else if (isWeekendDay) dateColor = 'text-red-500';
-                    if (isToday) dateColor = 'text-cyan-600 font-bold';
-                    
+                    let additionalClass = '';
                     let bgClass = 'bg-gray-50 border-gray-200';
-                    if (isToday) bgClass = 'bg-cyan-50 border-cyan-200';
-                    else if (hasHoliday) bgClass = 'bg-red-50 border-red-200';
+                    
+                    if (isToday) {
+                        // HARI INI: Biru
+                        additionalClass = 'today-cell';
+                        dateColor = 'text-cyan-600 font-bold';
+                        bgClass = '';
+                    } 
+                    else if (isWeekendDay && !hasEvent) {
+                        // Weekend TANPA EVENT: Merah
+                        additionalClass = 'weekend-cell';
+                        dateColor = 'text-red-500';
+                        bgClass = '';
+                    }
+                    else if (isWeekendDay && hasEvent && !hasHoliday) {
+                        // Weekend ADA EVENT (dan bukan holiday): Background putih normal
+                        // Tidak pakai additional class, warna tulisan hitam (default)
+                        dateColor = 'text-gray-700';
+                        bgClass = 'bg-gray-50 border-gray-200';
+                    }
+                    else if (hasHoliday) {
+                        // Holiday BUKAN hari ini dan BUKAN weekend: Merah muda
+                        bgClass = 'bg-red-50 border-red-200';
+                        dateColor = 'text-red-500';
+                    }
                     
                     let eventsHtml = '';
                     if (dayEvents.length > 0) {
@@ -715,20 +814,24 @@
                             else if (ev.type === 'visit') icon = '👥';
                             else if (ev.type === 'training') icon = '📚';
                             else if (ev.type === 'holiday') icon = '🎉';
-                            let eventColor = 'text-cyan-700';
-                            if (ev.type === 'holiday') eventColor = 'text-red-600';
-                            eventsHtml += `<div class="calendar-event ${eventColor}" title="${ev.title || ''}">${icon} ${ev.title?.substring(0, 22) || ''}</div>`;
+                            let eventClass = 'calendar-event';
+                            if (ev.type === 'holiday') eventClass += ' holiday';
+                            eventsHtml += '<div class="' + eventClass + '" title="' + (ev.title || '') + '">' + icon + ' ' + (ev.title || '') + '</div>';
                         }
                         eventsHtml += '</div>';
                     }
-                    cellsHtml += `<div class="calendar-cell ${bgClass}"><span class="calendar-date ${dateColor}">${day}</span>${eventsHtml}</div>`;
+                    
+                    const finalBgClass = additionalClass ? additionalClass : bgClass;
+                    cellsHtml += '<div class="calendar-cell ' + finalBgClass + '"><span class="calendar-date ' + dateColor + '">' + day + '</span>' + eventsHtml + '</div>';
                     dayCounter++;
                 }
             }
             
-            calendarGrid.style.display = 'grid';
-            calendarGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
-            calendarGrid.innerHTML = cellsHtml;
+            if (calendarGrid) {
+                calendarGrid.style.display = 'grid';
+                calendarGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+                calendarGrid.innerHTML = cellsHtml;
+            }
         }
 
         async function loadData() {
@@ -739,12 +842,13 @@
                 renderCalendar(events, grouped);
 
                 const todayDate = getTodayDate();
-                const todayEvents = events.filter(e => e.date === todayDate);
+                const todayEvents = events.filter(function(e) { return e.date === todayDate; });
                 const todayEventsDiv = document.getElementById('today-events-list');
                 const todayDateSpan = document.getElementById('today-date');
-                todayDateSpan.innerHTML = formatDisplayDate(todayDate);
+                
+                if (todayDateSpan) todayDateSpan.innerHTML = formatDisplayDate(todayDate);
 
-                if (todayEvents.length > 0) {
+                if (todayEvents.length > 0 && todayEventsDiv) {
                     let eventsHtml = '';
                     for (let event of todayEvents) {
                         let icon = '📌';
@@ -752,88 +856,88 @@
                         else if (event.type === 'visit') icon = '👥';
                         else if (event.type === 'training') icon = '📚';
                         else if (event.type === 'holiday') icon = '🎉';
-                        let timeHtml = event.time ? `<span class="event-time">🕘 ${event.time}</span>` : '';
+                        let timeHtml = event.time ? '<span class="event-time">🕘 ' + event.time + '</span>' : '';
                         eventsHtml += `
                             <div class="today-event-card">
                                 <div class="event-title"><span>${icon} ${event.title || '-'}</span>${timeHtml}</div>
                                 <div class="event-type">${event.type || 'activity'}</div>
-                                ${event.pic ? `<div class="event-pic">👤 PIC: ${event.pic}</div>` : ''}
+                                ${event.pic ? '<div class="event-pic">👤 PIC: ' + event.pic + '</div>' : ''}
                             </div>
                         `;
                     }
                     todayEventsDiv.innerHTML = eventsHtml;
-                } else {
+                } else if (todayEventsDiv) {
                     todayEventsDiv.innerHTML = '<div class="text-center text-slate-500 py-3 text-[9px]">📭 No events today</div>';
                 }
 
                 const todayMidnight = new Date();
                 todayMidnight.setHours(0, 0, 0, 0);
-                // FILTER: EXCLUDE HOLIDAY type from upcoming events
-                const upcomingEvents = events.filter(e => {
+                const upcomingEvents = events.filter(function(e) {
                     if (!e.date) return false;
                     const evDate = new Date(e.date);
                     evDate.setHours(0, 0, 0, 0);
-                    // exclude holiday type (case insensitive)
                     const isHoliday = e.type && e.type.toLowerCase() === 'holiday';
                     return evDate > todayMidnight && !isHoliday;
-                }).sort((a, b) => new Date(a.date) - new Date(b.date)).slice(0, 5);
+                }).sort(function(a, b) { return new Date(a.date) - new Date(b.date); }).slice(0, 5);
 
                 const upcomingDiv = document.getElementById('upcoming-events');
-                if (upcomingEvents.length) {
-                    upcomingDiv.innerHTML = upcomingEvents.map(ev => {
+                if (upcomingEvents.length && upcomingDiv) {
+                    upcomingDiv.innerHTML = upcomingEvents.map(function(ev) {
                         const evDate = new Date(ev.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
                         let icon = '📌';
                         if (ev.type === 'audit') icon = '🔍';
                         else if (ev.type === 'visit') icon = '👥';
                         else if (ev.type === 'training') icon = '📚';
-                        // holiday sudah di-filter, tidak akan ada di sini, tapi tetap safety
-                        if (ev.type === 'holiday') icon = '🎉';
-                        return `<div class="upcoming-item"><span class="upcoming-date">${icon} ${evDate}</span><span class="upcoming-title" title="${ev.title}">${ev.title || '-'}</span><span class="upcoming-pic">${ev.pic ? '👤 ' + ev.pic : ''}</span></div>`;
+                        return '<div class="upcoming-item"><span class="upcoming-date">' + icon + ' ' + evDate + '</span><span class="upcoming-title" title="' + (ev.title || '') + '">' + (ev.title || '-') + '</span><span class="upcoming-pic">' + (ev.pic ? '👤 ' + ev.pic : '') + '</span></div>';
                     }).join('');
-                } else {
+                } else if (upcomingDiv) {
                     upcomingDiv.innerHTML = '<div class="text-center text-slate-500 py-1 text-[9px]">No upcoming events</div>';
                 }
             } catch (error) {
                 console.warn("API error or fallback triggered", error);
-                // FALLBACK data - exclude holiday items from upcoming
                 const fallbackEvents = [
                     { date: getTodayDate(), title: "NSJ PRESIDENT VISIT", type: "visit", pic: "habib", time: "09:00" },
-                    { date: getTodayDate(), title: "INTERNAL AUDIT : BEKASI", type: "audit", pic: "quality team", time: "13:30" },
-                    { date: "2026-06-18", title: "IAT AUDIT : TANGGRANG", type: "audit", pic: "external", time: "" },
-                    { date: "2026-06-23", title: "IAT AUDIT : BEKASI", type: "audit", pic: "auditor", time: "" },
-                    { date: "2026-06-24", title: "IAT AUDIT : BEKASI", type: "audit", pic: "auditor", time: "" },
-                    { date: "2026-06-25", title: "IAT AUDIT : BEKASI", type: "audit", pic: "auditor", time: "" },
-                    // HOLIDAY example (will be excluded from upcoming)
-                    { date: "2026-12-25", title: "CHRISTMAS", type: "holiday", pic: "", time: "" }
+                    { date: getTodayDate(), title: "INTERNAL AUDIT", type: "audit", pic: "quality team", time: "13:30" },
+                    { date: "2026-06-13", title: "ACT. PLAN: ENG", type: "activity", pic: "Engineer", time: "" },
+                    { date: "2026-06-18", title: "IAT AUDIT", type: "audit", pic: "external", time: "" },
+                    { date: "2026-06-23", title: "VISIT LIXIL", type: "visit", pic: "Eka", time: "" },
+                    { date: "2026-06-25", title: "TRAINING ISO", type: "training", pic: "Trainer", time: "" }
                 ];
                 const groupedFallback = groupEventsByDate(fallbackEvents);
                 renderCalendar(fallbackEvents, groupedFallback);
                 const todayDate2 = getTodayDate();
-                const todayEventsFallback = fallbackEvents.filter(e => e.date === todayDate2);
+                const todayEventsFallback = fallbackEvents.filter(function(e) { return e.date === todayDate2; });
                 let fallbackHtml = '';
                 for (let ev of todayEventsFallback) {
-                    let icon = ev.type === 'visit' ? '👥' : '🔍';
-                    fallbackHtml += `<div class="today-event-card"><div class="event-title"><span>${icon} ${ev.title}</span><span class="event-time">🕘 ${ev.time || 'All day'}</span></div><div class="event-type">${ev.type}</div><div class="event-pic">👤 PIC: ${ev.pic}</div></div>`;
+                    let icon = ev.type === 'visit' ? '👥' : (ev.type === 'audit' ? '🔍' : '📌');
+                    fallbackHtml += '<div class="today-event-card"><div class="event-title"><span>' + icon + ' ' + ev.title + '</span><span class="event-time">🕘 ' + (ev.time || 'All day') + '</span></div><div class="event-type">' + ev.type + '</div><div class="event-pic">👤 PIC: ' + ev.pic + '</div></div>';
                 }
-                if (!fallbackHtml) fallbackHtml = '<div class="text-center text-slate-500 py-3 text-[9px]">📭 No events today</div>';
-                document.getElementById('today-events-list').innerHTML = fallbackHtml;
-                document.getElementById('today-date').innerHTML = formatDisplayDate(todayDate2);
-                // Upcoming fallback WITHOUT holidays
-                const upcomingFallback = fallbackEvents.filter(e => {
+                const todayEventsDiv2 = document.getElementById('today-events-list');
+                const todayDateSpan2 = document.getElementById('today-date');
+                if (todayDateSpan2) todayDateSpan2.innerHTML = formatDisplayDate(todayDate2);
+                if (todayEventsDiv2) {
+                    if (!fallbackHtml) fallbackHtml = '<div class="text-center text-slate-500 py-3 text-[9px]">📭 No events today</div>';
+                    todayEventsDiv2.innerHTML = fallbackHtml;
+                }
+                
+                const upcomingFallback = fallbackEvents.filter(function(e) {
                     const evDate = new Date(e.date);
                     const todayF = new Date();
                     todayF.setHours(0,0,0,0);
                     return evDate > todayF && e.type !== 'holiday';
-                }).sort((a,b) => new Date(a.date) - new Date(b.date)).slice(0,5);
+                }).sort(function(a,b) { return new Date(a.date) - new Date(b.date); }).slice(0,5);
                 
-                if (upcomingFallback.length) {
-                    document.getElementById('upcoming-events').innerHTML = upcomingFallback.map(ev => {
-                        const evDate = new Date(ev.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
-                        let icon = ev.type === 'audit' ? '🔍' : (ev.type === 'visit' ? '👥' : '📌');
-                        return `<div class="upcoming-item"><span class="upcoming-date">${icon} ${evDate}</span><span class="upcoming-title">${ev.title}</span><span class="upcoming-pic">${ev.pic ? '👤 ' + ev.pic : ''}</span></div>`;
-                    }).join('');
-                } else {
-                    document.getElementById('upcoming-events').innerHTML = '<div class="text-center text-slate-500 py-1 text-[9px]">No upcoming events</div>';
+                const upcomingDiv2 = document.getElementById('upcoming-events');
+                if (upcomingDiv2) {
+                    if (upcomingFallback.length) {
+                        upcomingDiv2.innerHTML = upcomingFallback.map(function(ev) {
+                            const evDate = new Date(ev.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+                            let icon = ev.type === 'audit' ? '🔍' : (ev.type === 'visit' ? '👥' : '📌');
+                            return '<div class="upcoming-item"><span class="upcoming-date">' + icon + ' ' + evDate + '</span><span class="upcoming-title">' + ev.title + '</span><span class="upcoming-pic">' + (ev.pic ? '👤 ' + ev.pic : '') + '</span></div>';
+                        }).join('');
+                    } else {
+                        upcomingDiv2.innerHTML = '<div class="text-center text-slate-500 py-1 text-[9px]">No upcoming events</div>';
+                    }
                 }
             }
         }
@@ -843,6 +947,7 @@
             autoRefreshInterval = setInterval(loadData, 30000);
         }
 
+        // ============ INIT ============
         renderMenu();
         updateClock();
         setInterval(updateClock, 1000);
