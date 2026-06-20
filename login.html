@@ -4,28 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Login - QMS System</title>
-    <!-- Menggunakan unit rem yang konsisten, ukuran font base ditetapkan -->
     <style>
-        /* RESET & BASE FIXED TYPOGRAPHY - Konsisten di semua device */
+        /* RESET & BASE FIXED TYPOGRAPHY */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
-        /* Ukuran font dasar ditetapkan 16px (1rem = 16px) 
-           Agar teks tidak terpengaruh oleh scaling device, kita lock base font */
         html {
             font-size: 16px;
-            -webkit-text-size-adjust: 100%; /* Mencegah auto zoom text di Safari */
+            -webkit-text-size-adjust: 100%;
             text-size-adjust: 100%;
         }
         
         body {
-            background: #FFFFFF;
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
             min-height: 100vh;
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            font-size: 1rem; /* 16px base */
+            font-size: 1rem;
             line-height: 1.5;
             color: #1E293B;
             display: flex;
@@ -34,33 +31,30 @@
             padding: 1rem;
         }
         
-        /* Container width fixed dengan max-width, padding responsif tapi teks tetap */
         .login-container {
             width: 100%;
-            max-width: 28rem; /* 448px */
+            max-width: 28rem;
             margin: 0 auto;
             padding: 0;
         }
         
-        /* Card styling */
         .login-card {
             background: #FFFFFF;
             border: 1px solid #E5E7EB;
-            border-radius: 1rem; /* 16px */
+            border-radius: 1.2rem;
             transition: all 0.3s ease;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            padding: 2rem; /* 32px - konsisten */
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+            padding: 2.2rem;
         }
         
         .login-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.12);
             border-color: #0284C7;
         }
         
-        /* Ukuran teks tetap menggunakan rem */
         .company-title {
-            font-size: 1.5rem; /* 24px */
+            font-size: 1.4rem;
             font-weight: 700;
             color: #1A63F6;
             line-height: 1.3;
@@ -68,13 +62,13 @@
         }
         
         .subtitle {
-            font-size: 0.875rem; /* 14px tetap */
+            font-size: 0.85rem;
             color: #64748B;
-            margin-top: 0.25rem;
+            margin-top: 0.2rem;
         }
         
         .welcome-text {
-            font-size: 1.25rem; /* 20px */
+            font-size: 1.2rem;
             font-weight: 700;
             color: #1E293B;
             margin-bottom: 1.5rem;
@@ -83,19 +77,19 @@
         
         .form-label {
             display: block;
-            font-size: 0.875rem; /* 14px */
+            font-size: 0.85rem;
             font-weight: 500;
             color: #475569;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.4rem;
         }
         
         .input-field {
             width: 100%;
             background: #F8FAFC;
-            border: 1px solid #E5E7EB;
-            border-radius: 0.75rem; /* 12px */
-            padding: 0.75rem 1rem 0.75rem 2.5rem;
-            font-size: 0.9375rem; /* 15px stabil */
+            border: 1.5px solid #E5E7EB;
+            border-radius: 0.75rem;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
             color: #1E293B;
             font-family: inherit;
@@ -103,14 +97,14 @@
         
         .input-field:focus {
             border-color: #0284C7;
-            box-shadow: 0 0 0 2px rgba(2,132,199,0.1);
+            box-shadow: 0 0 0 3px rgba(2,132,199,0.1);
             outline: none;
             background: #FFFFFF;
         }
         
         .input-field::placeholder {
             color: #94A3B8;
-            font-size: 0.875rem;
+            font-size: 0.85rem;
         }
         
         .login-btn {
@@ -118,7 +112,7 @@
             background: linear-gradient(135deg, #0284C7, #1A63F6);
             color: white;
             font-weight: 700;
-            font-size: 1rem; /* 16px */
+            font-size: 1rem;
             padding: 0.75rem 1rem;
             border-radius: 0.75rem;
             transition: all 0.3s ease;
@@ -129,40 +123,43 @@
             justify-content: center;
             gap: 0.5rem;
             font-family: inherit;
+            margin-top: 0.25rem;
         }
         
         .login-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(2,132,199,0.3);
+            box-shadow: 0 5px 20px rgba(2,132,199,0.35);
+        }
+        
+        .login-btn:active {
+            transform: scale(0.98);
         }
         
         .footer-text {
-            font-size: 0.75rem; /* 12px konsisten */
+            font-size: 0.75rem;
             color: #94A3B8;
             text-align: center;
         }
         
-        .footer-status {
-            font-size: 0.75rem;
-            color: #0284C7;
-            margin-top: 0.25rem;
-        }
-        
         .error-message {
-            font-size: 0.875rem;
+            font-size: 0.85rem;
             color: #EF4444;
             text-align: center;
             margin-top: 1rem;
             padding: 0.5rem;
             background: #FEF2F2;
             border-radius: 0.5rem;
+            border: 1px solid #FEE2E2;
         }
         
-        /* Logo container konsisten */
+        .error-message.hidden {
+            display: none;
+        }
+        
         .logo-wrapper {
-            width: 7rem;  /* 112px */
-            height: 7rem;
-            margin: 0 auto 1rem auto;
+            width: 6.5rem;
+            height: 6.5rem;
+            margin: 0 auto 0.8rem auto;
         }
         
         .logo-wrapper img {
@@ -171,22 +168,20 @@
             object-fit: contain;
         }
         
-        /* Divider */
         .divider {
             margin-top: 1.5rem;
-            padding-top: 1rem;
+            padding-top: 1.2rem;
             border-top: 1px solid #E2E8F0;
             text-align: center;
         }
         
-        /* Animations */
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
+            from { opacity: 0; transform: translateY(-15px); }
             to { opacity: 1; transform: translateY(0); }
         }
         
         .animate-fade-in {
-            animation: fadeIn 0.5s ease;
+            animation: fadeIn 0.4s ease;
         }
         
         @keyframes shake {
@@ -213,7 +208,6 @@
             to { transform: rotate(360deg); }
         }
         
-        /* Relative wrapper untuk icon input */
         .input-icon-wrapper {
             position: relative;
         }
@@ -228,31 +222,36 @@
             pointer-events: none;
         }
         
-        /* Responsif: memastikan di layar sangat kecil (max-width 480px) padding card masih proporsional tapi teks tetap ukuran sama */
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+        
+        .form-group:last-of-type {
+            margin-bottom: 0.25rem;
+        }
+        
+        /* Responsive */
         @media (max-width: 480px) {
             .login-card {
-                padding: 1.5rem; /* sedikit kurang tapi font-size tidak berubah */
+                padding: 1.5rem;
             }
             .company-title {
-                font-size: 1.375rem; /* sedikit kompromi agar tidak pecah tapi tetap stabil */
+                font-size: 1.2rem;
             }
             .welcome-text {
-                font-size: 1.125rem;
+                font-size: 1.05rem;
             }
-            /* Tetap base font size 16px tidak berubah */
             body {
                 padding: 0.75rem;
             }
         }
         
-        /* Untuk tablet dan desktop font tetap sama, hanya spacing yang mungkin berbeda */
         @media (min-width: 640px) {
             .login-card {
-                padding: 2rem;
+                padding: 2.2rem;
             }
         }
         
-        /* Mencegah scaling berlebihan pada landscape mode */
         @media (max-height: 600px) {
             body {
                 padding: 0.5rem;
@@ -260,13 +259,17 @@
             .logo-wrapper {
                 width: 5rem;
                 height: 5rem;
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.4rem;
             }
             .login-card {
-                padding: 1.25rem;
+                padding: 1.2rem;
             }
             .welcome-text {
                 margin-bottom: 1rem;
+                font-size: 1rem;
+            }
+            .form-group {
+                margin-bottom: 0.8rem;
             }
         }
     </style>
@@ -278,18 +281,18 @@
             <img src="maskotnitto.png" alt="NITTO MASKOT" id="logo-img" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 100 100\'%3E%3Ccircle cx=\'50\' cy=\'50\' r=\'45\' fill=\'%230284C7\'/%3E%3Ctext x=\'50\' y=\'67\' text-anchor=\'middle\' fill=\'white\' font-size=\'40\' font-weight=\'bold\'%3EN%3C/text%3E%3C/svg%3E';">
         </div>
         
-        <!-- Company Info - teks tetap -->
-        <div class="text-center mb-6">
+        <!-- Company Info -->
+        <div class="text-center mb-5">
             <h1 class="company-title">PT NITTO ALAM INDONESIA</h1>
             <p class="subtitle">Plant 2 - Quality Management System</p>
         </div>
         
         <!-- Login Card -->
         <div class="login-card">
-            <h2 class="welcome-text">Welcome Back</h2>
+            <h2 class="welcome-text">👋 Welcome Back</h2>
             
             <form onsubmit="handleLogin(event); return false;">
-                <div class="mb-4">
+                <div class="form-group">
                     <label class="form-label">Username</label>
                     <div class="input-icon-wrapper">
                         <span class="input-icon">👤</span>
@@ -301,7 +304,7 @@
                     </div>
                 </div>
                 
-                <div class="mb-5">
+                <div class="form-group">
                     <label class="form-label">Password</label>
                     <div class="input-icon-wrapper">
                         <span class="input-icon">🔒</span>
@@ -322,28 +325,22 @@
             
             <div class="divider">
                 <p class="footer-text">PT NITTO ALAM INDONESIA Quality System PLANT 2</p>
-                <div id="account-status" class="footer-status">⏳ Connecting to database...</div>
             </div>
         </div>
         
-        <div class="text-center mt-5">
+        <div class="text-center mt-4">
             <p class="footer-text">© 2026 NITTO SEIKO - Quality Management System</p>
         </div>
     </div>
 
     <script>
-        // API Endpoint - tetap menggunakan sheet yang sama
         const ACCOUNT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/akun";
         
         let usersData = [];
         let isLoading = true;
         
-        // Fungsi load data dari sheet (sama seperti sebelumnya)
         async function loadUsersFromSheet() {
-            const statusDiv = document.getElementById('account-status');
-            
             try {
-                statusDiv.innerHTML = "🔄 Connecting to database...";
                 const response = await fetch(ACCOUNT_API);
                 
                 if (!response.ok) {
@@ -361,29 +358,23 @@
                         role: (row.status || '').toLowerCase()
                     }));
                     
-                    statusDiv.innerHTML = `✅ ${usersData.length} accounts loaded`;
                     console.log('Processed users:', usersData);
                     isLoading = false;
                 } else {
-                    statusDiv.innerHTML = "⚠️ No accounts found in database";
                     console.log('No data from API');
                 }
                 
             } catch (error) {
                 console.error('Error loading users:', error);
-                statusDiv.innerHTML = "❌ Failed to load accounts. Using fallback data.";
                 
                 usersData = [
-                    { id: "1", username: "habib", password: "123", role: "admin" },
-                    { id: "2", username: "windah", password: "123", role: "user" },
-                    { id: "3", username: "ryuma", password: "123", role: "user" },
-                    { id: "4", username: "prabowo", password: "123", role: "user" }
+                    { id: "1", username: "admin", password: "123", role: "admin" },
+                    { id: "2", username: "user", password: "123", role: "user" }
                 ];
                 isLoading = false;
             }
         }
         
-        // Check if already logged in
         function checkAlreadyLoggedIn() {
             const user = sessionStorage.getItem('currentUser');
             if (user) {
@@ -393,12 +384,11 @@
             return false;
         }
         
-        // Handle login form submission
         async function handleLogin(event) {
             event.preventDefault();
             
             if (isLoading) {
-                showError("Please wait, loading accounts...");
+                showError("⏳ Loading accounts, please wait...");
                 return;
             }
             
@@ -410,7 +400,6 @@
             loginBtn.innerHTML = '<span class="loading-spinner"></span><span> Signing in...</span>';
             loginBtn.disabled = true;
             
-            // Simulasi sedikit delay untuk feedback
             setTimeout(() => {
                 const user = usersData.find(u => 
                     u.username === username && u.password === password
@@ -429,7 +418,7 @@
                     console.log('Login successful:', user.username, 'Role:', user.role);
                     window.location.href = 'maindashboard.html';
                 } else {
-                    showError("Invalid username or password");
+                    showError("❌ Invalid username or password");
                     document.getElementById('password').value = '';
                 }
             }, 500);
@@ -451,8 +440,6 @@
         }
         
         init();
-        
-        // Optional: tambahkan event listener untuk tombol enter (bawaan form sudah support)
     </script>
 </body>
 </html>
