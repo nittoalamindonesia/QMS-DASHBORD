@@ -640,7 +640,8 @@
     </div>
 
     <script>
-        // ============ MENU DATA ============
+        // ============ MENU DATA PER ROLE ============
+        // ADMIN - semua menu
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
@@ -648,19 +649,77 @@
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
             { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
             { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false },
+            { icon: "✅", name: "Claim", link: "claim.html", active: false },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false }
+        ];
+
+        // ENGINEERING
+        const engMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
             { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
 
-        const userMenus = [
-            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+        // QUALITY ASSURANCE
+        const qaMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false },
+            { icon: "✅", name: "Claim", link: "claim.html", active: false }
+        ];
+
+        // MARKETING
+        const mktMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
             { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false }
+        ];
+
+        // PPIC
+        const ppicMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🏭", name: "Production", link: "production.html", active: false },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false },
             { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
+
+        // USER DEFAULT (jika username tidak dikenali)
+        const userDefaultMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true }
+        ];
+
+        // ============ FUNGSI AMBIL MENU BERDASARKAN USERNAME ============
+        function getMenusByUsername(username) {
+            // Normalisasi username (lowercase)
+            const user = (username || '').toLowerCase();
+            
+            switch(user) {
+                case 'admin':
+                case 'tm':
+                case 'habib':
+                    return adminMenus;
+                case 'eng':
+                    return engMenus;
+                case 'qa':
+                    return qaMenus;
+                case 'mkt':
+                    return mktMenus;
+                case 'ppic':
+                    return ppicMenus;
+                default:
+                    return userDefaultMenus;
+            }
+        }
 
         // ============ VARIABLES ============
         const EVENT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/event";
         let autoRefreshInterval = null;
+        let currentUsername = '';
         let currentUserRole = 'user';
 
         // ============ DOWNLOAD CALENDAR AS IMAGE ============
@@ -684,19 +743,12 @@
             showToast('📸 Capturing calendar...');
 
             try {
-                // === TAMBAHKAN CLASS CAPTURE MODE KE CARD ===
                 calendarCard.classList.add('capture-mode');
-                
-                // Tunggu sebentar agar style capture-mode berlaku
                 await new Promise(resolve => setTimeout(resolve, 200));
                 
-                // === BUAT CLONE ===
                 const cloneCard = calendarCard.cloneNode(true);
-                
-                // Hapus class capture-mode dari clone (karena sudah inline)
                 cloneCard.classList.remove('capture-mode');
                 
-                // Set style untuk clone
                 cloneCard.style.position = 'fixed';
                 cloneCard.style.left = '-9999px';
                 cloneCard.style.top = '0';
@@ -710,10 +762,8 @@
                 cloneCard.style.overflow = 'visible';
                 cloneCard.style.boxShadow = 'none';
                 
-                // === PERBAIKI SEMUA CELL DI CLONE ===
                 const cloneCells = cloneCard.querySelectorAll('.calendar-cell');
                 cloneCells.forEach(cell => {
-                    // Style dasar
                     cell.style.minHeight = '70px';
                     cell.style.height = 'auto';
                     cell.style.overflow = 'visible';
@@ -726,7 +776,6 @@
                     cell.style.justifyContent = 'flex-start';
                     cell.style.width = '100%';
                     
-                    // Background berdasarkan class
                     if (cell.classList.contains('empty-cell')) {
                         cell.style.background = '#F1F5F9';
                         cell.style.opacity = '0.5';
@@ -741,7 +790,6 @@
                     }
                 });
                 
-                // === PERBAIKI TANGGAL DI CLONE ===
                 const cloneDates = cloneCard.querySelectorAll('.calendar-date');
                 cloneDates.forEach(date => {
                     date.style.fontSize = '0.75rem';
@@ -755,7 +803,6 @@
                     date.style.display = 'block';
                 });
                 
-                // === PERBAIKI EVENT CONTAINER DI CLONE ===
                 const cloneContainers = cloneCard.querySelectorAll('.calendar-events-container');
                 cloneContainers.forEach(container => {
                     container.style.display = 'flex';
@@ -767,7 +814,6 @@
                     container.style.flex = '1';
                 });
                 
-                // === PERBAIKI EVENT ITEM DI CLONE ===
                 const cloneEvents = cloneCard.querySelectorAll('.calendar-event');
                 cloneEvents.forEach(event => {
                     event.style.display = 'block';
@@ -794,7 +840,6 @@
                     }
                 });
                 
-                // === PERBAIKI GRID DI CLONE ===
                 const cloneGrid = cloneCard.querySelector('.calendar-grid');
                 if (cloneGrid) {
                     cloneGrid.style.display = 'grid';
@@ -805,7 +850,6 @@
                     cloneGrid.style.flex = '1';
                     cloneGrid.style.minHeight = '0';
                     
-                    // Ambil grid template rows dari asli
                     const originalGrid = document.querySelector('.calendar-grid');
                     if (originalGrid) {
                         const computedStyle = window.getComputedStyle(originalGrid);
@@ -813,13 +857,9 @@
                     }
                 }
                 
-                // === TAMBAHKAN CLONE KE BODY ===
                 document.body.appendChild(cloneCard);
-                
-                // Tunggu sebentar agar clone ter-render
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
-                // === CAPTURE ===
                 const canvas = await html2canvas(cloneCard, {
                     scale: 2,
                     backgroundColor: '#FFFFFF',
@@ -831,7 +871,6 @@
                     windowWidth: cloneCard.scrollWidth,
                     windowHeight: cloneCard.scrollHeight,
                     onclone: function(doc) {
-                        // Pastikan semua elemen di clone terlihat
                         const cells = doc.querySelectorAll('.calendar-cell');
                         cells.forEach(cell => {
                             cell.style.overflow = 'visible';
@@ -852,13 +891,9 @@
                     }
                 });
                 
-                // === HAPUS CLONE ===
                 document.body.removeChild(cloneCard);
-                
-                // === HAPUS CAPTURE MODE DARI CARD ASLI ===
                 calendarCard.classList.remove('capture-mode');
                 
-                // === DOWNLOAD ===
                 const link = document.createElement('a');
                 const now = new Date();
                 const fileName = 'calendar_' + now.getFullYear() + '_' + String(now.getMonth() + 1).padStart(2, '0') + '.png';
@@ -870,7 +905,6 @@
 
             } catch (error) {
                 console.error('Download error:', error);
-                // Pastikan capture mode dihapus jika error
                 calendarCard.classList.remove('capture-mode');
                 showToast('❌ Failed to download calendar', true);
             }
@@ -879,19 +913,28 @@
         // ============ MENU FUNCTIONS ============
         function renderMenu() {
             const userJson = sessionStorage.getItem('currentUser');
-            if (!userJson) return;
-            const user = JSON.parse(userJson);
-            const role = user.role || 'user';
-            currentUserRole = role;
-            
-            const floatingBtn = document.getElementById('floatingDownloadBtn');
-            if (floatingBtn) {
-                floatingBtn.style.display = role === 'admin' ? 'flex' : 'none';
+            if (!userJson) {
+                window.location.href = 'login.html';
+                return;
             }
             
-            const menus = role === 'admin' ? adminMenus : userMenus;
+            const user = JSON.parse(userJson);
+            const username = user.username || '';
+            const role = user.role || 'user';
+            currentUsername = username;
+            currentUserRole = role;
+            
+            // Tampilkan floating button hanya untuk admin
+            const floatingBtn = document.getElementById('floatingDownloadBtn');
+            if (floatingBtn) {
+                floatingBtn.style.display = role === 'admin' || username === 'admin' || username === 'tm' || username === 'habib' ? 'flex' : 'none';
+            }
+            
+            // Ambil menu berdasarkan username
+            const menus = getMenusByUsername(username);
             const currentPage = window.location.pathname.split('/').pop() || 'activityschedule.html';
             const menuContainer = document.getElementById('menu-container');
+            
             let menuHtml = '';
             menus.forEach(menu => {
                 const activeClass = menu.link === currentPage ? 'active' : '';

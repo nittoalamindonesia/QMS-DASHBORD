@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Claim - PT NITTO ALAM INDONESIA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* ===== SEMUA STYLE SAMA PERSIS DENGAN AUDIT ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #F1F5F9;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        html { font-size: 14px; }
+        
+        @media (min-width: 1920px) and (max-width: 2559px) {
+            html { font-size: 16px; }
+        }
+        
+        @media (min-width: 2560px) and (max-width: 3839px) {
+            html { font-size: 18px; }
+        }
+        
+        @media (max-width: 1919px) {
+            html { font-size: 12px; }
+            body { transform: scale(0.95); transform-origin: top left; width: 105.26%; }
+        }
+        
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
+        
+        .stat-card { 
+            background: #FFFFFF;
+            transition: all 0.3s ease; 
+            border: 1px solid #E5E7EB; 
+            border-radius: 0.8rem;
+            padding: 0.6rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #0284C7; }
+        
+        .claim-card {
+            background: #F8FAFC;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.6rem;
+            padding: 0.6rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 0.5rem;
+        }
+        .claim-card:hover {
+            transform: translateY(-2px);
+            border-color: #0284C7;
+            background: #F0F9FF;
+        }
+        
+        .id-badge {
+            background: #0284C7;
+            color: white;
+            border-radius: 2rem;
+            padding: 0.15rem 0.5rem;
+            font-size: 0.6rem;
+            font-weight: bold;
+        }
+        
+        .claim-date { font-size: 0.6rem; color: #64748B; }
+        .claim-title { font-size: 0.75rem; font-weight: bold; color: #1E293B; margin-top: 0.3rem; }
+        .claim-customer { font-size: 0.6rem; color: #0284C7; margin-top: 0.15rem; }
+        .claims-count { font-size: 0.6rem; font-weight: bold; color: #0284C7; }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 0.15rem 0.5rem;
+            border-radius: 2rem;
+            font-size: 0.55rem;
+            font-weight: bold;
+        }
+        .badge-open { background: #FEF2F2; color: #EF4444; border: 1px solid #FEE2E2; }
+        .badge-progress { background: #FFFBEB; color: #F59E0B; border: 1px solid #FEF3C7; }
+        .badge-close { background: #F0FDF4; color: #22C55E; border: 1px solid #DCFCE7; }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active { display: flex; }
+        
+        .modal-content {
+            background: #FFFFFF;
+            border-radius: 1.2rem;
+            max-width: 750px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 2px solid #0284C7;
+        }
+        
+        .modal-header {
+            position: sticky;
+            top: 0;
+            background: #FFFFFF;
+            padding: 0.8rem 1rem;
+            border-bottom: 2px solid #0284C7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+        .modal-header h3 { font-size: 1.1rem; font-weight: bold; color: #0284C7; }
+        .modal-header button { font-size: 1.5rem; cursor: pointer; color: #64748B; background: none; border: none; }
+        .modal-header button:hover { color: #EF4444; }
+        
+        .claim-info-box {
+            background: #F8FAFC;
+            border-radius: 0.8rem;
+            padding: 0.8rem;
+            margin: 0.8rem;
+            border: 1px solid #E5E7EB;
+        }
+        .claim-info-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+        .info-label { font-size: 0.65rem; color: #64748B; }
+        .info-value { font-size: 0.8rem; font-weight: 600; color: #1E293B; }
+        
+        .claims-section-title {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #0284C7;
+            margin: 0 0.8rem 0.5rem 0.8rem;
+            padding-bottom: 0.3rem;
+            border-bottom: 1px solid #0284C7;
+        }
+        
+        .claim-detail-item {
+            background: #F8FAFC;
+            border-radius: 0.8rem;
+            padding: 0.8rem;
+            margin: 0.6rem 0.8rem;
+            border-left: 4px solid #0284C7;
+        }
+        .claim-detail-item:hover { background: #F0F9FF; }
+        
+        .claim-number { font-size: 0.8rem; font-weight: bold; color: #0284C7; }
+        .claim-detail-text { font-size: 0.8rem; color: #1E293B; margin-top: 0.4rem; line-height: 1.4; }
+        .claim-pic { font-size: 0.7rem; color: #64748B; margin-top: 0.4rem; }
+        
+        .claim-image-wrapper {
+            margin-top: 0.8rem;
+            border-radius: 0.6rem;
+            overflow: hidden;
+            border: 1px solid #E5E7EB;
+            position: relative;
+            background: #F1F5F9;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            max-width: 100%;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .claim-image-wrapper:hover {
+            border-color: #0284C7;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.2);
+        }
+        .claim-image-wrapper img {
+            display: block;
+            width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+            background: #FFFFFF;
+            transition: transform 0.3s ease;
+        }
+        .claim-image-wrapper:hover img {
+            transform: scale(1.02);
+        }
+        .claim-image-wrapper .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            font-size: 0.6rem;
+            padding: 0.3rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .claim-image-wrapper:hover .image-overlay {
+            opacity: 1;
+        }
+        .claim-image-wrapper .image-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+            color: #64748B;
+            font-size: 0.7rem;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .claim-image-wrapper .image-loading .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #E5E7EB;
+            border-top: 3px solid #0284C7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .claim-image-wrapper .image-error {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+            color: #EF4444;
+            font-size: 0.7rem;
+            text-align: center;
+            padding: 1rem;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .claim-image-wrapper .image-error .retry-btn {
+            margin-top: 8px;
+            padding: 4px 16px;
+            background: #0284C7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.6rem;
+        }
+        .claim-image-wrapper .image-error .retry-btn:hover {
+            background: #0369A1;
+        }
+        
+        .image-caption { 
+            font-size: 0.55rem; 
+            color: #64748B; 
+            margin-top: 0.3rem; 
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+        .image-caption .zoom-icon {
+            background: #0284C7;
+            color: white;
+            border-radius: 50%;
+            width: 1.2rem;
+            height: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+        }
+        
+        .image-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 1100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+        .image-modal.active { display: flex; }
+        .image-modal img { 
+            max-width: 90%; 
+            max-height: 90%; 
+            border-radius: 0.8rem; 
+            object-fit: contain;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .image-modal .close-zoom {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1101;
+            background: none;
+            border: none;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        .image-modal .close-zoom:hover { opacity: 1; }
+        
+        .modal-footer {
+            position: sticky;
+            bottom: 0;
+            background: #FFFFFF;
+            padding: 0.6rem;
+            text-align: center;
+            border-top: 1px solid #E5E7EB;
+        }
+        .modal-footer button { font-size: 0.8rem; color: #0284C7; background: none; border: none; cursor: pointer; }
+        .modal-footer button:hover { color: #0369A1; }
+        
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+            display: none;
+        }
+        .menu-overlay.active { display: block; }
+        
+        .popup-sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: #FFFFFF;
+            border-right: 1px solid #E5E7EB;
+            z-index: 999;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .popup-sidebar.active { left: 0; }
+        
+        .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; }
+        .menu-item { margin: 0.2rem 0.6rem; }
+        .menu-button {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.6rem;
+            color: #475569;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+        .menu-button:hover { background: #F0F9FF; color: #0284C7; transform: translateX(5px); }
+        .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
+        .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
+        
+        .sidebar-logout-btn {
+            margin: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.6rem 0.8rem;
+            border-radius: 0.6rem;
+            cursor: pointer;
+            border-top: 1px solid #E5E7EB;
+            transition: all 0.2s;
+            color: #475569;
+        }
+        .sidebar-logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
+        
+        .hamburger-btn {
+            background: #F0F9FF;
+            border: 1px solid #0284C7;
+            border-radius: 0.5rem;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .hamburger-btn:hover { background: #0284C7; }
+        .hamburger-btn:hover span { color: white; }
+        
+        .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
+        .running-text marquee { font-size: 0.7rem; font-weight: 600; color: #0284C7; padding: 0.25rem 0; }
+        
+        .digital-clock { 
+            font-family: 'Courier New', monospace; 
+            font-weight: 700; 
+            background: #F8FAFC; 
+            padding: 0.25rem 0.75rem; 
+            border-radius: 0.5rem; 
+            border: 1px solid #E5E7EB; 
+            color: #0284C7;
+        }
+        
+        .text-brand { color: #1A63F6; }
+        
+        .dashboard-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .main-layout {
+            display: flex;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 0.6rem;
+        }
+        
+        .card-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .card-header {
+            flex-shrink: 0;
+            padding-bottom: 0.3rem;
+            margin-bottom: 0.3rem;
+            border-bottom: 1px solid #E5E7EB;
+        }
+        
+        .card-body {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            padding-right: 0.2rem;
+        }
+        
+        .header-title { font-size: 0.8rem; font-weight: bold; color: #1E293B; }
+        .header-subtitle { font-size: 0.55rem; color: #64748B; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        .stats-grid .stat-item {
+            text-align: center;
+            padding: 0.4rem;
+            background: #F8FAFC;
+            border-radius: 0.5rem;
+        }
+        .stats-grid .stat-number {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0284C7;
+        }
+        .stats-grid .stat-label {
+            font-size: 0.55rem;
+            color: #64748B;
+        }
+        
+        @media (min-width: 1920px) {
+            .header-title { font-size: 0.9rem; }
+            .claim-title { font-size: 0.85rem; }
+            .id-badge { font-size: 0.7rem; }
+        }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- IMAGE ZOOM MODAL -->
+    <div id="imageZoomModal" class="image-modal" onclick="closeImageZoom()">
+        <button class="close-zoom" onclick="closeImageZoom()">&times;</button>
+        <img id="zoomImage" src="" alt="Zoomed image">
+    </div>
+
+    <!-- OVERLAY -->
+    <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+    
+    <!-- POP UP SIDEBAR MENU -->
+    <div id="popupSidebar" class="popup-sidebar">
+        <div class="logo-section">
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
+                    <span class="text-white text-sm font-bold">NS</span>
+                </div>
+                <div>
+                    <h1 class="text-sm font-bold text-brand">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-[8px]">Plant 2</p>
+                </div>
+            </div>
+        </div>
+        <div id="menu-container"></div>
+        <div class="sidebar-logout-btn" onclick="logout()">
+            <span class="menu-icon">🚪</span>
+            <span>Logout</span>
+        </div>
+        <div class="text-center p-2 text-slate-400 text-[10px] border-t mt-1">System Online</div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="dashboard-container">
+        
+        <!-- TOP BAR -->
+        <div class="bg-white border-b border-gray-200 px-4 py-2 flex justify-between items-center shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-sm">☰</span></div>
+                <div><h1 class="text-sm md:text-base font-bold text-brand">PT NITTO ALAM INDONESIA</h1><p class="text-slate-500 text-[9px]">Plant 2 - Customer Claim</p></div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="digital-clock" id="clock">00:00:00</div>
+                <div class="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg">
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-green-600 text-[8px] font-bold">LIVE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RUNNING TEXT -->
+        <div class="running-text shrink-0">
+            <marquee behavior="scroll" direction="left" scrollamount="2">
+                🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | CUSTOMER CLAIM MONITORING | COMMITMENT TO QUALITY & EXCELLENCE
+            </marquee>
+        </div>
+
+        <!-- MAIN LAYOUT -->
+        <div class="main-layout">
+            <div class="content-area">
+                
+                <!-- STATISTICS CARD -->
+                <div class="stat-card mb-3">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="total-claim">0</div>
+                            <div class="stat-label">Total Claim</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number text-red-500" id="total-open">0</div>
+                            <div class="stat-label">Open</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number text-yellow-500" id="total-progress">0</div>
+                            <div class="stat-label">In Progress</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number text-green-500" id="total-close">0</div>
+                            <div class="stat-label">Closed</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CLAIM LIST CARD -->
+                <div class="stat-card card-container p-2">
+                    <div class="card-header">
+                        <h3 class="font-bold text-gray-800 header-title">📋 Customer Claim List</h3>
+                        <p class="text-slate-500 header-subtitle">Click on any claim to see details</p>
+                    </div>
+                    <div class="card-body">
+                        <div id="claim-list-container">
+                            <div class="text-center text-slate-500 py-3 text-[9px]">Loading claim data...</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL for Detail Claim -->
+    <div id="detailModal" class="modal" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h3>📋 Claim Details</h3>
+                <button onclick="closeModal()">&times;</button>
+            </div>
+            <div id="modal-body">
+                <div class="text-center text-slate-500 py-6 text-sm">Loading...</div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastNotification" style="position:fixed; bottom:90px; right:20px; background:#10B981; color:white; padding:10px 16px; border-radius:8px; font-size:12px; font-weight:600; z-index:2000; opacity:0; transition:opacity 0.3s ease; pointer-events:none; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+        ✅ Success
+    </div>
+
+    <script>
+        // ==================== FUNGSI KONVERSI LINK GOOGLE DRIVE ====================
+        function convertGoogleDriveLink(url) {
+            if (!url || url === '' || url === 'null' || url === 'undefined') return null;
+            
+            url = url.trim();
+            
+            let fileId = null;
+            
+            // Pattern 1: /file/d/XXXXX/
+            let match = url.match(/\/file\/d\/([^\/]+)/);
+            if (match) fileId = match[1];
+            
+            // Pattern 2: ?id=XXXXX
+            if (!fileId) {
+                match = url.match(/[?&]id=([^&]+)/);
+                if (match) fileId = match[1];
+            }
+            
+            // Pattern 3: /d/XXXXX/
+            if (!fileId) {
+                match = url.match(/\/d\/([^\/]+)/);
+                if (match) fileId = match[1];
+            }
+            
+            // Pattern 4: uc?export=view&id=XXXXX
+            if (!fileId) {
+                match = url.match(/uc\?export=view&id=([^&]+)/);
+                if (match) fileId = match[1];
+            }
+            
+            // Pattern 5: view&id=XXXXX
+            if (!fileId) {
+                match = url.match(/view&id=([^&]+)/);
+                if (match) fileId = match[1];
+            }
+            
+            // Pattern 6: /preview (format terakhir)
+            if (!fileId) {
+                match = url.match(/\/d\/([^\/]+)\/preview/);
+                if (match) fileId = match[1];
+            }
+            
+            if (fileId) {
+                // Gunakan format thumbnail yang paling stabil
+                return `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+            }
+            
+            return null;
+        }
+
+        // ==================== KONFIGURASI MENU ====================
+        const adminMenus = [
+            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🏭", name: "Production", link: "production.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false },
+            { icon: "✅", name: "Claim", link: "claim.html", active: true },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false }
+        ];
+        
+        const userMenus = [
+            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
+        ];
+        
+        function renderMenu() {
+            const userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) return;
+            
+            const user = JSON.parse(userJson);
+            const role = user.role || 'user';
+            const menus = role === 'admin' ? adminMenus : userMenus;
+            const currentPage = window.location.pathname.split('/').pop() || 'claim.html';
+            
+            const menuContainer = document.getElementById('menu-container');
+            let menuHtml = '';
+            
+            menus.forEach(menu => {
+                const activeClass = menu.link === currentPage ? 'active' : '';
+                menuHtml += `
+                    <div class="menu-item">
+                        <a href="${menu.link}" class="menu-button ${activeClass}">
+                            <span class="menu-icon">${menu.icon}</span>
+                            <span>${menu.name}</span>
+                        </a>
+                    </div>
+                `;
+            });
+            
+            menuContainer.innerHTML = menuHtml;
+        }
+        
+        // ==================== API ENDPOINT ====================
+        const CLAIM_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/claim_cs";
+        
+        let claimData = [];
+        let groupedClaims = [];
+        
+        function openImageZoom(imageUrl) {
+            if (!imageUrl || imageUrl === '') return;
+            const convertedUrl = convertGoogleDriveLink(imageUrl);
+            if (!convertedUrl) {
+                showToast('❌ Gambar tidak valid', true);
+                return;
+            }
+            const modal = document.getElementById('imageZoomModal');
+            const zoomImg = document.getElementById('zoomImage');
+            zoomImg.src = convertedUrl;
+            zoomImg.alt = 'Claim Image';
+            modal.classList.add('active');
+        }
+        
+        function closeImageZoom() {
+            document.getElementById('imageZoomModal').classList.remove('active');
+        }
+        
+        // ==================== TOAST NOTIFICATION ====================
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toastNotification');
+            toast.textContent = message;
+            toast.style.background = isError ? '#EF4444' : '#10B981';
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+        }
+        
+        function toggleMenu() {
+            const sidebar = document.getElementById('popupSidebar');
+            const overlay = document.getElementById('menuOverlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                const sidebar = document.getElementById('popupSidebar');
+                const overlay = document.getElementById('menuOverlay');
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+                closeModal();
+                closeImageZoom();
+            }
+        });
+        
+        function checkAuth() {
+            const userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) { 
+                window.location.href = 'login.html'; 
+                return null; 
+            }
+            return JSON.parse(userJson);
+        }
+        
+        const currentUser = checkAuth();
+        
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+        
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', { hour12: false });
+        }
+        
+        // ==================== GROUP CLAIM BY ID ====================
+        function groupClaimById(data) {
+            const groups = {};
+            data.forEach(item => {
+                const id = item.id || item.no;
+                if (!groups[id]) {
+                    groups[id] = {
+                        id: id,
+                        customer: item.Customer || item.customer || '',
+                        date: item.date || '',
+                        claim: item.claim || '',
+                        claim_detail: item['claim detail'] || item.claim_detail || '',
+                        status: item.status || '',
+                        image: item.image || null
+                    };
+                }
+            });
+            return Object.values(groups);
+        }
+        
+        // ==================== GET STATUS COUNTS ====================
+        function getClaimStatusCounts(group) {
+            let open = 0, progress = 0, close = 0;
+            const status = (group.status || '').toUpperCase();
+            if (status === 'OPEN' || status === 'O') open++;
+            else if (status === 'IN PROGRESS' || status === 'PROGRESS' || status === 'P') progress++;
+            else if (status === 'CLOSE' || status === 'CLOSED' || status === 'C') close++;
+            return { open, progress, close };
+        }
+        
+        // ==================== RENDER CLAIM LIST ====================
+        function renderClaimList() {
+            const container = document.getElementById('claim-list-container');
+            
+            if (!groupedClaims || groupedClaims.length === 0) {
+                container.innerHTML = '<div class="text-center text-slate-500 py-3 text-[9px]">📭 No claim data available</div>';
+                return;
+            }
+            
+            // Update statistics
+            let totalOpen = 0, totalProgress = 0, totalClose = 0;
+            groupedClaims.forEach(group => {
+                const counts = getClaimStatusCounts(group);
+                totalOpen += counts.open;
+                totalProgress += counts.progress;
+                totalClose += counts.close;
+            });
+            
+            document.getElementById('total-claim').innerText = groupedClaims.length;
+            document.getElementById('total-open').innerText = totalOpen;
+            document.getElementById('total-progress').innerText = totalProgress;
+            document.getElementById('total-close').innerText = totalClose;
+            
+            container.innerHTML = groupedClaims.map(claim => {
+                const counts = getClaimStatusCounts(claim);
+                
+                let statusColor = '';
+                if (counts.open > 0) statusColor = 'border-l-4 border-l-red-500';
+                else if (counts.progress > 0) statusColor = 'border-l-4 border-l-yellow-500';
+                else if (counts.close > 0) statusColor = 'border-l-4 border-l-green-500';
+                else statusColor = 'border-l-4 border-l-gray-300';
+                
+                let formattedDate = claim.date || '-';
+                if (claim.date) {
+                    const d = new Date(claim.date);
+                    if (!isNaN(d.getTime())) {
+                        formattedDate = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+                    }
+                }
+                
+                const hasImage = claim.image && claim.image.trim() !== '' && claim.image !== 'null';
+                const imageIcon = hasImage ? '🖼️' : '';
+                
+                return `
+                    <div class="claim-card ${statusColor}" onclick='showDetail(${JSON.stringify(claim).replace(/'/g, "&#39;")})'>
+                        <div class="flex justify-between items-start mb-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="id-badge">ID: ${claim.id}</span>
+                                <span class="claim-date">📅 ${formattedDate}</span>
+                                ${imageIcon ? `<span class="text-[8px] text-cyan-600">${imageIcon}</span>` : ''}
+                            </div>
+                            <div class="flex gap-1">
+                                ${counts.open > 0 ? `<span class="status-badge badge-open text-[8px]">🔴 ${counts.open}</span>` : ''}
+                                ${counts.progress > 0 ? `<span class="status-badge badge-progress text-[8px]">🟡 ${counts.progress}</span>` : ''}
+                                ${counts.close > 0 ? `<span class="status-badge badge-close text-[8px]">🟢 ${counts.close}</span>` : ''}
+                            </div>
+                        </div>
+                        <div class="claim-title">📌 ${claim.claim || '-'}</div>
+                        <div class="claim-customer">🏢 ${claim.customer || '-'}</div>
+                        <div class="mt-2 flex justify-between items-center">
+                            <span class="claims-count">📋 ${claim.claim_detail ? 'Detail tersedia' : 'No detail'}</span>
+                            <span class="text-cyan-600 text-[8px]">Click →</span>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // ==================== SHOW DETAIL ====================
+        function showDetail(claim) {
+            const modalBody = document.getElementById('modal-body');
+            
+            let formattedDate = claim.date || '-';
+            if (claim.date) {
+                const d = new Date(claim.date);
+                if (!isNaN(d.getTime())) {
+                    formattedDate = d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+                }
+            }
+            
+            const counts = getClaimStatusCounts(claim);
+            
+            let statusBadge = '';
+            const status = (claim.status || '').toUpperCase();
+            if (status === 'OPEN' || status === 'O') statusBadge = '<span class="status-badge badge-open text-[9px]">🔴 OPEN</span>';
+            else if (status === 'IN PROGRESS' || status === 'PROGRESS' || status === 'P') statusBadge = '<span class="status-badge badge-progress text-[9px]">🟡 IN PROGRESS</span>';
+            else if (status === 'CLOSE' || status === 'CLOSED' || status === 'C') statusBadge = '<span class="status-badge badge-close text-[9px]">🟢 CLOSE</span>';
+            else statusBadge = '<span class="status-badge bg-gray-100 text-gray-500 text-[9px]">⚪ UNKNOWN</span>';
+            
+            let imageHtml = '';
+            if (claim.image && claim.image.trim() !== '' && claim.image !== 'null' && claim.image !== 'undefined') {
+                const convertedUrl = convertGoogleDriveLink(claim.image);
+                if (convertedUrl) {
+                    imageHtml = `
+                        <div class="claim-image-wrapper" onclick="event.stopPropagation(); openImageZoom('${claim.image.replace(/'/g, "\\'")}')">
+                            <div class="image-loading" id="loading-claim">
+                                <div class="spinner"></div>
+                                <span>Loading image...</span>
+                            </div>
+                            <img src="${convertedUrl}" 
+                                 alt="Claim Image" 
+                                 style="display:none;"
+                                 onload="document.getElementById('loading-claim').style.display='none'; this.style.display='block';"
+                                 onerror="document.getElementById('loading-claim').style.display='none'; document.getElementById('error-claim').style.display='flex';">
+                            <div class="image-error" id="error-claim">
+                                ❌ Gagal memuat gambar
+                                <button class="retry-btn" onclick="event.stopPropagation(); retryImage('${claim.image.replace(/'/g, "\\'")}')">🔄 Coba Lagi</button>
+                            </div>
+                            <div class="image-overlay">🔍 Klik untuk memperbesar</div>
+                        </div>
+                        <div class="image-caption">
+                            <span class="zoom-icon">🔍</span>
+                            Klik gambar untuk memperbesar
+                        </div>
+                    `;
+                }
+            }
+            
+            modalBody.innerHTML = `
+                <div class="claim-info-box">
+                    <div class="claim-info-grid">
+                        <div><span class="info-label">ID Claim</span><div class="info-value">${claim.id}</div></div>
+                        <div><span class="info-label">Status</span><div class="info-value">${statusBadge}</div></div>
+                        <div><span class="info-label">Customer</span><div class="info-value">${claim.customer || '-'}</div></div>
+                        <div><span class="info-label">Date</span><div class="info-value">${formattedDate}</div></div>
+                        <div class="col-span-2"><span class="info-label">Claim Title</span><div class="info-value">${claim.claim || '-'}</div></div>
+                        <div class="col-span-2"><span class="info-label">Claim Detail</span><div class="info-value" style="font-weight:400; font-size:0.85rem;">${claim.claim_detail || '-'}</div></div>
+                        <div class="col-span-2">
+                            <span class="info-label">Status Summary</span>
+                            <div class="info-value flex gap-3 mt-1 flex-wrap">
+                                ${counts.open > 0 ? `<span class="status-badge badge-open">🔴 ${counts.open} Open</span>` : ''}
+                                ${counts.progress > 0 ? `<span class="status-badge badge-progress">🟡 ${counts.progress} In Progress</span>` : ''}
+                                ${counts.close > 0 ? `<span class="status-badge badge-close">🟢 ${counts.close} Closed</span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                ${imageHtml}
+            `;
+            
+            document.getElementById('detailModal').classList.add('active');
+        }
+        
+        function retryImage(imageUrl) {
+            const loadingEl = document.getElementById('loading-claim');
+            const errorEl = document.getElementById('error-claim');
+            const imgEl = loadingEl?.parentElement?.querySelector('img');
+            
+            if (loadingEl) loadingEl.style.display = 'flex';
+            if (errorEl) errorEl.style.display = 'none';
+            if (imgEl) {
+                imgEl.style.display = 'none';
+                const convertedUrl = convertGoogleDriveLink(imageUrl);
+                if (convertedUrl) {
+                    imgEl.src = convertedUrl;
+                    imgEl.onload = function() {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        this.style.display = 'block';
+                    };
+                    imgEl.onerror = function() {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        if (errorEl) errorEl.style.display = 'flex';
+                    };
+                }
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('detailModal').classList.remove('active');
+        }
+        
+        // ==================== LOAD DATA ====================
+        async function loadClaimData() {
+            const container = document.getElementById('claim-list-container');
+            container.innerHTML = '<div class="text-center text-slate-500 py-3 text-[9px]">🔄 Loading claim data...</div>';
+            
+            try {
+                const response = await fetch(CLAIM_API);
+                const data = await response.json();
+                console.log('Raw Claim Data:', data);
+                
+                if (data && Array.isArray(data) && data.length > 0) {
+                    const claimFindings = data.filter(item => item.claim || item.id || item.no);
+                    
+                    if (claimFindings.length > 0) {
+                        claimData = claimFindings;
+                        groupedClaims = groupClaimById(claimData);
+                        renderClaimList();
+                    } else {
+                        console.warn('No claim data found in sheet "claim_cs"');
+                        container.innerHTML = '<div class="text-center text-slate-500 py-3 text-[9px]">📭 No claim data available.</div>';
+                        document.getElementById('total-claim').innerText = '0';
+                        document.getElementById('total-open').innerText = '0';
+                        document.getElementById('total-progress').innerText = '0';
+                        document.getElementById('total-close').innerText = '0';
+                    }
+                } else {
+                    groupedClaims = [];
+                    renderClaimList();
+                }
+            } catch (error) {
+                console.error('Error loading claim data:', error);
+                container.innerHTML = '<div class="text-center text-red-400 py-3 text-[9px]">❌ Error loading data.</div>';
+            }
+        }
+        
+        let autoRefreshInterval;
+        function startAutoRefresh() {
+            if (autoRefreshInterval) clearInterval(autoRefreshInterval);
+            autoRefreshInterval = setInterval(loadClaimData, 30000);
+        }
+        
+        // ==================== INIT ====================
+        renderMenu();
+        updateClock();
+        setInterval(updateClock, 1000);
+        loadClaimData();
+        startAutoRefresh();
+    </script>
+</body>
+</html>

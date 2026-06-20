@@ -288,20 +288,20 @@
         <!-- Statistik Cards -->
         <div class="stats-grid">
           <div class="stat-item">
-            <div class="stat-label">Total RFQ</div>
+            <div class="stat-label">📊 Total RFQ</div>
             <div class="stat-value text-cyan-600" id="total-all">0</div>
           </div>
           <div class="stat-item" style="border-color: #22c55e;">
             <div class="stat-label">✅ Continue</div>
             <div class="stat-value text-green-600" id="total-continue">0</div>
           </div>
-          <div class="stat-item" style="border-color: #ef4444;">
-            <div class="stat-label">❌ Decline</div>
-            <div class="stat-value text-red-600" id="total-decline">0</div>
-          </div>
           <div class="stat-item" style="border-color: #3b82f6;">
             <div class="stat-label">⚙️ Technical Assistance</div>
             <div class="stat-value text-blue-600" id="total-ta">0</div>
+          </div>
+          <div class="stat-item" style="border-color: #ef4444;">
+            <div class="stat-label">❌ Decline</div>
+            <div class="stat-value text-red-600" id="total-decline">0</div>
           </div>
           <div class="stat-item" style="border-color: #9ca3af;">
             <div class="stat-label">📝 No Progres</div>
@@ -309,7 +309,7 @@
           </div>
         </div>
 
-        <!-- Bar Chart - LEBIH BESAR -->
+        <!-- Bar Chart Combo + Line -->
         <div class="chart-container">
           <canvas id="rfqChart" class="chart-canvas"></canvas>
         </div>
@@ -424,6 +424,18 @@
     const RFQ_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/RFQ";
     let chart = null;
     
+    // Mapping untuk case insensitive
+    function getValue(row, key) {
+      if (!row) return 0;
+      const keys = Object.keys(row);
+      for (let k of keys) {
+        if (k.toLowerCase() === key.toLowerCase()) {
+          return row[k];
+        }
+      }
+      return 0;
+    }
+    
     async function loadRFQData() {
       try {
         const response = await fetch(RFQ_API, {
@@ -448,6 +460,7 @@
         const taData = [];
         const declineData = [];
         const noProgresData = [];
+        const totalData = [];
         
         let totalRFQ = 0;
         let totalContinue = 0;
@@ -457,12 +470,21 @@
         
         for (let i = 0; i < data.length; i++) {
           let row = data[i];
-          let month = row["month"] || row["Month"] || row["MONTH"] || "";
-          let total = parseInt(row["total rfq"] || row["total"] || row["TOTAL"] || row["total_rfq"] || 0);
-          let continueVal = parseInt(row["continue"] || row["Continue"] || row["CONTINUE"] || 0);
-          let ta = parseInt(row["technical assistance"] || row["technical_assistance"] || row["Technical Assistance"] || 0);
-          let decline = parseInt(row["decline"] || row["Decline"] || row["DECLINE"] || 0);
-          let np = parseInt(row["no progres"] || row["no_progres"] || row["No Progres"] || row["no progress"] || 0);
+          
+          // Ambil bulan - case insensitive
+          let month = getValue(row, 'month') || getValue(row, 'bulan') || '';
+          
+          // Ambil nilai-nilai - case insensitive
+          let total = parseInt(getValue(row, 'total rfq') || getValue(row, 'total_rfq') || getValue(row, 'total') || 0);
+          let continueVal = parseInt(getValue(row, 'continue') || 0);
+          let ta = parseInt(getValue(row, 'technical assistance') || getValue(row, 'technical_assistance') || 0);
+          let decline = parseInt(getValue(row, 'decline') || 0);
+          let np = parseInt(getValue(row, 'no progres') || getValue(row, 'no_progres') || getValue(row, 'no progress') || 0);
+          
+          // Jika total belum diisi, hitung dari jumlah
+          if (total === 0 && (continueVal > 0 || ta > 0 || decline > 0 || np > 0)) {
+            total = continueVal + ta + decline + np;
+          }
           
           if (month && month !== "") {
             months.push(month);
@@ -470,6 +492,7 @@
             taData.push(ta);
             declineData.push(decline);
             noProgresData.push(np);
+            totalData.push(total);
             
             totalRFQ = totalRFQ + total;
             totalContinue = totalContinue + continueVal;
@@ -480,15 +503,17 @@
         }
         
         // Update statistik cards
-        document.getElementById('total-all').innerText = totalRFQ;
-        document.getElementById('total-continue').innerText = totalContinue;
-        document.getElementById('total-decline').innerText = totalDecline;
-        document.getElementById('total-ta').innerText = totalTA;
-        document.getElementById('total-np').innerText = totalNP;
+        document.getElementById('total-all').innerText = totalRFQ.toLocaleString();
+        document.getElementById('total-continue').innerText = totalContinue.toLocaleString();
+        document.getElementById('total-decline').innerText = totalDecline.toLocaleString();
+        document.getElementById('total-ta').innerText = totalTA.toLocaleString();
+        document.getElementById('total-np').innerText = totalNP.toLocaleString();
         
         // Update chart
         if (months.length > 0) {
-          renderChart(months, continueData, taData, declineData, noProgresData);
+          renderChart(months, continueData, taData, declineData, noProgresData, totalData);
+        } else {
+          useFallbackData();
         }
         
         updateLastUpdate();
@@ -499,16 +524,16 @@
       }
     }
     
-    // Data fallback
+    // Data fallback dari spreadsheet yang Anda berikan
     function useFallbackData() {
       console.log("Menggunakan data fallback");
       
       var months = ['Jan-26', 'Feb-26', 'Mar-26', 'Apr-26', 'May-26', 'Jun-26', 'Jul-26', 'Aug-26', 'Sep-26', 'Oct-26', 'Nov-26', 'Dec-26'];
-      var continueData = [17, 4, 6, 11, 11, 0, 0, 0, 0, 0, 0, 0];
-      var taData = [3, 3, 4, 7, 2, 0, 0, 0, 0, 0, 0, 0];
-      var declineData = [11, 0, 3, 2, 14, 0, 0, 0, 0, 0, 0, 0];
-      var noProgresData = [0, 5, 0, 7, 47, 0, 0, 0, 0, 0, 0, 0];
-      var totalData = [31, 12, 13, 27, 74, 0, 0, 0, 0, 0, 0, 0];
+      var continueData = [17, 4, 6, 11, 29, 3, 0, 0, 0, 0, 0, 0];
+      var taData = [3, 3, 4, 7, 10, 0, 0, 0, 0, 0, 0, 0];
+      var declineData = [11, 0, 3, 2, 26, 0, 0, 0, 0, 0, 0, 0];
+      var noProgresData = [0, 5, 0, 7, 27, 2, 0, 0, 0, 0, 0, 0];
+      var totalData = [31, 12, 13, 27, 92, 5, 0, 0, 0, 0, 0, 0];
       
       var totalRFQ = 0;
       for (var i = 0; i < totalData.length; i++) {
@@ -531,26 +556,26 @@
         totalNP = totalNP + noProgresData[i];
       }
       
-      document.getElementById('total-all').innerText = totalRFQ;
-      document.getElementById('total-continue').innerText = totalContinue;
-      document.getElementById('total-decline').innerText = totalDecline;
-      document.getElementById('total-ta').innerText = totalTA;
-      document.getElementById('total-np').innerText = totalNP;
+      document.getElementById('total-all').innerText = totalRFQ.toLocaleString();
+      document.getElementById('total-continue').innerText = totalContinue.toLocaleString();
+      document.getElementById('total-decline').innerText = totalDecline.toLocaleString();
+      document.getElementById('total-ta').innerText = totalTA.toLocaleString();
+      document.getElementById('total-np').innerText = totalNP.toLocaleString();
       
-      renderChart(months, continueData, taData, declineData, noProgresData);
+      renderChart(months, continueData, taData, declineData, noProgresData, totalData);
       updateLastUpdate();
     }
     
-    // ==================== BAR CHART YANG LEBIH BAGUS ====================
-    function renderChart(labels, continueData, taData, declineData, noProgresData) {
+    // ==================== BAR CHART COMBO + LINE ====================
+    function renderChart(labels, continueData, taData, declineData, noProgresData, totalData) {
       var ctx = document.getElementById('rfqChart').getContext('2d');
       
       if (chart) chart.destroy();
       
-      // Dynamic scale: cari max value dari semua dataset
-      var allData = continueData.concat(taData, declineData, noProgresData);
+      // Dynamic scale: cari max value dari semua dataset termasuk total
+      var allData = continueData.concat(taData, declineData, noProgresData, totalData);
       var maxValue = Math.max.apply(Math, allData);
-      var suggestedMax = (maxValue === 0) ? 20 : Math.ceil(maxValue * 1.15);
+      var suggestedMax = (maxValue === 0) ? 20 : Math.ceil(maxValue * 1.2);
       
       chart = new Chart(ctx, {
         type: 'bar',
@@ -561,43 +586,67 @@
               label: 'Continue', 
               data: continueData, 
               backgroundColor: '#22c55e', 
-              borderRadius: 8, 
-              barPercentage: 0.65,
+              borderRadius: 4, 
+              barPercentage: 0.6,
               categoryPercentage: 0.8,
-              borderWidth: 0
+              borderWidth: 0,
+              order: 2
             },
             { 
               label: 'Technical Assistance', 
               data: taData, 
               backgroundColor: '#3b82f6', 
-              borderRadius: 8, 
-              barPercentage: 0.65,
+              borderRadius: 4, 
+              barPercentage: 0.6,
               categoryPercentage: 0.8,
-              borderWidth: 0
+              borderWidth: 0,
+              order: 3
             },
             { 
               label: 'Decline', 
               data: declineData, 
               backgroundColor: '#ef4444', 
-              borderRadius: 8, 
-              barPercentage: 0.65,
+              borderRadius: 4, 
+              barPercentage: 0.6,
               categoryPercentage: 0.8,
-              borderWidth: 0
+              borderWidth: 0,
+              order: 4
             },
             { 
               label: 'No Progres', 
               data: noProgresData, 
               backgroundColor: '#9ca3af', 
-              borderRadius: 8, 
-              barPercentage: 0.65,
+              borderRadius: 4, 
+              barPercentage: 0.6,
               categoryPercentage: 0.8,
-              borderWidth: 0
+              borderWidth: 0,
+              order: 5
+            },
+            { 
+              label: 'Total RFQ', 
+              data: totalData, 
+              type: 'line',
+              borderColor: '#0284C7', 
+              backgroundColor: 'rgba(2, 132, 199, 0.1)',
+              borderWidth: 3,
+              pointBackgroundColor: '#0284C7',
+              pointBorderColor: '#FFFFFF',
+              pointBorderWidth: 2,
+              pointRadius: 5,
+              pointHoverRadius: 7,
+              fill: true,
+              tension: 0.3,
+              order: 1
             }
           ]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
           plugins: {
             legend: { 
               position: 'top',
@@ -605,7 +654,7 @@
                 color: '#475569', 
                 font: { size: 11, weight: 'bold' }, 
                 usePointStyle: true, 
-                boxWidth: 10,
+                boxWidth: 12,
                 padding: 15
               }
             },
@@ -613,22 +662,34 @@
               backgroundColor: '#1e293b',
               titleColor: '#0284C7',
               bodyColor: '#e2e8f0',
-              padding: 10,
+              padding: 12,
               callbacks: {
                 label: function(context) {
-                  return context.dataset.label + ': ' + context.raw;
+                  return context.dataset.label + ': ' + context.raw.toLocaleString();
                 }
               }
             }
           },
           scales: {
             x: { 
-              ticks: { color: '#64748B', font: { size: 10, weight: 'bold' }, rotation: 45, autoSkip: true }, 
+              ticks: { 
+                color: '#64748B', 
+                font: { size: 10, weight: 'bold' }, 
+                maxRotation: 45,
+                minRotation: 0,
+                autoSkip: true,
+                maxTicksLimit: 12
+              }, 
               grid: { display: false },
               title: { display: true, text: 'Bulan', color: '#64748B', font: { size: 10, weight: 'bold' } }
             },
             y: { 
-              ticks: { color: '#64748B', stepSize: Math.ceil(suggestedMax / 6), font: { size: 10 }, callback: function(v) { return v.toLocaleString(); } }, 
+              ticks: { 
+                color: '#64748B', 
+                stepSize: Math.ceil(suggestedMax / 8), 
+                font: { size: 10 }, 
+                callback: function(v) { return v.toLocaleString(); } 
+              }, 
               grid: { color: '#E5E7EB', lineWidth: 1 }, 
               beginAtZero: true,
               suggestedMax: suggestedMax,
@@ -638,28 +699,27 @@
         }
       });
       
-      // Tambahkan angka di atas bar
+      // Tambahkan angka di atas bar untuk Total RFQ saja
       var originalDraw = chart.draw;
       chart.draw = function() {
         originalDraw.apply(this, arguments);
         var ctx = this.ctx;
         ctx.save();
         ctx.font = 'bold 10px "Inter"';
-        ctx.fillStyle = '#1e293b';
+        ctx.fillStyle = '#0284C7';
         ctx.textAlign = 'center';
         
-        for (var i = 0; i < this.data.datasets.length; i++) {
-          var dataset = this.data.datasets[i];
-          var meta = this.getDatasetMeta(i);
-          if (!meta.hidden && meta.data) {
-            for (var j = 0; j < meta.data.length; j++) {
-              var element = meta.data[j];
-              var value = dataset.data[j];
-              if (value > 0 && element) {
-                var position = element.tooltipPosition();
-                if (position) {
-                  ctx.fillText(value.toLocaleString(), position.x, position.y - 6);
-                }
+        // Tampilkan angka Total RFQ di atas bar
+        var meta = this.getDatasetMeta(4); // Dataset Total RFQ (index 4)
+        if (meta && meta.data) {
+          var dataset = this.data.datasets[4];
+          for (var j = 0; j < meta.data.length; j++) {
+            var element = meta.data[j];
+            var value = dataset.data[j];
+            if (value > 0 && element) {
+              var position = element.tooltipPosition();
+              if (position) {
+                ctx.fillText(value.toLocaleString(), position.x, position.y - 10);
               }
             }
           }
