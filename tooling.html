@@ -221,7 +221,7 @@
         .bar-po { background: linear-gradient(90deg, #0284C7, #3b82f6); }
         .bar-eta { background: linear-gradient(90deg, #22c55e, #16a34a); }
         
-        /* Sidebar Menu */
+        /* ===== SIDEBAR MENU - SAMA PERSIS DENGAN ACTIVITYSCHEDULE ===== */
         .menu-overlay {
             position: fixed;
             top: 0;
@@ -234,7 +234,7 @@
             display: none;
         }
         .menu-overlay.active { display: block; }
-        
+
         .popup-sidebar {
             position: fixed;
             top: 0;
@@ -249,47 +249,102 @@
             flex-direction: column;
         }
         .popup-sidebar.active { left: 0; }
-        
-        .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; }
-        .menu-item { margin: 0.2rem 0.6rem; }
+
+        .logo-section { 
+            padding: 0.75rem 1rem; 
+            border-bottom: 1px solid #E5E7EB; 
+        }
+        .logo-section .flex { gap: 0.5rem; }
+        .logo-section .w-7 { 
+            width: 1.75rem; 
+            height: 1.75rem; 
+        }
+        .logo-section .w-7 span { font-size: 0.65rem; }
+        .logo-section h1 { font-size: 0.75rem; font-weight: 700; }
+        .logo-section p { font-size: 0.55rem; color: #94A3B8; }
+
+        #menu-container {
+            flex: 1;
+            padding: 0.25rem 0;
+        }
+        .menu-item { 
+            margin: 0.1rem 0.5rem; 
+        }
         .menu-button {
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            padding: 0.6rem 0.8rem;
-            border-radius: 0.6rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.4rem;
             color: #475569;
             text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.2s;
+            font-size: 0.8rem;
+            transition: all 0.15s;
         }
-        .menu-button:hover { background: #F0F9FF; color: #0284C7; transform: translateX(5px); }
-        .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
-        .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
-        
+        .menu-button:hover { 
+            background: #F0F9FF; 
+            color: #0284C7; 
+            transform: translateX(3px); 
+        }
+        .menu-button.active { 
+            background: #E0F2FE; 
+            color: #0284C7; 
+            border-left: 3px solid #0284C7; 
+        }
+        .menu-icon { 
+            font-size: 1rem; 
+            min-width: 1.6rem; 
+            text-align: center; 
+        }
+        .menu-button span:last-child { 
+            font-size: 0.78rem; 
+        }
+
         .sidebar-logout-btn {
-            margin: 1rem;
+            margin: 0.5rem 0.8rem;
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            padding: 0.6rem 0.8rem;
-            border-radius: 0.6rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.4rem;
             cursor: pointer;
             border-top: 1px solid #E5E7EB;
-            transition: all 0.2s;
+            transition: all 0.15s;
             color: #475569;
+            font-size: 0.8rem;
         }
-        .sidebar-logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
-        
+        .sidebar-logout-btn:hover { 
+            background: #FEE2E2; 
+            color: #EF4444; 
+            transform: translateX(3px); 
+        }
+        .sidebar-logout-btn .menu-icon { 
+            font-size: 1rem; 
+            min-width: 1.6rem; 
+            text-align: center; 
+        }
+
+        .sidebar-footer { 
+            text-align: center; 
+            padding: 0.3rem; 
+            color: #94A3B8; 
+            font-size: 0.6rem; 
+            border-top: 1px solid #E5E7EB; 
+        }
+
         .hamburger-btn {
             background: #F0F9FF;
             border: 1px solid #0284C7;
             border-radius: 0.5rem;
-            padding: 0.3rem 0.6rem;
+            padding: 0.25rem 0.5rem;
             cursor: pointer;
+            transition: all 0.2s;
         }
         .hamburger-btn:hover { background: #0284C7; }
         .hamburger-btn:hover span { color: white; }
+        .hamburger-btn span { font-size: 0.8rem; color: #475569; }
+        
+        .text-brand { color: #1A63F6; }
         
         .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
         .running-text marquee { font-size: 0.7rem; font-weight: 600; color: #0284C7; padding: 0.25rem 0; }
@@ -445,16 +500,19 @@
 </head>
 <body>
 
+    <!-- OVERLAY -->
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+    
+    <!-- POP UP SIDEBAR MENU - SAMA PERSIS DENGAN ACTIVITYSCHEDULE -->
     <div id="popupSidebar" class="popup-sidebar">
         <div class="logo-section">
             <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
-                    <span class="text-white text-sm font-bold">NS</span>
+                <div class="w-7 h-7 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
+                    <span class="text-white text-xs font-bold">NS</span>
                 </div>
                 <div>
-                    <h1 class="text-sm font-bold text-brand">NITTO SEIKO</h1>
-                    <p class="text-slate-500 text-[8px]">Plant 2</p>
+                    <h1 class="text-xs font-bold">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-[7px]">Plant 2</p>
                 </div>
             </div>
         </div>
@@ -463,7 +521,7 @@
             <span class="menu-icon">🚪</span>
             <span>Logout</span>
         </div>
-        <div class="text-center p-2 text-slate-400 text-[10px] border-t mt-1">System Online</div>
+        <div class="sidebar-footer">System Online</div>
     </div>
 
     <div class="dashboard-container">
@@ -553,7 +611,8 @@
     </div>
 
     <script>
-        // ==================== KONFIGURASI MENU ====================
+        // ==================== KONFIGURASI MENU BERDASARKAN USERNAME ====================
+        // ADMIN - semua menu
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
@@ -561,30 +620,130 @@
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
             { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
             { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
-            { icon: "🔧", name: "Tooling Schedule", link: "tooling.html", active: true }
+            { icon: "🔧", name: "Tooling Schedule", link: "tooling.html", active: true },
+            { icon: "✅", name: "Claim", link: "claim.html", active: false },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false }
         ];
-        
-        const userMenus = [
-            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+
+        // ENGINEERING - DENGAN TOOLING
+        const engMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
             { icon: "🔧", name: "Tooling Schedule", link: "tooling.html", active: true }
         ];
-        
+
+        // QUALITY ASSURANCE - TANPA TOOLING
+        const qaMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false },
+            { icon: "✅", name: "Claim", link: "claim.html", active: false }
+        ];
+
+        // MARKETING - TANPA TOOLING
+        const mktMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false }
+        ];
+
+        // PPIC - DENGAN TOOLING
+        const ppicMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🏭", name: "Production", link: "production.html", active: false },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false },
+            { icon: "🔧", name: "Tooling Schedule", link: "tooling.html", active: true }
+        ];
+
+        // USER DEFAULT - HANYA ACTIVITY SCHEDULE
+        const userDefaultMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false }
+        ];
+
+        // ============ FUNGSI AMBIL MENU BERDASARKAN USERNAME ============
+        function getMenusByUsername(username) {
+            const user = (username || '').toLowerCase();
+            switch(user) {
+                case 'admin': case 'tm': case 'habib':
+                    return adminMenus;
+                case 'eng':
+                    return engMenus;
+                case 'qa':
+                    return qaMenus;
+                case 'mkt':
+                    return mktMenus;
+                case 'ppic':
+                    return ppicMenus;
+                default:
+                    return userDefaultMenus;
+            }
+        }
+
+        // ==================== RENDER MENU ====================
         function renderMenu() {
             const userJson = sessionStorage.getItem('currentUser');
-            if (!userJson) return;
+            if (!userJson) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
             const user = JSON.parse(userJson);
-            const role = user.role || 'user';
-            const menus = role === 'admin' ? adminMenus : userMenus;
+            const username = user.username || '';
+            
+            const menus = getMenusByUsername(username);
             const currentPage = window.location.pathname.split('/').pop() || 'tooling.html';
-            const container = document.getElementById('menu-container');
-            let html = '';
+            
+            const menuContainer = document.getElementById('menu-container');
+            let menuHtml = '';
+            
             menus.forEach(menu => {
                 const activeClass = menu.link === currentPage ? 'active' : '';
-                html += `<div class="menu-item"><a href="${menu.link}" class="menu-button ${activeClass}"><span class="menu-icon">${menu.icon}</span><span>${menu.name}</span></a></div>`;
+                menuHtml += `
+                    <div class="menu-item">
+                        <a href="${menu.link}" class="menu-button ${activeClass}">
+                            <span class="menu-icon">${menu.icon}</span>
+                            <span>${menu.name}</span>
+                        </a>
+                    </div>
+                `;
             });
-            container.innerHTML = html;
+            
+            menuContainer.innerHTML = menuHtml;
+        }
+        
+        // ==================== MENU FUNCTIONS ====================
+        function toggleMenu() {
+            document.getElementById('popupSidebar').classList.toggle('active');
+            document.getElementById('menuOverlay').classList.toggle('active');
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('popupSidebar').classList.remove('active');
+                document.getElementById('menuOverlay').classList.remove('active');
+                closeModal();
+            }
+        });
+        
+        // ==================== AUTHENTICATION ====================
+        function checkAuth() {
+            if (!sessionStorage.getItem('currentUser')) window.location.href = 'login.html';
+        }
+        
+        checkAuth();
+        renderMenu();
+
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+        
+        function updateClock() {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('id-ID', { hour12: false });
         }
         
         // ==================== DATA TOOLING ====================
@@ -771,28 +930,7 @@
             renderGantt();
         }
         
-        // ==================== MENU & CLOCK ====================
-        function toggleMenu() {
-            document.getElementById('popupSidebar').classList.toggle('active');
-            document.getElementById('menuOverlay').classList.toggle('active');
-        }
-        
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                document.getElementById('popupSidebar').classList.remove('active');
-                document.getElementById('menuOverlay').classList.remove('active');
-                closeModal();
-            }
-        });
-        
-        function checkAuth() {
-            if (!sessionStorage.getItem('currentUser')) window.location.href = 'login.html';
-        }
-        function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString('id-ID', { hour12: false }); }
-        function logout() { sessionStorage.removeItem('currentUser'); window.location.href = 'login.html'; }
-        
-        checkAuth();
-        renderMenu();
+        // ==================== INIT ====================
         updateClock();
         setInterval(updateClock, 1000);
         

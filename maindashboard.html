@@ -112,53 +112,128 @@
         .running-text marquee { font-size: 0.75rem; font-weight: 600; color: #0284C7; padding: 0.3rem 0; }
         .digital-clock { font-family: 'Courier New', monospace; font-weight: 700; background: #F8FAFC; padding: 0.3rem 0.8rem; border-radius: 0.5rem; border: 1px solid #E5E7EB; color: #0284C7; font-size: 1.1rem; }
         
-        /* SIDEBAR MENU */
-        .menu-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(3px); z-index: 998; display: none; }
+        /* ===== SIDEBAR MENU - SAMA PERSIS DENGAN ACTIVITYSCHEDULE.HTML ===== */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+            display: none;
+        }
         .menu-overlay.active { display: block; }
-        .popup-sidebar { position: fixed; top: 0; left: -280px; width: 280px; height: 100vh; background: #FFFFFF; border-right: 1px solid #E5E7EB; z-index: 999; transition: left 0.3s ease; display: flex; flex-direction: column; }
+
+        .popup-sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: #FFFFFF;
+            border-right: 1px solid #E5E7EB;
+            z-index: 999;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
         .popup-sidebar.active { left: 0; }
-        .logo-section { padding: 1rem; border-bottom: 1px solid #E5E7EB; }
-        .menu-item { margin: 0.2rem 0.6rem; }
+
+        .logo-section { 
+            padding: 0.75rem 1rem; 
+            border-bottom: 1px solid #E5E7EB; 
+        }
+        .logo-section .flex { gap: 0.5rem; }
+        .logo-section .w-7 { 
+            width: 1.75rem; 
+            height: 1.75rem; 
+        }
+        .logo-section .w-7 span { font-size: 0.65rem; }
+        .logo-section h1 { font-size: 0.75rem; font-weight: 700; }
+        .logo-section p { font-size: 0.55rem; color: #94A3B8; }
+
+        #menu-container {
+            flex: 1;
+            padding: 0.25rem 0;
+        }
+        .menu-item { 
+            margin: 0.1rem 0.5rem; 
+        }
         .menu-button {
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            padding: 0.6rem 0.8rem;
-            border-radius: 0.6rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.4rem;
             color: #475569;
             text-decoration: none;
-            font-size: 0.85rem;
-            transition: all 0.2s;
+            font-size: 0.8rem;
+            transition: all 0.15s;
         }
-        .menu-button:hover { background: #F0F9FF; color: #0284C7; transform: translateX(5px); }
-        .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
-        .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
-        
-        /* LOGOUT BUTTON - HANYA SATU */
+        .menu-button:hover { 
+            background: #F0F9FF; 
+            color: #0284C7; 
+            transform: translateX(3px); 
+        }
+        .menu-button.active { 
+            background: #E0F2FE; 
+            color: #0284C7; 
+            border-left: 3px solid #0284C7; 
+        }
+        .menu-icon { 
+            font-size: 1rem; 
+            min-width: 1.6rem; 
+            text-align: center; 
+        }
+        .menu-button span:last-child { 
+            font-size: 0.78rem; 
+        }
+
         .sidebar-logout-btn {
-            margin: 1rem;
+            margin: 0.5rem 0.8rem;
             display: flex;
             align-items: center;
             gap: 0.6rem;
-            padding: 0.6rem 0.8rem;
-            border-radius: 0.6rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.4rem;
             cursor: pointer;
             border-top: 1px solid #E5E7EB;
-            transition: all 0.2s;
+            transition: all 0.15s;
             color: #475569;
+            font-size: 0.8rem;
         }
-        .sidebar-logout-btn:hover { background: #FEE2E2; color: #EF4444; transform: translateX(5px); }
-        
+        .sidebar-logout-btn:hover { 
+            background: #FEE2E2; 
+            color: #EF4444; 
+            transform: translateX(3px); 
+        }
+        .sidebar-logout-btn .menu-icon { 
+            font-size: 1rem; 
+            min-width: 1.6rem; 
+            text-align: center; 
+        }
+
+        .sidebar-footer { 
+            text-align: center; 
+            padding: 0.3rem; 
+            color: #94A3B8; 
+            font-size: 0.6rem; 
+            border-top: 1px solid #E5E7EB; 
+        }
+
         .hamburger-btn {
             background: #F0F9FF;
             border: 1px solid #0284C7;
             border-radius: 0.5rem;
-            padding: 0.3rem 0.6rem;
+            padding: 0.25rem 0.5rem;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s;
         }
         .hamburger-btn:hover { background: #0284C7; }
         .hamburger-btn:hover span { color: white; }
+        .hamburger-btn span { font-size: 0.8rem; color: #475569; }
         
         .text-brand { color: #1A63F6; }
         
@@ -193,11 +268,17 @@
             .event-card { padding: 0.6rem 0.8rem; }
             .event-card .font-medium { font-size: 0.85rem; }
             .production-chart-container { height: 230px; }
+            .menu-button { font-size: 0.85rem; padding: 0.45rem 0.7rem; }
+            .menu-button span:last-child { font-size: 0.82rem; }
+            .logo-section h1 { font-size: 0.8rem; }
         }
         
         @media (min-width: 2560px) {
             .stat-mini-value { font-size: 1.4rem; }
             .production-chart-container { height: 260px; }
+            .menu-button { font-size: 0.9rem; padding: 0.5rem 0.8rem; }
+            .menu-button span:last-child { font-size: 0.88rem; }
+            .logo-section h1 { font-size: 0.85rem; }
         }
     </style>
 </head>
@@ -206,16 +287,16 @@
     <!-- OVERLAY -->
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
     
-    <!-- POP UP SIDEBAR MENU -->
+    <!-- POP UP SIDEBAR MENU - SAMA PERSIS DENGAN ACTIVITYSCHEDULE -->
     <div id="popupSidebar" class="popup-sidebar">
         <div class="logo-section">
             <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
-                    <span class="text-white text-sm font-bold">NS</span>
+                <div class="w-7 h-7 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
+                    <span class="text-white text-xs font-bold">NS</span>
                 </div>
                 <div>
-                    <h1 class="text-sm font-bold text-brand">NITTO SEIKO</h1>
-                    <p class="text-slate-500 text-[8px]">Plant 2</p>
+                    <h1 class="text-xs font-bold">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-[7px]">Plant 2</p>
                 </div>
             </div>
         </div>
@@ -224,7 +305,7 @@
             <span class="menu-icon">🚪</span>
             <span>Logout</span>
         </div>
-        <div class="text-center p-3 text-slate-400 text-[10px] border-t mt-2">System Online</div>
+        <div class="sidebar-footer">System Online</div>
     </div>
 
     <div class="h-screen flex flex-col">
@@ -328,8 +409,8 @@
     </div>
 
     <script>
-        // ==================== KONFIGURASI MENU (ROLE-BASED) ====================
-        // ADMIN MENU - Ditambahkan Schedule Tooling (🔧)
+        // ==================== KONFIGURASI MENU BERDASARKAN USERNAME ====================
+        // ADMIN - semua menu (TERMASUK MAIN DASHBOARD)
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: true },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
@@ -337,24 +418,81 @@
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
             { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
             { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
-            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false },
+            { icon: "✅", name: "Claim", link: "claim.html", active: false },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false }
         ];
-        
-        // USER MENU - Ditambahkan Schedule Tooling (🔧)
-        const userMenus = [
-            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: true },
+
+        // ENGINEERING - TANPA MAIN DASHBOARD
+        const engMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
             { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
-        
+
+        // QUALITY ASSURANCE - TANPA MAIN DASHBOARD
+        const qaMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false },
+            { icon: "✅", name: "Claim", link: "claim.html", active: false }
+        ];
+
+        // MARKETING - TANPA MAIN DASHBOARD
+        const mktMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false }
+        ];
+
+        // PPIC - TANPA MAIN DASHBOARD
+        const ppicMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🏭", name: "Production", link: "production.html", active: false },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
+        ];
+
+        // USER DEFAULT - HANYA ACTIVITY SCHEDULE
+        const userDefaultMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false }
+        ];
+
+        // ============ FUNGSI AMBIL MENU BERDASARKAN USERNAME ============
+        function getMenusByUsername(username) {
+            const user = (username || '').toLowerCase();
+            switch(user) {
+                case 'admin': case 'tm': case 'habib':
+                    return adminMenus;
+                case 'eng':
+                    return engMenus;
+                case 'qa':
+                    return qaMenus;
+                case 'mkt':
+                    return mktMenus;
+                case 'ppic':
+                    return ppicMenus;
+                default:
+                    return userDefaultMenus;
+            }
+        }
+
+        // ==================== RENDER MENU - SAMA DENGAN ACTIVITYSCHEDULE ====================
         function renderMenu() {
             const userJson = sessionStorage.getItem('currentUser');
-            if (!userJson) return;
+            if (!userJson) {
+                window.location.href = 'login.html';
+                return;
+            }
             
             const user = JSON.parse(userJson);
-            const role = user.role || 'user';
-            const menus = role === 'admin' ? adminMenus : userMenus;
+            const username = user.username || '';
+            
+            const menus = getMenusByUsername(username);
             const currentPage = window.location.pathname.split('/').pop() || 'maindashboard.html';
             
             const menuContainer = document.getElementById('menu-container');
@@ -389,11 +527,12 @@
         });
         
         function checkAuth() {
-            if (!sessionStorage.getItem('currentUser')) {
+            const userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) {
                 window.location.href = 'login.html';
                 return null;
             }
-            return JSON.parse(sessionStorage.getItem('currentUser'));
+            return JSON.parse(userJson);
         }
         
         function logout() {
