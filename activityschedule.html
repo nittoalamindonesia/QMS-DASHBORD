@@ -26,18 +26,27 @@
         }
 
         @media (min-width: 1920px) and (max-width: 2559px) {
-            html { font-size: 18px; }
+            html { font-size: 17px; }
         }
 
         @media (min-width: 2560px) {
-            html { font-size: 22px; }
+            html { font-size: 20px; }
+        }
+
+        @media (max-width: 1024px) {
+            html { font-size: 14px; }
         }
 
         @media (max-width: 768px) {
             html { font-size: 12px; }
             .dashboard-grid {
                 grid-template-columns: 1fr !important;
+                gap: 0.5rem !important;
             }
+        }
+
+        @media (max-width: 480px) {
+            html { font-size: 10px; }
         }
 
         ::-webkit-scrollbar {
@@ -82,21 +91,21 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            padding: 0.5rem 0.6rem;
+            padding: 0.4rem 0.5rem;
         }
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 0.75rem;
+            grid-template-columns: 2.2fr 1fr;
+            gap: 0.6rem;
             flex: 1;
             min-height: 0;
         }
 
         .card-header {
             flex-shrink: 0;
-            padding-bottom: 0.3rem;
-            margin-bottom: 0.3rem;
+            padding-bottom: 0.25rem;
+            margin-bottom: 0.25rem;
             border-bottom: 1px solid #E5E7EB;
         }
 
@@ -111,18 +120,18 @@
         .days-header {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 0.2rem;
-            margin-bottom: 0.3rem;
+            gap: 0.15rem;
+            margin-bottom: 0.2rem;
             flex-shrink: 0;
         }
 
         .day-header {
             text-align: center;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 700;
-            padding: 0.2rem 0;
+            padding: 0.15rem 0;
             background: #F1F5F9;
-            border-radius: 0.4rem;
+            border-radius: 0.3rem;
         }
 
         .calendar-grid-container {
@@ -135,45 +144,73 @@
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 0.25rem;
+            gap: 0.2rem;
             flex: 1;
+            min-height: 0;
         }
 
         .calendar-cell {
             background: #F8FAFC;
             border: 1px solid #E5E7EB;
-            border-radius: 0.5rem;
+            border-radius: 0.4rem;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: flex-start;
-            padding: 0.3rem 0.15rem;
-            transition: all 0.1s ease;
+            padding: 0.2rem 0.1rem;
             min-width: 0;
-            overflow-y: auto;
+            overflow: hidden;
             height: 100%;
-            min-height: 80px;
+            min-height: 65px;
         }
 
-        /* Style untuk weekend cell (Sabtu & Minggu) TANPA EVENT */
+        @media (min-height: 1000px) {
+            .calendar-cell {
+                min-height: 85px;
+            }
+        }
+
+        @media (min-height: 1200px) {
+            .calendar-cell {
+                min-height: 100px;
+            }
+        }
+
+        @media (max-height: 800px) {
+            .calendar-cell {
+                min-height: 55px;
+            }
+        }
+
+        @media (max-height: 650px) {
+            .calendar-cell {
+                min-height: 45px;
+            }
+        }
+
+        .calendar-cell.empty-cell {
+            background: #F1F5F9;
+            opacity: 0.5;
+            border-color: #E5E7EB;
+        }
+
         .calendar-cell.weekend-cell {
             background: #FEE2E2 !important;
             border-color: #FCA5A5 !important;
         }
 
-        /* Style untuk hari ini (TODAY) */
         .calendar-cell.today-cell {
             background: #CFFAFE !important;
             border-color: #06B6D4 !important;
         }
 
         .calendar-date {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             font-weight: bold;
             text-align: center;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.1rem;
             line-height: 1.2;
-            padding-bottom: 0.15rem;
+            padding-bottom: 0.1rem;
             border-bottom: 1px solid #E5E7EB;
             width: 100%;
             flex-shrink: 0;
@@ -183,27 +220,56 @@
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 0.15rem;
+            gap: 0.04rem;
             align-items: flex-start;
             flex: 1;
+            overflow: hidden;
+            padding: 0 0.05rem;
         }
 
         .calendar-event {
-            font-size: 0.5rem;
-            line-height: 1.3;
+            font-size: 0.45rem;
+            line-height: 1.2;
             font-weight: 500;
-            white-space: normal;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
             text-align: left;
             width: 100%;
-            border-radius: 0.2rem;
-            padding: 0.1rem 0.2rem;
+            border-radius: 0.15rem;
+            padding: 0.04rem 0.15rem;
             color: #0369A1;
+            max-width: 100%;
         }
 
         .calendar-event.holiday {
             color: #DC2626;
+        }
+
+        .calendar-event.more-indicator {
+            color: #64748B;
+            font-size: 0.4rem;
+            font-style: italic;
+        }
+
+        @media (min-height: 1000px) {
+            .calendar-event { font-size: 0.55rem; }
+            .calendar-date { font-size: 0.8rem; }
+        }
+
+        @media (min-height: 1200px) {
+            .calendar-event { font-size: 0.6rem; }
+            .calendar-date { font-size: 0.85rem; }
+        }
+
+        @media (max-height: 800px) {
+            .calendar-event { font-size: 0.4rem; }
+            .calendar-date { font-size: 0.65rem; }
+        }
+
+        @media (max-height: 650px) {
+            .calendar-event { font-size: 0.35rem; }
+            .calendar-date { font-size: 0.55rem; }
         }
 
         .today-events-wrapper {
@@ -219,93 +285,103 @@
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 0.45rem;
-            padding-right: 0.2rem;
+            gap: 0.3rem;
+            padding-right: 0.15rem;
         }
 
         .today-event-card {
             background: #F8FAFC;
-            border-left: 4px solid #0284C7;
-            border-radius: 0.5rem;
-            padding: 0.5rem 0.6rem;
+            border-left: 3px solid #0284C7;
+            border-radius: 0.4rem;
+            padding: 0.35rem 0.5rem;
             flex-shrink: 0;
             transition: all 0.2s;
         }
 
         .today-event-card .event-title {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: #1E293B;
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
-            gap: 0.3rem;
-            margin-bottom: 0.2rem;
+            gap: 0.2rem;
+            margin-bottom: 0.1rem;
         }
 
         .today-event-card .event-time {
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             color: #0284C7;
             font-weight: 600;
             background: #E0F2FE;
-            padding: 0.1rem 0.4rem;
+            padding: 0.05rem 0.35rem;
             border-radius: 1rem;
         }
 
         .today-event-card .event-type {
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             color: #475569;
-            margin-bottom: 0.15rem;
+            margin-bottom: 0.1rem;
         }
 
         .today-event-card .event-pic {
-            font-size: 0.6rem;
+            font-size: 0.5rem;
             color: #0284C7;
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.2rem;
         }
 
         .upcoming-scroll {
-            max-height: 140px;
+            max-height: 110px;
             overflow-y: auto;
-            padding-right: 0.2rem;
+            padding-right: 0.15rem;
+        }
+
+        @media (min-height: 1000px) {
+            .upcoming-scroll { max-height: 130px; }
+        }
+
+        @media (min-height: 1200px) {
+            .upcoming-scroll { max-height: 150px; }
         }
 
         .upcoming-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.35rem 0;
+            padding: 0.25rem 0;
             border-bottom: 1px solid #E5E7EB;
-            gap: 0.4rem;
+            gap: 0.3rem;
         }
 
         .upcoming-date {
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             color: #0284C7;
             font-weight: 600;
-            min-width: 75px;
+            min-width: 65px;
             white-space: nowrap;
         }
 
         .upcoming-title {
-            font-size: 0.65rem;
+            font-size: 0.55rem;
             color: #1E293B;
             font-weight: 500;
             flex: 1;
-            white-space: normal;
-            word-break: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .upcoming-pic {
-            font-size: 0.6rem;
+            font-size: 0.5rem;
             color: #64748B;
-            min-width: 60px;
+            min-width: 50px;
             text-align: right;
-            white-space: normal;
-            word-break: break-word;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         .menu-overlay {
@@ -342,7 +418,7 @@
             background: #F0F9FF;
             border: 1px solid #0284C7;
             border-radius: 0.5rem;
-            padding: 0.3rem 0.6rem;
+            padding: 0.25rem 0.5rem;
             cursor: pointer;
             transition: 0.2s;
         }
@@ -354,21 +430,20 @@
             font-family: 'Courier New', monospace;
             font-weight: 700;
             background: #F8FAFC;
-            padding: 0.2rem 0.7rem;
+            padding: 0.15rem 0.6rem;
             border-radius: 0.5rem;
             border: 1px solid #E5E7EB;
             color: #0284C7;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
 
         .running-text marquee {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             font-weight: 600;
             color: #0284C7;
-            padding: 0.2rem 0;
+            padding: 0.15rem 0;
         }
 
-        /* FLOATING BUTTON ADMIN */
         .floating-download-btn {
             position: fixed;
             bottom: 20px;
@@ -377,9 +452,9 @@
             color: white;
             border: none;
             border-radius: 50%;
-            width: 56px;
-            height: 56px;
-            font-size: 24px;
+            width: 50px;
+            height: 50px;
+            font-size: 22px;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
@@ -391,24 +466,17 @@
 
         .floating-download-btn:hover {
             transform: scale(1.1);
-            background: linear-gradient(135deg, #0369A1, #0284C7);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
         }
 
-        .floating-download-btn:active {
-            transform: scale(0.95);
-        }
-
-        /* Toast notification */
         .toast-notification {
             position: fixed;
-            bottom: 90px;
+            bottom: 80px;
             right: 20px;
             background: #10B981;
             color: white;
-            padding: 10px 16px;
+            padding: 8px 14px;
             border-radius: 8px;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 600;
             z-index: 1000;
             opacity: 0;
@@ -420,20 +488,32 @@
             opacity: 1;
         }
 
-        @media (min-width: 1920px) {
-            .calendar-date { font-size: 0.9rem; }
-            .calendar-event { font-size: 0.6rem; }
-            .today-event-card .event-title { font-size: 0.85rem; }
-            .upcoming-scroll { max-height: 160px; }
-            .calendar-cell { min-height: 100px; }
+        .calendar-event[title] {
+            cursor: help;
         }
 
-        @media (min-width: 2560px) {
-            .calendar-date { font-size: 1rem; }
-            .calendar-event { font-size: 0.7rem; }
-            .today-event-card .event-title { font-size: 0.95rem; }
-            .upcoming-scroll { max-height: 180px; }
-            .calendar-cell { min-height: 120px; }
+        /* ===== STYLE KHUSUS UNTUK CAPTURE ===== */
+        .capture-mode .calendar-cell {
+            min-height: 70px !important;
+            height: auto !important;
+            overflow: visible !important;
+        }
+        .capture-mode .calendar-events-container {
+            overflow: visible !important;
+        }
+        .capture-mode .calendar-event {
+            white-space: normal !important;
+            word-wrap: break-word !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+            font-size: 0.5rem !important;
+            line-height: 1.3 !important;
+            padding: 0.1rem 0.2rem !important;
+        }
+        .capture-mode .calendar-date {
+            border-bottom: 1px solid #E5E7EB !important;
+            padding-bottom: 0.15rem !important;
+            margin-bottom: 0.15rem !important;
         }
     </style>
 </head>
@@ -442,39 +522,39 @@
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
 
     <div id="popupSidebar" class="popup-sidebar">
-        <div class="logo-section p-4 border-b border-gray-200">
+        <div class="logo-section p-3 border-b border-gray-200">
             <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
-                    <span class="text-white text-sm font-bold">NS</span>
+                <div class="w-7 h-7 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
+                    <span class="text-white text-xs font-bold">NS</span>
                 </div>
                 <div>
-                    <h1 class="text-sm font-bold">NITTO SEIKO</h1>
-                    <p class="text-slate-500 text-[8px]">Plant 2</p>
+                    <h1 class="text-xs font-bold">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-[7px]">Plant 2</p>
                 </div>
             </div>
         </div>
         <div id="menu-container" class="flex-1"></div>
-        <div class="sidebar-logout-btn flex items-center gap-2 p-3 m-2 rounded-lg cursor-pointer border-t border-gray-200 text-slate-600 hover:bg-red-50" onclick="logout()">
+        <div class="sidebar-logout-btn flex items-center gap-2 p-2 m-2 rounded-lg cursor-pointer border-t border-gray-200 text-slate-600 hover:bg-red-50" onclick="logout()">
             <span class="menu-icon">🚪</span>
             <span>Logout</span>
         </div>
-        <div class="text-center p-2 text-slate-400 text-[10px] border-t">System Online</div>
+        <div class="text-center p-1 text-slate-400 text-[8px] border-t">System Online</div>
     </div>
 
     <div class="dashboard-container">
-        <div class="bg-white border-b border-gray-200 px-3 py-1.5 flex justify-between items-center shrink-0">
+        <div class="bg-white border-b border-gray-200 px-2 py-1 flex justify-between items-center shrink-0">
             <div class="flex items-center gap-2">
-                <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-sm">☰</span></div>
+                <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-xs">☰</span></div>
                 <div>
-                    <h1 class="text-sm font-bold">PT NITTO ALAM INDONESIA</h1>
-                    <p class="text-slate-500 text-[8px]">Plant 2 - Activity Schedule</p>
+                    <h1 class="text-xs font-bold">PT NITTO ALAM INDONESIA</h1>
+                    <p class="text-slate-500 text-[7px]">Plant 2 - Activity Schedule</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
                 <div class="digital-clock" id="clock">00:00:00</div>
-                <div class="flex items-center gap-1 bg-green-50 px-2 py-0.5 rounded-lg">
-                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                    <span class="text-green-600 text-[8px] font-bold">LIVE</span>
+                <div class="flex items-center gap-1 bg-green-50 px-1.5 py-0.5 rounded-lg">
+                    <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-green-600 text-[7px] font-bold">LIVE</span>
                 </div>
             </div>
         </div>
@@ -489,14 +569,14 @@
             <div class="content-area">
                 <div class="dashboard-grid">
                     <!-- LEFT: KALENDER -->
-                    <div class="stat-card p-1.5" id="calendar-card">
+                    <div class="stat-card p-1" id="calendar-card">
                         <div class="card-header flex justify-between items-center">
                             <div class="flex items-center gap-1">
-                                <span class="text-sm">📅</span>
-                                <h2 id="calendar-month" class="text-cyan-600 font-bold text-sm">Loading...</h2>
+                                <span class="text-xs">📅</span>
+                                <h2 id="calendar-month" class="text-cyan-600 font-bold text-xs">Loading...</h2>
                             </div>
-                            <div class="text-slate-500 text-[8px] flex items-center gap-1">
-                                <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                            <div class="text-slate-500 text-[7px] flex items-center gap-1">
+                                <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
                                 <span>Live</span>
                             </div>
                         </div>
@@ -519,30 +599,30 @@
                     </div>
 
                     <!-- RIGHT: TODAY'S EVENTS + UPCOMING -->
-                    <div class="stat-card p-1.5">
+                    <div class="stat-card p-1">
                         <div class="card-header">
                             <div class="flex items-center justify-between">
                                 <div class="flex items-center gap-1">
-                                    <span class="text-sm">📌</span>
-                                    <h3 class="font-bold text-cyan-600 text-sm">Today's Events</h3>
+                                    <span class="text-xs">📌</span>
+                                    <h3 class="font-bold text-cyan-600 text-xs">Today's Events</h3>
                                 </div>
-                                <span id="today-date" class="text-slate-500 text-[9px]">-</span>
+                                <span id="today-date" class="text-slate-500 text-[8px]">-</span>
                             </div>
                         </div>
 
                         <div class="today-events-wrapper">
                             <div id="today-events-list" class="today-events-list">
-                                <div class="text-center text-slate-500 py-3 text-[9px]">Loading events...</div>
+                                <div class="text-center text-slate-500 py-2 text-[8px]">Loading events...</div>
                             </div>
                         </div>
 
-                        <div class="mt-2 pt-2 border-t border-gray-200 shrink-0">
-                            <div class="flex items-center gap-1 mb-1">
-                                <span class="text-sm">⏰</span>
-                                <h3 class="font-bold text-cyan-600 text-xs uppercase tracking-wide">Upcoming Events</h3>
+                        <div class="mt-1 pt-1 border-t border-gray-200 shrink-0">
+                            <div class="flex items-center gap-1 mb-0.5">
+                                <span class="text-xs">⏰</span>
+                                <h3 class="font-bold text-cyan-600 text-[10px] uppercase tracking-wide">Upcoming Events</h3>
                             </div>
                             <div id="upcoming-events" class="upcoming-scroll">
-                                <div class="text-center text-slate-500 py-1 text-[9px]">Loading...</div>
+                                <div class="text-center text-slate-500 py-1 text-[8px]">Loading...</div>
                             </div>
                         </div>
                     </div>
@@ -551,7 +631,7 @@
         </div>
     </div>
 
-    <!-- Floating Download Button (hanya untuk admin) -->
+    <!-- Floating Download Button -->
     <div id="floatingDownloadBtn" class="floating-download-btn" style="display: none;" onclick="downloadCalendarAsImage()">
         📸
     </div>
@@ -604,35 +684,194 @@
             showToast('📸 Capturing calendar...');
 
             try {
-                const originalOverflow = calendarCard.style.overflow;
-                const originalHeight = calendarCard.style.height;
+                // === TAMBAHKAN CLASS CAPTURE MODE KE CARD ===
+                calendarCard.classList.add('capture-mode');
                 
-                calendarCard.style.overflow = 'visible';
-                calendarCard.style.height = 'auto';
+                // Tunggu sebentar agar style capture-mode berlaku
+                await new Promise(resolve => setTimeout(resolve, 200));
                 
-                await new Promise(resolve => setTimeout(resolve, 100));
+                // === BUAT CLONE ===
+                const cloneCard = calendarCard.cloneNode(true);
                 
-                const canvas = await html2canvas(calendarCard, {
+                // Hapus class capture-mode dari clone (karena sudah inline)
+                cloneCard.classList.remove('capture-mode');
+                
+                // Set style untuk clone
+                cloneCard.style.position = 'fixed';
+                cloneCard.style.left = '-9999px';
+                cloneCard.style.top = '0';
+                cloneCard.style.width = calendarCard.offsetWidth + 'px';
+                cloneCard.style.height = 'auto';
+                cloneCard.style.background = '#FFFFFF';
+                cloneCard.style.padding = '8px';
+                cloneCard.style.borderRadius = '12px';
+                cloneCard.style.border = '1px solid #E5E7EB';
+                cloneCard.style.zIndex = '9999';
+                cloneCard.style.overflow = 'visible';
+                cloneCard.style.boxShadow = 'none';
+                
+                // === PERBAIKI SEMUA CELL DI CLONE ===
+                const cloneCells = cloneCard.querySelectorAll('.calendar-cell');
+                cloneCells.forEach(cell => {
+                    // Style dasar
+                    cell.style.minHeight = '70px';
+                    cell.style.height = 'auto';
+                    cell.style.overflow = 'visible';
+                    cell.style.border = '1px solid #E5E7EB';
+                    cell.style.borderRadius = '0.4rem';
+                    cell.style.padding = '0.3rem 0.15rem';
+                    cell.style.display = 'flex';
+                    cell.style.flexDirection = 'column';
+                    cell.style.alignItems = 'center';
+                    cell.style.justifyContent = 'flex-start';
+                    cell.style.width = '100%';
+                    
+                    // Background berdasarkan class
+                    if (cell.classList.contains('empty-cell')) {
+                        cell.style.background = '#F1F5F9';
+                        cell.style.opacity = '0.5';
+                    } else if (cell.classList.contains('weekend-cell')) {
+                        cell.style.background = '#FEE2E2';
+                        cell.style.borderColor = '#FCA5A5';
+                    } else if (cell.classList.contains('today-cell')) {
+                        cell.style.background = '#CFFAFE';
+                        cell.style.borderColor = '#06B6D4';
+                    } else {
+                        cell.style.background = '#F8FAFC';
+                    }
+                });
+                
+                // === PERBAIKI TANGGAL DI CLONE ===
+                const cloneDates = cloneCard.querySelectorAll('.calendar-date');
+                cloneDates.forEach(date => {
+                    date.style.fontSize = '0.75rem';
+                    date.style.fontWeight = 'bold';
+                    date.style.textAlign = 'center';
+                    date.style.marginBottom = '0.15rem';
+                    date.style.paddingBottom = '0.15rem';
+                    date.style.borderBottom = '1px solid #E5E7EB';
+                    date.style.width = '100%';
+                    date.style.flexShrink = '0';
+                    date.style.display = 'block';
+                });
+                
+                // === PERBAIKI EVENT CONTAINER DI CLONE ===
+                const cloneContainers = cloneCard.querySelectorAll('.calendar-events-container');
+                cloneContainers.forEach(container => {
+                    container.style.display = 'flex';
+                    container.style.flexDirection = 'column';
+                    container.style.gap = '0.08rem';
+                    container.style.width = '100%';
+                    container.style.overflow = 'visible';
+                    container.style.padding = '0 0.1rem';
+                    container.style.flex = '1';
+                });
+                
+                // === PERBAIKI EVENT ITEM DI CLONE ===
+                const cloneEvents = cloneCard.querySelectorAll('.calendar-event');
+                cloneEvents.forEach(event => {
+                    event.style.display = 'block';
+                    event.style.whiteSpace = 'normal';
+                    event.style.wordWrap = 'break-word';
+                    event.style.overflow = 'visible';
+                    event.style.textOverflow = 'clip';
+                    event.style.width = '100%';
+                    event.style.fontSize = '0.5rem';
+                    event.style.lineHeight = '1.3';
+                    event.style.padding = '0.08rem 0.2rem';
+                    event.style.borderRadius = '0.15rem';
+                    event.style.textAlign = 'left';
+                    event.style.fontWeight = '500';
+                    event.style.color = '#0369A1';
+                    
+                    if (event.classList.contains('holiday')) {
+                        event.style.color = '#DC2626';
+                    }
+                    if (event.classList.contains('more-indicator')) {
+                        event.style.color = '#64748B';
+                        event.style.fontSize = '0.4rem';
+                        event.style.fontStyle = 'italic';
+                    }
+                });
+                
+                // === PERBAIKI GRID DI CLONE ===
+                const cloneGrid = cloneCard.querySelector('.calendar-grid');
+                if (cloneGrid) {
+                    cloneGrid.style.display = 'grid';
+                    cloneGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+                    cloneGrid.style.gap = '0.2rem';
+                    cloneGrid.style.width = '100%';
+                    cloneGrid.style.height = 'auto';
+                    cloneGrid.style.flex = '1';
+                    cloneGrid.style.minHeight = '0';
+                    
+                    // Ambil grid template rows dari asli
+                    const originalGrid = document.querySelector('.calendar-grid');
+                    if (originalGrid) {
+                        const computedStyle = window.getComputedStyle(originalGrid);
+                        cloneGrid.style.gridTemplateRows = computedStyle.gridTemplateRows || 'repeat(5, 1fr)';
+                    }
+                }
+                
+                // === TAMBAHKAN CLONE KE BODY ===
+                document.body.appendChild(cloneCard);
+                
+                // Tunggu sebentar agar clone ter-render
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // === CAPTURE ===
+                const canvas = await html2canvas(cloneCard, {
                     scale: 2,
                     backgroundColor: '#FFFFFF',
                     logging: false,
                     useCORS: true,
-                    allowTaint: false
+                    allowTaint: false,
+                    width: cloneCard.scrollWidth,
+                    height: cloneCard.scrollHeight,
+                    windowWidth: cloneCard.scrollWidth,
+                    windowHeight: cloneCard.scrollHeight,
+                    onclone: function(doc) {
+                        // Pastikan semua elemen di clone terlihat
+                        const cells = doc.querySelectorAll('.calendar-cell');
+                        cells.forEach(cell => {
+                            cell.style.overflow = 'visible';
+                            cell.style.height = 'auto';
+                            cell.style.minHeight = '70px';
+                        });
+                        const events = doc.querySelectorAll('.calendar-event');
+                        events.forEach(ev => {
+                            ev.style.whiteSpace = 'normal';
+                            ev.style.wordWrap = 'break-word';
+                            ev.style.overflow = 'visible';
+                            ev.style.textOverflow = 'clip';
+                        });
+                        const grid = doc.querySelector('.calendar-grid');
+                        if (grid) {
+                            grid.style.height = 'auto';
+                        }
+                    }
                 });
                 
-                calendarCard.style.overflow = originalOverflow;
-                calendarCard.style.height = originalHeight;
+                // === HAPUS CLONE ===
+                document.body.removeChild(cloneCard);
                 
+                // === HAPUS CAPTURE MODE DARI CARD ASLI ===
+                calendarCard.classList.remove('capture-mode');
+                
+                // === DOWNLOAD ===
                 const link = document.createElement('a');
                 const now = new Date();
                 const fileName = 'calendar_' + now.getFullYear() + '_' + String(now.getMonth() + 1).padStart(2, '0') + '.png';
                 link.download = fileName;
                 link.href = canvas.toDataURL('image/png');
                 link.click();
-                
+
                 showToast('✅ Calendar downloaded!');
+
             } catch (error) {
                 console.error('Download error:', error);
+                // Pastikan capture mode dihapus jika error
+                calendarCard.classList.remove('capture-mode');
                 showToast('❌ Failed to download calendar', true);
             }
         }
@@ -748,19 +987,21 @@
             const firstDayOfMonth = new Date(year, month, 1).getDay();
             const daysInMonth = new Date(year, month + 1, 0).getDate();
             
-            const totalCells = firstDayOfMonth + daysInMonth;
-            const totalRows = Math.ceil(totalCells / 7);
+            const totalDays = firstDayOfMonth + daysInMonth;
+            const totalRows = Math.ceil(totalDays / 7);
             const totalGridCells = totalRows * 7;
             
             let cellsHtml = '';
             let dayCounter = 1;
             
             for (let i = 0; i < totalGridCells; i++) {
-                if (i < firstDayOfMonth || dayCounter > daysInMonth) {
-                    cellsHtml += `<div class="calendar-cell empty-cell" style="background: #F9FAFB; opacity:0.6;">
-                                    <span class="calendar-date text-gray-300" style="border-bottom-color: #E5E7EB;"></span>
-                                  </div>`;
-                } else {
+                if (i < firstDayOfMonth) {
+                    cellsHtml += `<div class="calendar-cell empty-cell"></div>`;
+                } 
+                else if (dayCounter > daysInMonth) {
+                    cellsHtml += `<div class="calendar-cell empty-cell"></div>`;
+                }
+                else {
                     const day = dayCounter;
                     const fullDate = year + '-' + String(month + 1).padStart(2, "0") + '-' + String(day).padStart(2, "0");
                     const dayEvents = groupedEvents[fullDate] || [];
@@ -770,45 +1011,30 @@
                     const hasHoliday = dayEvents.some(function(e) { return e.type && e.type.toLowerCase() === 'holiday'; });
                     const hasEvent = dayEvents.length > 0;
                     
-                    // PRIORITAS WARNA:
-                    // 1. HARI INI (TODAY) -> background biru, tulisan biru (MENGESAMPINGKAN weekend)
-                    // 2. Weekend TANPA EVENT -> background merah, tulisan merah
-                    // 3. Weekend ADA EVENT -> background PUTIH (seperti biasa), tulisan HITAM
-                    // 4. Holiday (bukan hari ini, bukan weekend) -> background merah muda, tulisan merah
-                    // 5. Weekday biasa -> background putih, tulisan hitam
-                    
                     let dateColor = 'text-gray-700';
                     let additionalClass = '';
-                    let bgClass = 'bg-gray-50 border-gray-200';
                     
                     if (isToday) {
-                        // HARI INI: Biru
                         additionalClass = 'today-cell';
                         dateColor = 'text-cyan-600 font-bold';
-                        bgClass = '';
                     } 
                     else if (isWeekendDay && !hasEvent) {
-                        // Weekend TANPA EVENT: Merah
                         additionalClass = 'weekend-cell';
                         dateColor = 'text-red-500';
-                        bgClass = '';
                     }
                     else if (isWeekendDay && hasEvent && !hasHoliday) {
-                        // Weekend ADA EVENT (dan bukan holiday): Background putih normal
-                        // Tidak pakai additional class, warna tulisan hitam (default)
                         dateColor = 'text-gray-700';
-                        bgClass = 'bg-gray-50 border-gray-200';
                     }
                     else if (hasHoliday) {
-                        // Holiday BUKAN hari ini dan BUKAN weekend: Merah muda
-                        bgClass = 'bg-red-50 border-red-200';
                         dateColor = 'text-red-500';
                     }
                     
                     let eventsHtml = '';
                     if (dayEvents.length > 0) {
                         eventsHtml = '<div class="calendar-events-container">';
-                        for (let ev of dayEvents) {
+                        const maxEvents = 4;
+                        const displayEvents = dayEvents.slice(0, maxEvents);
+                        for (let ev of displayEvents) {
                             let icon = '📌';
                             if (ev.type === 'audit') icon = '🔍';
                             else if (ev.type === 'visit') icon = '👥';
@@ -816,13 +1042,18 @@
                             else if (ev.type === 'holiday') icon = '🎉';
                             let eventClass = 'calendar-event';
                             if (ev.type === 'holiday') eventClass += ' holiday';
-                            eventsHtml += '<div class="' + eventClass + '" title="' + (ev.title || '') + '">' + icon + ' ' + (ev.title || '') + '</div>';
+                            const tooltip = ev.title || '';
+                            let title = ev.title || '';
+                            if (title.length > 25) title = title.substring(0, 22) + '...';
+                            eventsHtml += '<div class="' + eventClass + '" title="' + (ev.title || '') + '">' + icon + ' ' + title + '</div>';
+                        }
+                        if (dayEvents.length > maxEvents) {
+                            eventsHtml += '<div class="calendar-event more-indicator">+' + (dayEvents.length - maxEvents) + ' more</div>';
                         }
                         eventsHtml += '</div>';
                     }
                     
-                    const finalBgClass = additionalClass ? additionalClass : bgClass;
-                    cellsHtml += '<div class="calendar-cell ' + finalBgClass + '"><span class="calendar-date ' + dateColor + '">' + day + '</span>' + eventsHtml + '</div>';
+                    cellsHtml += '<div class="calendar-cell ' + additionalClass + '"><span class="calendar-date ' + dateColor + '">' + day + '</span>' + eventsHtml + '</div>';
                     dayCounter++;
                 }
             }
@@ -830,6 +1061,7 @@
             if (calendarGrid) {
                 calendarGrid.style.display = 'grid';
                 calendarGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+                calendarGrid.style.gridTemplateRows = 'repeat(' + totalRows + ', 1fr)';
                 calendarGrid.innerHTML = cellsHtml;
             }
         }
@@ -867,7 +1099,7 @@
                     }
                     todayEventsDiv.innerHTML = eventsHtml;
                 } else if (todayEventsDiv) {
-                    todayEventsDiv.innerHTML = '<div class="text-center text-slate-500 py-3 text-[9px]">📭 No events today</div>';
+                    todayEventsDiv.innerHTML = '<div class="text-center text-slate-500 py-2 text-[8px]">📭 No events today</div>';
                 }
 
                 const todayMidnight = new Date();
@@ -891,7 +1123,7 @@
                         return '<div class="upcoming-item"><span class="upcoming-date">' + icon + ' ' + evDate + '</span><span class="upcoming-title" title="' + (ev.title || '') + '">' + (ev.title || '-') + '</span><span class="upcoming-pic">' + (ev.pic ? '👤 ' + ev.pic : '') + '</span></div>';
                     }).join('');
                 } else if (upcomingDiv) {
-                    upcomingDiv.innerHTML = '<div class="text-center text-slate-500 py-1 text-[9px]">No upcoming events</div>';
+                    upcomingDiv.innerHTML = '<div class="text-center text-slate-500 py-1 text-[8px]">No upcoming events</div>';
                 }
             } catch (error) {
                 console.warn("API error or fallback triggered", error);
@@ -905,18 +1137,19 @@
                 ];
                 const groupedFallback = groupEventsByDate(fallbackEvents);
                 renderCalendar(fallbackEvents, groupedFallback);
+                
                 const todayDate2 = getTodayDate();
                 const todayEventsFallback = fallbackEvents.filter(function(e) { return e.date === todayDate2; });
-                let fallbackHtml = '';
-                for (let ev of todayEventsFallback) {
-                    let icon = ev.type === 'visit' ? '👥' : (ev.type === 'audit' ? '🔍' : '📌');
-                    fallbackHtml += '<div class="today-event-card"><div class="event-title"><span>' + icon + ' ' + ev.title + '</span><span class="event-time">🕘 ' + (ev.time || 'All day') + '</span></div><div class="event-type">' + ev.type + '</div><div class="event-pic">👤 PIC: ' + ev.pic + '</div></div>';
-                }
                 const todayEventsDiv2 = document.getElementById('today-events-list');
                 const todayDateSpan2 = document.getElementById('today-date');
                 if (todayDateSpan2) todayDateSpan2.innerHTML = formatDisplayDate(todayDate2);
                 if (todayEventsDiv2) {
-                    if (!fallbackHtml) fallbackHtml = '<div class="text-center text-slate-500 py-3 text-[9px]">📭 No events today</div>';
+                    let fallbackHtml = '';
+                    for (let ev of todayEventsFallback) {
+                        let icon = ev.type === 'visit' ? '👥' : (ev.type === 'audit' ? '🔍' : '📌');
+                        fallbackHtml += '<div class="today-event-card"><div class="event-title"><span>' + icon + ' ' + ev.title + '</span><span class="event-time">🕘 ' + (ev.time || 'All day') + '</span></div><div class="event-type">' + ev.type + '</div><div class="event-pic">👤 PIC: ' + ev.pic + '</div></div>';
+                    }
+                    if (!fallbackHtml) fallbackHtml = '<div class="text-center text-slate-500 py-2 text-[8px]">📭 No events today</div>';
                     todayEventsDiv2.innerHTML = fallbackHtml;
                 }
                 
@@ -933,10 +1166,10 @@
                         upcomingDiv2.innerHTML = upcomingFallback.map(function(ev) {
                             const evDate = new Date(ev.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
                             let icon = ev.type === 'audit' ? '🔍' : (ev.type === 'visit' ? '👥' : '📌');
-                            return '<div class="upcoming-item"><span class="upcoming-date">' + icon + ' ' + evDate + '</span><span class="upcoming-title">' + ev.title + '</span><span class="upcoming-pic">' + (ev.pic ? '👤 ' + ev.pic : '') + '</span></div>';
+                            return '<div class="upcoming-item"><span class="upcoming-date">' + icon + ' ' + evDate + '</span><span class="upcoming-title" title="' + (ev.title || '') + '">' + ev.title + '</span><span class="upcoming-pic">' + (ev.pic ? '👤 ' + ev.pic : '') + '</span></div>';
                         }).join('');
                     } else {
-                        upcomingDiv2.innerHTML = '<div class="text-center text-slate-500 py-1 text-[9px]">No upcoming events</div>';
+                        upcomingDiv2.innerHTML = '<div class="text-center text-slate-500 py-1 text-[8px]">No upcoming events</div>';
                     }
                 }
             }

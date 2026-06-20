@@ -6,6 +6,7 @@
     <title>Audit Finding - PT NITTO ALAM INDONESIA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
+        /* ===== SEMUA STYLE SAMA SEPERTI SEBELUMNYA ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
             background: #F1F5F9;
@@ -15,22 +16,16 @@
             width: 100vw;
         }
         
-        /* ========== OPTIMASI KHUSUS TV 50-55 INCH ========== */
         html { font-size: 14px; }
         
-        /* TV 50 inch (1920x1080) */
         @media (min-width: 1920px) and (max-width: 2559px) {
             html { font-size: 16px; }
-            body { transform: scale(1); }
         }
         
-        /* TV 55 inch (2560x1440) */
         @media (min-width: 2560px) and (max-width: 3839px) {
             html { font-size: 18px; }
-            body { transform: scale(1); }
         }
         
-        /* Fallback untuk layar lebih kecil */
         @media (max-width: 1919px) {
             html { font-size: 12px; }
             body { transform: scale(0.95); transform-origin: top left; width: 105.26%; }
@@ -40,7 +35,6 @@
         ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
         
-        /* Stat Card */
         .stat-card { 
             background: #FFFFFF;
             transition: all 0.3s ease; 
@@ -51,7 +45,6 @@
         }
         .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #0284C7; }
         
-        /* Audit Card */
         .audit-card {
             background: #F8FAFC;
             border: 1px solid #E5E7EB;
@@ -94,7 +87,6 @@
         .badge-progress { background: #FFFBEB; color: #F59E0B; border: 1px solid #FEF3C7; }
         .badge-close { background: #F0FDF4; color: #22C55E; border: 1px solid #DCFCE7; }
         
-        /* MODAL */
         .modal {
             display: none;
             position: fixed;
@@ -112,7 +104,7 @@
         .modal-content {
             background: #FFFFFF;
             border-radius: 1.2rem;
-            max-width: 700px;
+            max-width: 750px;
             width: 90%;
             max-height: 85vh;
             overflow-y: auto;
@@ -128,6 +120,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            z-index: 10;
         }
         .modal-header h3 { font-size: 1.1rem; font-weight: bold; color: #0284C7; }
         .modal-header button { font-size: 1.5rem; cursor: pointer; color: #64748B; background: none; border: none; }
@@ -166,17 +159,121 @@
         .finding-detail-text { font-size: 0.8rem; color: #1E293B; margin-top: 0.4rem; line-height: 1.4; }
         .finding-pic { font-size: 0.7rem; color: #64748B; margin-top: 0.4rem; }
         
-        .finding-image {
+        .finding-image-wrapper {
             margin-top: 0.8rem;
-            max-width: 100%;
-            max-height: 200px;
             border-radius: 0.6rem;
-            object-fit: contain;
+            overflow: hidden;
+            border: 1px solid #E5E7EB;
+            position: relative;
+            background: #F1F5F9;
             cursor: pointer;
-            border: 1px solid #0284C7;
+            transition: all 0.3s ease;
+            max-width: 100%;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .finding-image-wrapper:hover {
+            border-color: #0284C7;
+            box-shadow: 0 2px 8px rgba(2, 132, 199, 0.2);
+        }
+        .finding-image-wrapper img {
+            display: block;
+            width: 100%;
+            max-height: 280px;
+            object-fit: contain;
+            background: #FFFFFF;
+            transition: transform 0.3s ease;
+        }
+        .finding-image-wrapper:hover img {
+            transform: scale(1.02);
+        }
+        .finding-image-wrapper .image-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            font-size: 0.6rem;
+            padding: 0.3rem;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .finding-image-wrapper:hover .image-overlay {
+            opacity: 1;
+        }
+        .finding-image-wrapper .image-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+            color: #64748B;
+            font-size: 0.7rem;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .finding-image-wrapper .image-loading .spinner {
+            width: 30px;
+            height: 30px;
+            border: 3px solid #E5E7EB;
+            border-top: 3px solid #0284C7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .finding-image-wrapper .image-error {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            min-height: 120px;
+            color: #EF4444;
+            font-size: 0.7rem;
+            text-align: center;
+            padding: 1rem;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .finding-image-wrapper .image-error .retry-btn {
+            margin-top: 8px;
+            padding: 4px 16px;
+            background: #0284C7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.6rem;
+        }
+        .finding-image-wrapper .image-error .retry-btn:hover {
+            background: #0369A1;
         }
         
-        .image-caption { font-size: 0.6rem; color: #64748B; margin-top: 0.2rem; text-align: center; }
+        .image-caption { 
+            font-size: 0.55rem; 
+            color: #64748B; 
+            margin-top: 0.3rem; 
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+        }
+        .image-caption .zoom-icon {
+            background: #0284C7;
+            color: white;
+            border-radius: 50%;
+            width: 1.2rem;
+            height: 1.2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+        }
         
         .image-modal {
             position: fixed;
@@ -184,7 +281,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #FFFFFF;
+            background: rgba(0,0,0,0.92);
             z-index: 1100;
             display: none;
             justify-content: center;
@@ -192,7 +289,27 @@
             cursor: pointer;
         }
         .image-modal.active { display: flex; }
-        .image-modal img { max-width: 90%; max-height: 90%; border-radius: 0.8rem; }
+        .image-modal img { 
+            max-width: 90%; 
+            max-height: 90%; 
+            border-radius: 0.8rem; 
+            object-fit: contain;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .image-modal .close-zoom {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            z-index: 1101;
+            background: none;
+            border: none;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        .image-modal .close-zoom:hover { opacity: 1; }
         
         .modal-footer {
             position: sticky;
@@ -203,8 +320,8 @@
             border-top: 1px solid #E5E7EB;
         }
         .modal-footer button { font-size: 0.8rem; color: #0284C7; background: none; border: none; cursor: pointer; }
+        .modal-footer button:hover { color: #0369A1; }
         
-        /* SIDEBAR MENU */
         .menu-overlay {
             position: fixed;
             top: 0;
@@ -250,7 +367,6 @@
         .menu-button.active { background: #E0F2FE; color: #0284C7; border-left: 3px solid #0284C7; }
         .menu-icon { font-size: 1.2rem; min-width: 1.8rem; }
         
-        /* LOGOUT BUTTON - SATU DI SIDEBAR */
         .sidebar-logout-btn {
             margin: 1rem;
             display: flex;
@@ -339,10 +455,34 @@
         .header-title { font-size: 0.8rem; font-weight: bold; color: #1E293B; }
         .header-subtitle { font-size: 0.55rem; color: #64748B; }
         
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.5rem;
+        }
+        .stats-grid .stat-item {
+            text-align: center;
+            padding: 0.4rem;
+            background: #F8FAFC;
+            border-radius: 0.5rem;
+        }
+        .stats-grid .stat-number {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #0284C7;
+        }
+        .stats-grid .stat-label {
+            font-size: 0.55rem;
+            color: #64748B;
+        }
+        
         @media (min-width: 1920px) {
             .header-title { font-size: 0.9rem; }
             .audit-title { font-size: 0.85rem; }
             .id-badge { font-size: 0.7rem; }
+        }
+        @media (max-width: 768px) {
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -350,6 +490,7 @@
 
     <!-- IMAGE ZOOM MODAL -->
     <div id="imageZoomModal" class="image-modal" onclick="closeImageZoom()">
+        <button class="close-zoom" onclick="closeImageZoom()">&times;</button>
         <img id="zoomImage" src="" alt="Zoomed image">
     </div>
 
@@ -408,9 +549,23 @@
                 
                 <!-- STATISTICS CARD -->
                 <div class="stat-card mb-3">
-                    <div class="text-center">
-                        <div class="text-[9px] text-slate-500">Total Audit</div>
-                        <div class="text-lg font-bold text-cyan-600" id="total-audit">0</div>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-number" id="total-audit">0</div>
+                            <div class="stat-label">Total Audit</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number text-red-500" id="total-open">0</div>
+                            <div class="stat-label">Open</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number text-yellow-500" id="total-progress">0</div>
+                            <div class="stat-label">In Progress</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number text-green-500" id="total-close">0</div>
+                            <div class="stat-label">Closed</div>
+                        </div>
                     </div>
                 </div>
                 
@@ -446,21 +601,78 @@
         </div>
     </div>
 
+    <!-- TOAST NOTIFICATION -->
+    <div id="toastNotification" style="position:fixed; bottom:90px; right:20px; background:#10B981; color:white; padding:10px 16px; border-radius:8px; font-size:12px; font-weight:600; z-index:2000; opacity:0; transition:opacity 0.3s ease; pointer-events:none; box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+        ✅ Downloading calendar...
+    </div>
+
     <script>
-        // ==================== KONFIGURASI MENU (ROLE-BASED) ====================
+        // ==================== FUNGSI KONVERSI LINK GOOGLE DRIVE ====================
+        function convertGoogleDriveLink(url) {
+            if (!url || url === '' || url === 'null' || url === 'undefined') return null;
+            
+            url = url.trim();
+            
+            let fileId = null;
+            
+            // Pattern 1: /file/d/XXXXX/
+            let match = url.match(/\/file\/d\/([^\/]+)/);
+            if (match) fileId = match[1];
+            
+            // Pattern 2: ?id=XXXXX
+            if (!fileId) {
+                match = url.match(/[?&]id=([^&]+)/);
+                if (match) fileId = match[1];
+            }
+            
+            // Pattern 3: /d/XXXXX/
+            if (!fileId) {
+                match = url.match(/\/d\/([^\/]+)/);
+                if (match) fileId = match[1];
+            }
+            
+            // Pattern 4: uc?export=view&id=XXXXX
+            if (!fileId) {
+                match = url.match(/uc\?export=view&id=([^&]+)/);
+                if (match) fileId = match[1];
+            }
+            
+            // Pattern 5: view&id=XXXXX
+            if (!fileId) {
+                match = url.match(/view&id=([^&]+)/);
+                if (match) fileId = match[1];
+            }
+            
+            // Pattern 6: /preview (format terakhir)
+            if (!fileId) {
+                match = url.match(/\/d\/([^\/]+)\/preview/);
+                if (match) fileId = match[1];
+            }
+            
+            if (fileId) {
+                // Gunakan format thumbnail yang paling stabil
+                return `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+            }
+            
+            return null;
+        }
+
+        // ==================== KONFIGURASI MENU ====================
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
             { icon: "🏭", name: "Production", link: "production.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: true },
             { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
         
         const userMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false }
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
         
         function renderMenu() {
@@ -487,11 +699,10 @@
                 `;
             });
             
-            // TIDAK MENAMBAHKAN LOGOUT DI SINI
             menuContainer.innerHTML = menuHtml;
         }
         
-        // ==================== API ENDPOINTS ====================
+        // ==================== API ENDPOINT ====================
         const AUDIT_API = "https://opensheet.elk.sh/1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0/audit";
         
         let auditData = [];
@@ -499,14 +710,29 @@
         
         function openImageZoom(imageUrl) {
             if (!imageUrl || imageUrl === '') return;
+            const convertedUrl = convertGoogleDriveLink(imageUrl);
+            if (!convertedUrl) {
+                showToast('❌ Gambar tidak valid', true);
+                return;
+            }
             const modal = document.getElementById('imageZoomModal');
             const zoomImg = document.getElementById('zoomImage');
-            zoomImg.src = imageUrl;
+            zoomImg.src = convertedUrl;
+            zoomImg.alt = 'Audit Finding Image';
             modal.classList.add('active');
         }
         
         function closeImageZoom() {
             document.getElementById('imageZoomModal').classList.remove('active');
+        }
+        
+        // ==================== TOAST NOTIFICATION ====================
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toastNotification');
+            toast.textContent = message;
+            toast.style.background = isError ? '#EF4444' : '#10B981';
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 2500);
         }
         
         function toggleMenu() {
@@ -531,7 +757,10 @@
         
         function checkAuth() {
             const userJson = sessionStorage.getItem('currentUser');
-            if (!userJson) { window.location.href = 'login.html'; return null; }
+            if (!userJson) { 
+                window.location.href = 'login.html'; 
+                return null; 
+            }
             return JSON.parse(userJson);
         }
         
@@ -571,25 +800,47 @@
             return Object.values(groups);
         }
         
+        function getFindingStatusCounts(group) {
+            let open = 0, progress = 0, close = 0;
+            group.findings.forEach(f => {
+                const status = (f.status || '').toUpperCase();
+                if (status === 'OPEN' || status === 'O') open++;
+                else if (status === 'IN PROGRESS' || status === 'PROGRESS' || status === 'P') progress++;
+                else if (status === 'CLOSE' || status === 'CLOSED' || status === 'C') close++;
+            });
+            return { open, progress, close };
+        }
+        
         function renderAuditList() {
             const container = document.getElementById('audit-list-container');
             
             if (!groupedAudits || groupedAudits.length === 0) {
-                container.innerHTML = '<div class="text-center text-slate-500 py-3 text-[9px]">No audit data available</div>';
+                container.innerHTML = '<div class="text-center text-slate-500 py-3 text-[9px]">📭 No audit data available</div>';
                 return;
             }
             
+            // Update statistics
+            let totalOpen = 0, totalProgress = 0, totalClose = 0;
+            groupedAudits.forEach(group => {
+                const counts = getFindingStatusCounts(group);
+                totalOpen += counts.open;
+                totalProgress += counts.progress;
+                totalClose += counts.close;
+            });
+            
             document.getElementById('total-audit').innerText = groupedAudits.length;
+            document.getElementById('total-open').innerText = totalOpen;
+            document.getElementById('total-progress').innerText = totalProgress;
+            document.getElementById('total-close').innerText = totalClose;
             
             container.innerHTML = groupedAudits.map(group => {
-                const openCount = group.findings.filter(f => f.status === 'OPEN').length;
-                const progressCount = group.findings.filter(f => f.status === 'IN PROGRESS').length;
-                const closeCount = group.findings.filter(f => f.status === 'CLOSE').length;
+                const counts = getFindingStatusCounts(group);
                 
                 let statusColor = '';
-                if (openCount > 0) statusColor = 'border-l-4 border-l-red-500';
-                else if (progressCount > 0) statusColor = 'border-l-4 border-l-yellow-500';
-                else statusColor = 'border-l-4 border-l-green-500';
+                if (counts.open > 0) statusColor = 'border-l-4 border-l-red-500';
+                else if (counts.progress > 0) statusColor = 'border-l-4 border-l-yellow-500';
+                else if (counts.close > 0) statusColor = 'border-l-4 border-l-green-500';
+                else statusColor = 'border-l-4 border-l-gray-300';
                 
                 let formattedDate = group.date || '-';
                 if (group.date) {
@@ -600,18 +851,21 @@
                 }
                 
                 const totalFindings = group.findings.length;
+                const hasImage = group.findings.some(f => f.image && f.image.trim() !== '' && f.image !== 'null');
+                const imageIcon = hasImage ? '🖼️' : '';
                 
                 return `
-                    <div class="audit-card ${statusColor}" onclick='showDetail(${JSON.stringify(group)})'>
+                    <div class="audit-card ${statusColor}" onclick='showDetail(${JSON.stringify(group).replace(/'/g, "&#39;")})'>
                         <div class="flex justify-between items-start mb-1">
                             <div class="flex items-center gap-2 flex-wrap">
                                 <span class="id-badge">ID: ${group.id}</span>
                                 <span class="audit-date">📅 ${formattedDate}</span>
+                                ${imageIcon ? `<span class="text-[8px] text-cyan-600">${imageIcon}</span>` : ''}
                             </div>
                             <div class="flex gap-1">
-                                ${openCount > 0 ? `<span class="status-badge badge-open text-[8px]">🔴 ${openCount}</span>` : ''}
-                                ${progressCount > 0 ? `<span class="status-badge badge-progress text-[8px]">🟡 ${progressCount}</span>` : ''}
-                                ${closeCount > 0 ? `<span class="status-badge badge-close text-[8px]">🟢 ${closeCount}</span>` : ''}
+                                ${counts.open > 0 ? `<span class="status-badge badge-open text-[8px]">🔴 ${counts.open}</span>` : ''}
+                                ${counts.progress > 0 ? `<span class="status-badge badge-progress text-[8px]">🟡 ${counts.progress}</span>` : ''}
+                                ${counts.close > 0 ? `<span class="status-badge badge-close text-[8px]">🟢 ${counts.close}</span>` : ''}
                             </div>
                         </div>
                         <div class="audit-title">${group.event || '-'}</div>
@@ -636,21 +890,43 @@
                 }
             }
             
+            const counts = getFindingStatusCounts(group);
+            
             const findingsHtml = group.findings.map((finding, idx) => {
                 let statusBadge = '';
-                if (finding.status === 'OPEN') statusBadge = '<span class="status-badge badge-open text-[9px]">🔴 OPEN</span>';
-                else if (finding.status === 'IN PROGRESS') statusBadge = '<span class="status-badge badge-progress text-[9px]">🟡 IN PROGRESS</span>';
-                else statusBadge = '<span class="status-badge badge-close text-[9px]">🟢 CLOSE</span>';
+                const status = (finding.status || '').toUpperCase();
+                if (status === 'OPEN' || status === 'O') statusBadge = '<span class="status-badge badge-open text-[9px]">🔴 OPEN</span>';
+                else if (status === 'IN PROGRESS' || status === 'PROGRESS' || status === 'P') statusBadge = '<span class="status-badge badge-progress text-[9px]">🟡 IN PROGRESS</span>';
+                else if (status === 'CLOSE' || status === 'CLOSED' || status === 'C') statusBadge = '<span class="status-badge badge-close text-[9px]">🟢 CLOSE</span>';
+                else statusBadge = '<span class="status-badge bg-gray-100 text-gray-500 text-[9px]">⚪ UNKNOWN</span>';
                 
                 let imageHtml = '';
-                if (finding.image && finding.image.trim() !== '' && finding.image !== 'null') {
-                    let imageUrl = finding.image;
-                    imageHtml = `
-                        <div class="mt-2">
-                            <img src="${imageUrl}" alt="Finding Image" class="finding-image" onclick="event.stopPropagation(); openImageZoom('${imageUrl}')" onerror="this.style.display='none'">
-                            <div class="image-caption">📸 Klik gambar untuk memperbesar</div>
-                        </div>
-                    `;
+                if (finding.image && finding.image.trim() !== '' && finding.image !== 'null' && finding.image !== 'undefined') {
+                    const convertedUrl = convertGoogleDriveLink(finding.image);
+                    if (convertedUrl) {
+                        imageHtml = `
+                            <div class="finding-image-wrapper" onclick="event.stopPropagation(); openImageZoom('${finding.image.replace(/'/g, "\\'")}')">
+                                <div class="image-loading" id="loading-${idx}">
+                                    <div class="spinner"></div>
+                                    <span>Loading image...</span>
+                                </div>
+                                <img src="${convertedUrl}" 
+                                     alt="Finding Image" 
+                                     style="display:none;"
+                                     onload="document.getElementById('loading-${idx}').style.display='none'; this.style.display='block';"
+                                     onerror="document.getElementById('loading-${idx}').style.display='none'; document.getElementById('error-${idx}').style.display='flex';">
+                                <div class="image-error" id="error-${idx}">
+                                    ❌ Gagal memuat gambar
+                                    <button class="retry-btn" onclick="event.stopPropagation(); retryImage(${idx}, '${finding.image.replace(/'/g, "\\'")}')">🔄 Coba Lagi</button>
+                                </div>
+                                <div class="image-overlay">🔍 Klik untuk memperbesar</div>
+                            </div>
+                            <div class="image-caption">
+                                <span class="zoom-icon">🔍</span>
+                                Klik gambar untuk memperbesar
+                            </div>
+                        `;
+                    }
                 }
                 
                 return `
@@ -671,15 +947,47 @@
                     <div class="audit-info-grid">
                         <div><span class="info-label">ID Audit</span><div class="info-value">${group.id}</div></div>
                         <div><span class="info-label">Date</span><div class="info-value">${formattedDate}</div></div>
-                        <div class="col-span-2"><span class="info-label">Event</span><div class="info-value">${group.event}</div></div>
-                        <div class="col-span-2"><span class="info-label">Area</span><div class="info-value">${group.area}</div></div>
+                        <div class="col-span-2"><span class="info-label">Event</span><div class="info-value">${group.event || '-'}</div></div>
+                        <div class="col-span-2"><span class="info-label">Area</span><div class="info-value">${group.area || '-'}</div></div>
+                        <div class="col-span-2">
+                            <span class="info-label">Status Summary</span>
+                            <div class="info-value flex gap-3 mt-1 flex-wrap">
+                                ${counts.open > 0 ? `<span class="status-badge badge-open">🔴 ${counts.open} Open</span>` : ''}
+                                ${counts.progress > 0 ? `<span class="status-badge badge-progress">🟡 ${counts.progress} In Progress</span>` : ''}
+                                ${counts.close > 0 ? `<span class="status-badge badge-close">🟢 ${counts.close} Closed</span>` : ''}
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="findings-section-title">📌 Findings (${group.findings.length})</div>
-                ${findingsHtml}
+                ${findingsHtml || '<div class="text-center text-slate-500 py-3 text-sm">No findings details available</div>'}
             `;
             
             document.getElementById('detailModal').classList.add('active');
+        }
+        
+        function retryImage(idx, imageUrl) {
+            const loadingEl = document.getElementById(`loading-${idx}`);
+            const errorEl = document.getElementById(`error-${idx}`);
+            const imgEl = loadingEl?.parentElement?.querySelector('img');
+            
+            if (loadingEl) loadingEl.style.display = 'flex';
+            if (errorEl) errorEl.style.display = 'none';
+            if (imgEl) {
+                imgEl.style.display = 'none';
+                const convertedUrl = convertGoogleDriveLink(imageUrl);
+                if (convertedUrl) {
+                    imgEl.src = convertedUrl;
+                    imgEl.onload = function() {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        this.style.display = 'block';
+                    };
+                    imgEl.onerror = function() {
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        if (errorEl) errorEl.style.display = 'flex';
+                    };
+                }
+            }
         }
         
         function closeModal() {
@@ -687,22 +995,36 @@
         }
         
         async function loadAuditData() {
+            const container = document.getElementById('audit-list-container');
+            container.innerHTML = '<div class="text-center text-slate-500 py-3 text-[9px]">🔄 Loading audit data...</div>';
+            
             try {
                 const response = await fetch(AUDIT_API);
                 const data = await response.json();
                 console.log('Raw Audit Data:', data);
                 
                 if (data && Array.isArray(data) && data.length > 0) {
-                    auditData = data;
-                    groupedAudits = groupAuditById(auditData);
-                    renderAuditList();
+                    const auditFindings = data.filter(item => item.finding_no || item.finding_detail);
+                    
+                    if (auditFindings.length > 0) {
+                        auditData = auditFindings;
+                        groupedAudits = groupAuditById(auditData);
+                        renderAuditList();
+                    } else {
+                        console.warn('No finding data found in sheet "audit"');
+                        container.innerHTML = '<div class="text-center text-slate-500 py-3 text-[9px]">📭 No audit finding data available.</div>';
+                        document.getElementById('total-audit').innerText = '0';
+                        document.getElementById('total-open').innerText = '0';
+                        document.getElementById('total-progress').innerText = '0';
+                        document.getElementById('total-close').innerText = '0';
+                    }
                 } else {
                     groupedAudits = [];
                     renderAuditList();
                 }
             } catch (error) {
                 console.error('Error loading audit data:', error);
-                document.getElementById('audit-list-container').innerHTML = '<div class="text-center text-red-400 py-3 text-[9px]">Error loading data</div>';
+                container.innerHTML = '<div class="text-center text-red-400 py-3 text-[9px]">❌ Error loading data.</div>';
             }
         }
         
