@@ -492,14 +492,20 @@
             cursor: help;
         }
 
-        /* ===== STYLE KHUSUS UNTUK CAPTURE ===== */
+        /* ===== STYLE KHUSUS UNTUK CAPTURE - ANGKA DI ATAS ===== */
         .capture-mode .calendar-cell {
-            min-height: 70px !important;
+            min-height: 75px !important;
             height: auto !important;
             overflow: visible !important;
+            padding: 0.15rem 0.15rem 0.1rem 0.15rem !important;
+            justify-content: flex-start !important;
+            align-items: stretch !important;
         }
         .capture-mode .calendar-events-container {
             overflow: visible !important;
+            gap: 0.06rem !important;
+            padding: 0 0.05rem !important;
+            flex: 1 !important;
         }
         .capture-mode .calendar-event {
             white-space: normal !important;
@@ -508,12 +514,28 @@
             text-overflow: clip !important;
             font-size: 0.5rem !important;
             line-height: 1.3 !important;
-            padding: 0.1rem 0.2rem !important;
+            padding: 0.05rem 0.15rem !important;
+            width: 100% !important;
+            text-align: left !important;
         }
         .capture-mode .calendar-date {
             border-bottom: 1px solid #E5E7EB !important;
             padding-bottom: 0.15rem !important;
             margin-bottom: 0.15rem !important;
+            font-size: 0.8rem !important;
+            font-weight: bold !important;
+            text-align: center !important;
+            width: 100% !important;
+            flex-shrink: 0 !important;
+            display: block !important;
+            position: relative !important;
+            top: 0 !important;
+        }
+        .capture-mode .calendar-grid {
+            gap: 0.25rem !important;
+        }
+        .capture-mode .calendar-cell .calendar-date {
+            border-bottom: 1px solid #E5E7EB !important;
         }
     </style>
 </head>
@@ -641,7 +663,6 @@
 
     <script>
         // ============ MENU DATA PER ROLE ============
-        // ADMIN - semua menu
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
@@ -654,7 +675,6 @@
             { icon: "🔬", name: "QC", link: "qc.html", active: false }
         ];
 
-        // ENGINEERING
         const engMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
@@ -662,7 +682,6 @@
             { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
 
-        // QUALITY ASSURANCE
         const qaMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
@@ -670,7 +689,6 @@
             { icon: "✅", name: "Claim", link: "claim.html", active: false }
         ];
 
-        // MARKETING
         const mktMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
@@ -678,7 +696,6 @@
             { icon: "📄", name: "Design Review", link: "rfq.html", active: false }
         ];
 
-        // PPIC
         const ppicMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
@@ -688,31 +705,19 @@
             { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
 
-        // USER DEFAULT (jika username tidak dikenali)
         const userDefaultMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true }
         ];
 
-        // ============ FUNGSI AMBIL MENU BERDASARKAN USERNAME ============
         function getMenusByUsername(username) {
-            // Normalisasi username (lowercase)
             const user = (username || '').toLowerCase();
-            
             switch(user) {
-                case 'admin':
-                case 'tm':
-                case 'habib':
-                    return adminMenus;
-                case 'eng':
-                    return engMenus;
-                case 'qa':
-                    return qaMenus;
-                case 'mkt':
-                    return mktMenus;
-                case 'ppic':
-                    return ppicMenus;
-                default:
-                    return userDefaultMenus;
+                case 'admin': case 'tm': case 'habib': return adminMenus;
+                case 'eng': return engMenus;
+                case 'qa': return qaMenus;
+                case 'mkt': return mktMenus;
+                case 'ppic': return ppicMenus;
+                default: return userDefaultMenus;
             }
         }
 
@@ -743,39 +748,48 @@
             showToast('📸 Capturing calendar...');
 
             try {
+                // === TAMBAHKAN CAPTURE MODE ===
                 calendarCard.classList.add('capture-mode');
-                await new Promise(resolve => setTimeout(resolve, 200));
                 
+                // Tunggu sebentar agar style capture-mode berlaku
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // === BUAT CLONE ===
                 const cloneCard = calendarCard.cloneNode(true);
                 cloneCard.classList.remove('capture-mode');
                 
+                // Set style untuk clone
                 cloneCard.style.position = 'fixed';
                 cloneCard.style.left = '-9999px';
                 cloneCard.style.top = '0';
                 cloneCard.style.width = calendarCard.offsetWidth + 'px';
                 cloneCard.style.height = 'auto';
                 cloneCard.style.background = '#FFFFFF';
-                cloneCard.style.padding = '8px';
+                cloneCard.style.padding = '12px';
                 cloneCard.style.borderRadius = '12px';
                 cloneCard.style.border = '1px solid #E5E7EB';
                 cloneCard.style.zIndex = '9999';
                 cloneCard.style.overflow = 'visible';
                 cloneCard.style.boxShadow = 'none';
                 
+                // === PERBAIKI SEMUA CELL DI CLONE - ANGKA DI ATAS ===
                 const cloneCells = cloneCard.querySelectorAll('.calendar-cell');
                 cloneCells.forEach(cell => {
-                    cell.style.minHeight = '70px';
+                    // Style dasar dengan spacing yang lebih baik
+                    cell.style.minHeight = '75px';
                     cell.style.height = 'auto';
                     cell.style.overflow = 'visible';
                     cell.style.border = '1px solid #E5E7EB';
                     cell.style.borderRadius = '0.4rem';
-                    cell.style.padding = '0.3rem 0.15rem';
+                    cell.style.padding = '0.15rem 0.15rem 0.1rem 0.15rem';
                     cell.style.display = 'flex';
                     cell.style.flexDirection = 'column';
-                    cell.style.alignItems = 'center';
+                    cell.style.alignItems = 'stretch';
                     cell.style.justifyContent = 'flex-start';
                     cell.style.width = '100%';
+                    cell.style.margin = '0';
                     
+                    // Background berdasarkan class
                     if (cell.classList.contains('empty-cell')) {
                         cell.style.background = '#F1F5F9';
                         cell.style.opacity = '0.5';
@@ -790,9 +804,10 @@
                     }
                 });
                 
+                // === PERBAIKI TANGGAL DI CLONE - PASTIKAN DI ATAS ===
                 const cloneDates = cloneCard.querySelectorAll('.calendar-date');
                 cloneDates.forEach(date => {
-                    date.style.fontSize = '0.75rem';
+                    date.style.fontSize = '0.8rem';
                     date.style.fontWeight = 'bold';
                     date.style.textAlign = 'center';
                     date.style.marginBottom = '0.15rem';
@@ -801,19 +816,23 @@
                     date.style.width = '100%';
                     date.style.flexShrink = '0';
                     date.style.display = 'block';
+                    date.style.position = 'relative';
+                    date.style.top = '0';
                 });
                 
+                // === PERBAIKI EVENT CONTAINER DI CLONE ===
                 const cloneContainers = cloneCard.querySelectorAll('.calendar-events-container');
                 cloneContainers.forEach(container => {
                     container.style.display = 'flex';
                     container.style.flexDirection = 'column';
-                    container.style.gap = '0.08rem';
+                    container.style.gap = '0.06rem';
                     container.style.width = '100%';
                     container.style.overflow = 'visible';
-                    container.style.padding = '0 0.1rem';
+                    container.style.padding = '0 0.05rem';
                     container.style.flex = '1';
                 });
                 
+                // === PERBAIKI EVENT ITEM DI CLONE ===
                 const cloneEvents = cloneCard.querySelectorAll('.calendar-event');
                 cloneEvents.forEach(event => {
                     event.style.display = 'block';
@@ -824,7 +843,7 @@
                     event.style.width = '100%';
                     event.style.fontSize = '0.5rem';
                     event.style.lineHeight = '1.3';
-                    event.style.padding = '0.08rem 0.2rem';
+                    event.style.padding = '0.05rem 0.15rem';
                     event.style.borderRadius = '0.15rem';
                     event.style.textAlign = 'left';
                     event.style.fontWeight = '500';
@@ -840,11 +859,12 @@
                     }
                 });
                 
+                // === PERBAIKI GRID DI CLONE ===
                 const cloneGrid = cloneCard.querySelector('.calendar-grid');
                 if (cloneGrid) {
                     cloneGrid.style.display = 'grid';
                     cloneGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
-                    cloneGrid.style.gap = '0.2rem';
+                    cloneGrid.style.gap = '0.25rem';
                     cloneGrid.style.width = '100%';
                     cloneGrid.style.height = 'auto';
                     cloneGrid.style.flex = '1';
@@ -857,11 +877,15 @@
                     }
                 }
                 
+                // === TAMBAHKAN CLONE KE BODY ===
                 document.body.appendChild(cloneCard);
+                
+                // Tunggu sebentar agar clone ter-render
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
+                // === CAPTURE ===
                 const canvas = await html2canvas(cloneCard, {
-                    scale: 2,
+                    scale: 2.5,
                     backgroundColor: '#FFFFFF',
                     logging: false,
                     useCORS: true,
@@ -871,11 +895,15 @@
                     windowWidth: cloneCard.scrollWidth,
                     windowHeight: cloneCard.scrollHeight,
                     onclone: function(doc) {
+                        // Pastikan semua elemen di clone terlihat
                         const cells = doc.querySelectorAll('.calendar-cell');
                         cells.forEach(cell => {
                             cell.style.overflow = 'visible';
                             cell.style.height = 'auto';
-                            cell.style.minHeight = '70px';
+                            cell.style.minHeight = '75px';
+                            cell.style.padding = '0.15rem 0.15rem 0.1rem 0.15rem';
+                            cell.style.justifyContent = 'flex-start';
+                            cell.style.alignItems = 'stretch';
                         });
                         const events = doc.querySelectorAll('.calendar-event');
                         events.forEach(ev => {
@@ -883,17 +911,33 @@
                             ev.style.wordWrap = 'break-word';
                             ev.style.overflow = 'visible';
                             ev.style.textOverflow = 'clip';
+                            ev.style.padding = '0.05rem 0.15rem';
+                            ev.style.lineHeight = '1.3';
+                        });
+                        const dates = doc.querySelectorAll('.calendar-date');
+                        dates.forEach(date => {
+                            date.style.paddingBottom = '0.15rem';
+                            date.style.marginBottom = '0.15rem';
+                            date.style.borderBottom = '1px solid #E5E7EB';
+                            date.style.position = 'relative';
+                            date.style.top = '0';
+                            date.style.flexShrink = '0';
                         });
                         const grid = doc.querySelector('.calendar-grid');
                         if (grid) {
                             grid.style.height = 'auto';
+                            grid.style.gap = '0.25rem';
                         }
                     }
                 });
                 
+                // === HAPUS CLONE ===
                 document.body.removeChild(cloneCard);
+                
+                // === HAPUS CAPTURE MODE DARI CARD ASLI ===
                 calendarCard.classList.remove('capture-mode');
                 
+                // === DOWNLOAD ===
                 const link = document.createElement('a');
                 const now = new Date();
                 const fileName = 'calendar_' + now.getFullYear() + '_' + String(now.getMonth() + 1).padStart(2, '0') + '.png';
@@ -924,13 +968,11 @@
             currentUsername = username;
             currentUserRole = role;
             
-            // Tampilkan floating button hanya untuk admin
             const floatingBtn = document.getElementById('floatingDownloadBtn');
             if (floatingBtn) {
                 floatingBtn.style.display = role === 'admin' || username === 'admin' || username === 'tm' || username === 'habib' ? 'flex' : 'none';
             }
             
-            // Ambil menu berdasarkan username
             const menus = getMenusByUsername(username);
             const currentPage = window.location.pathname.split('/').pop() || 'activityschedule.html';
             const menuContainer = document.getElementById('menu-container');
