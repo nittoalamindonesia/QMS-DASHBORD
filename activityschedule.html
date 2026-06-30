@@ -537,6 +537,49 @@
         .capture-mode .calendar-cell .calendar-date {
             border-bottom: 1px solid #E5E7EB !important;
         }
+
+        /* ===== NAVIGASI BULAN ===== */
+        .month-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .month-nav button {
+            background: #F0F9FF;
+            border: 1px solid #0284C7;
+            border-radius: 0.4rem;
+            padding: 0.15rem 0.5rem;
+            cursor: pointer;
+            font-size: 0.7rem;
+            color: #0284C7;
+            transition: all 0.2s;
+            font-weight: 600;
+        }
+        .month-nav button:hover {
+            background: #0284C7;
+            color: white;
+        }
+        .month-nav select {
+            background: #F8FAFC;
+            border: 1px solid #E5E7EB;
+            border-radius: 0.4rem;
+            padding: 0.15rem 0.4rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #1E293B;
+            cursor: pointer;
+        }
+        .month-nav select:focus {
+            outline: none;
+            border-color: #0284C7;
+        }
+        .month-nav .month-label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #0284C7;
+            min-width: 100px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -595,11 +638,18 @@
                         <div class="card-header flex justify-between items-center">
                             <div class="flex items-center gap-1">
                                 <span class="text-xs">📅</span>
-                                <h2 id="calendar-month" class="text-cyan-600 font-bold text-xs">Loading...</h2>
+                                <div class="month-nav">
+                                    <button onclick="changeMonth(-1)">◀</button>
+                                    <span class="month-label" id="calendar-month-label">Loading...</span>
+                                    <button onclick="changeMonth(1)">▶</button>
+                                </div>
                             </div>
-                            <div class="text-slate-500 text-[7px] flex items-center gap-1">
-                                <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
-                                <span>Live</span>
+                            <div class="flex items-center gap-2">
+                                <button onclick="goToToday()" class="text-[8px] bg-cyan-50 hover:bg-cyan-100 text-cyan-600 px-2 py-0.5 rounded border border-cyan-200 transition">Today</button>
+                                <div class="text-slate-500 text-[7px] flex items-center gap-1">
+                                    <div class="w-1 h-1 bg-green-500 rounded-full animate-pulse"></div>
+                                    <span>Live</span>
+                                </div>
                             </div>
                         </div>
 
@@ -727,230 +777,122 @@
         let currentUsername = '';
         let currentUserRole = 'user';
 
-        // ============ DOWNLOAD CALENDAR AS IMAGE ============
-        function showToast(message, isError = false) {
-            const toast = document.getElementById('toastNotification');
-            toast.textContent = message || (isError ? '❌ Failed to download' : '✅ Downloading calendar...');
-            toast.style.background = isError ? '#EF4444' : '#10B981';
-            toast.classList.add('show');
-            setTimeout(function() {
-                toast.classList.remove('show');
-            }, 2000);
+        // ============ STATE BULAN ============
+        let currentYear = new Date().getFullYear();
+        let currentMonth = new Date().getMonth();
+        let allEvents = [];
+        let allGroupedEvents = {};
+
+        // ============ NAVIGASI BULAN ============
+        function changeMonth(delta) {
+            currentMonth += delta;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            } else if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            renderCalendarFromData();
         }
 
-        async function downloadCalendarAsImage() {
-            const calendarCard = document.getElementById('calendar-card');
-            if (!calendarCard) {
-                showToast('❌ Calendar not found', true);
-                return;
-            }
+        function goToToday() {
+            const today = new Date();
+            currentYear = today.getFullYear();
+            currentMonth = today.getMonth();
+            renderCalendarFromData();
+        }
 
-            showToast('📸 Capturing calendar...');
+        // ============ RENDER KALENDER DARI DATA YANG ADA ============
+        function renderCalendarFromData() {
+            const calendarGrid = document.getElementById('calendar-grid');
+            const calendarMonthLabel = document.getElementById('calendar-month-label');
+            
+            const monthName = new Date(currentYear, currentMonth).toLocaleString('default', { month: 'long' });
+            calendarMonthLabel.innerText = monthName + ' ' + currentYear;
 
-            try {
-                // === TAMBAHKAN CAPTURE MODE ===
-                calendarCard.classList.add('capture-mode');
-                
-                // Tunggu sebentar agar style capture-mode berlaku
-                await new Promise(resolve => setTimeout(resolve, 300));
-                
-                // === BUAT CLONE ===
-                const cloneCard = calendarCard.cloneNode(true);
-                cloneCard.classList.remove('capture-mode');
-                
-                // Set style untuk clone
-                cloneCard.style.position = 'fixed';
-                cloneCard.style.left = '-9999px';
-                cloneCard.style.top = '0';
-                cloneCard.style.width = calendarCard.offsetWidth + 'px';
-                cloneCard.style.height = 'auto';
-                cloneCard.style.background = '#FFFFFF';
-                cloneCard.style.padding = '12px';
-                cloneCard.style.borderRadius = '12px';
-                cloneCard.style.border = '1px solid #E5E7EB';
-                cloneCard.style.zIndex = '9999';
-                cloneCard.style.overflow = 'visible';
-                cloneCard.style.boxShadow = 'none';
-                
-                // === PERBAIKI SEMUA CELL DI CLONE - ANGKA DI ATAS ===
-                const cloneCells = cloneCard.querySelectorAll('.calendar-cell');
-                cloneCells.forEach(cell => {
-                    // Style dasar dengan spacing yang lebih baik
-                    cell.style.minHeight = '75px';
-                    cell.style.height = 'auto';
-                    cell.style.overflow = 'visible';
-                    cell.style.border = '1px solid #E5E7EB';
-                    cell.style.borderRadius = '0.4rem';
-                    cell.style.padding = '0.15rem 0.15rem 0.1rem 0.15rem';
-                    cell.style.display = 'flex';
-                    cell.style.flexDirection = 'column';
-                    cell.style.alignItems = 'stretch';
-                    cell.style.justifyContent = 'flex-start';
-                    cell.style.width = '100%';
-                    cell.style.margin = '0';
-                    
-                    // Background berdasarkan class
-                    if (cell.classList.contains('empty-cell')) {
-                        cell.style.background = '#F1F5F9';
-                        cell.style.opacity = '0.5';
-                    } else if (cell.classList.contains('weekend-cell')) {
-                        cell.style.background = '#FEE2E2';
-                        cell.style.borderColor = '#FCA5A5';
-                    } else if (cell.classList.contains('today-cell')) {
-                        cell.style.background = '#CFFAFE';
-                        cell.style.borderColor = '#06B6D4';
-                    } else {
-                        cell.style.background = '#F8FAFC';
-                    }
-                });
-                
-                // === PERBAIKI TANGGAL DI CLONE - PASTIKAN DI ATAS ===
-                const cloneDates = cloneCard.querySelectorAll('.calendar-date');
-                cloneDates.forEach(date => {
-                    date.style.fontSize = '0.8rem';
-                    date.style.fontWeight = 'bold';
-                    date.style.textAlign = 'center';
-                    date.style.marginBottom = '0.15rem';
-                    date.style.paddingBottom = '0.15rem';
-                    date.style.borderBottom = '1px solid #E5E7EB';
-                    date.style.width = '100%';
-                    date.style.flexShrink = '0';
-                    date.style.display = 'block';
-                    date.style.position = 'relative';
-                    date.style.top = '0';
-                });
-                
-                // === PERBAIKI EVENT CONTAINER DI CLONE ===
-                const cloneContainers = cloneCard.querySelectorAll('.calendar-events-container');
-                cloneContainers.forEach(container => {
-                    container.style.display = 'flex';
-                    container.style.flexDirection = 'column';
-                    container.style.gap = '0.06rem';
-                    container.style.width = '100%';
-                    container.style.overflow = 'visible';
-                    container.style.padding = '0 0.05rem';
-                    container.style.flex = '1';
-                });
-                
-                // === PERBAIKI EVENT ITEM DI CLONE ===
-                const cloneEvents = cloneCard.querySelectorAll('.calendar-event');
-                cloneEvents.forEach(event => {
-                    event.style.display = 'block';
-                    event.style.whiteSpace = 'normal';
-                    event.style.wordWrap = 'break-word';
-                    event.style.overflow = 'visible';
-                    event.style.textOverflow = 'clip';
-                    event.style.width = '100%';
-                    event.style.fontSize = '0.5rem';
-                    event.style.lineHeight = '1.3';
-                    event.style.padding = '0.05rem 0.15rem';
-                    event.style.borderRadius = '0.15rem';
-                    event.style.textAlign = 'left';
-                    event.style.fontWeight = '500';
-                    event.style.color = '#0369A1';
-                    
-                    if (event.classList.contains('holiday')) {
-                        event.style.color = '#DC2626';
-                    }
-                    if (event.classList.contains('more-indicator')) {
-                        event.style.color = '#64748B';
-                        event.style.fontSize = '0.4rem';
-                        event.style.fontStyle = 'italic';
-                    }
-                });
-                
-                // === PERBAIKI GRID DI CLONE ===
-                const cloneGrid = cloneCard.querySelector('.calendar-grid');
-                if (cloneGrid) {
-                    cloneGrid.style.display = 'grid';
-                    cloneGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
-                    cloneGrid.style.gap = '0.25rem';
-                    cloneGrid.style.width = '100%';
-                    cloneGrid.style.height = 'auto';
-                    cloneGrid.style.flex = '1';
-                    cloneGrid.style.minHeight = '0';
-                    
-                    const originalGrid = document.querySelector('.calendar-grid');
-                    if (originalGrid) {
-                        const computedStyle = window.getComputedStyle(originalGrid);
-                        cloneGrid.style.gridTemplateRows = computedStyle.gridTemplateRows || 'repeat(5, 1fr)';
-                    }
+            const firstDayOfMonth = new Date(currentYear, currentMonth, 1).getDay();
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            const totalDays = firstDayOfMonth + daysInMonth;
+            const totalRows = Math.ceil(totalDays / 7);
+            const totalGridCells = totalRows * 7;
+            
+            let cellsHtml = '';
+            let dayCounter = 1;
+            const today = new Date().getDate();
+            const todayMonth = new Date().getMonth();
+            const todayYear = new Date().getFullYear();
+            
+            for (let i = 0; i < totalGridCells; i++) {
+                if (i < firstDayOfMonth) {
+                    cellsHtml += `<div class="calendar-cell empty-cell"></div>`;
+                } 
+                else if (dayCounter > daysInMonth) {
+                    cellsHtml += `<div class="calendar-cell empty-cell"></div>`;
                 }
-                
-                // === TAMBAHKAN CLONE KE BODY ===
-                document.body.appendChild(cloneCard);
-                
-                // Tunggu sebentar agar clone ter-render
-                await new Promise(resolve => setTimeout(resolve, 500));
-                
-                // === CAPTURE ===
-                const canvas = await html2canvas(cloneCard, {
-                    scale: 2.5,
-                    backgroundColor: '#FFFFFF',
-                    logging: false,
-                    useCORS: true,
-                    allowTaint: false,
-                    width: cloneCard.scrollWidth,
-                    height: cloneCard.scrollHeight,
-                    windowWidth: cloneCard.scrollWidth,
-                    windowHeight: cloneCard.scrollHeight,
-                    onclone: function(doc) {
-                        // Pastikan semua elemen di clone terlihat
-                        const cells = doc.querySelectorAll('.calendar-cell');
-                        cells.forEach(cell => {
-                            cell.style.overflow = 'visible';
-                            cell.style.height = 'auto';
-                            cell.style.minHeight = '75px';
-                            cell.style.padding = '0.15rem 0.15rem 0.1rem 0.15rem';
-                            cell.style.justifyContent = 'flex-start';
-                            cell.style.alignItems = 'stretch';
-                        });
-                        const events = doc.querySelectorAll('.calendar-event');
-                        events.forEach(ev => {
-                            ev.style.whiteSpace = 'normal';
-                            ev.style.wordWrap = 'break-word';
-                            ev.style.overflow = 'visible';
-                            ev.style.textOverflow = 'clip';
-                            ev.style.padding = '0.05rem 0.15rem';
-                            ev.style.lineHeight = '1.3';
-                        });
-                        const dates = doc.querySelectorAll('.calendar-date');
-                        dates.forEach(date => {
-                            date.style.paddingBottom = '0.15rem';
-                            date.style.marginBottom = '0.15rem';
-                            date.style.borderBottom = '1px solid #E5E7EB';
-                            date.style.position = 'relative';
-                            date.style.top = '0';
-                            date.style.flexShrink = '0';
-                        });
-                        const grid = doc.querySelector('.calendar-grid');
-                        if (grid) {
-                            grid.style.height = 'auto';
-                            grid.style.gap = '0.25rem';
-                        }
+                else {
+                    const day = dayCounter;
+                    const fullDate = currentYear + '-' + String(currentMonth + 1).padStart(2, "0") + '-' + String(day).padStart(2, "0");
+                    const dayEvents = allGroupedEvents[fullDate] || [];
+                    const isToday = (day === today && currentMonth === todayMonth && currentYear === todayYear);
+                    const dayOfWeek = new Date(currentYear, currentMonth, day).getDay();
+                    const isWeekendDay = (dayOfWeek === 0 || dayOfWeek === 6);
+                    const hasHoliday = dayEvents.some(function(e) { return e.type && e.type.toLowerCase() === 'holiday'; });
+                    const hasEvent = dayEvents.length > 0;
+                    
+                    let dateColor = 'text-gray-700';
+                    let additionalClass = '';
+                    
+                    if (isToday) {
+                        additionalClass = 'today-cell';
+                        dateColor = 'text-cyan-600 font-bold';
+                    } 
+                    else if (isWeekendDay && !hasEvent) {
+                        additionalClass = 'weekend-cell';
+                        dateColor = 'text-red-500';
                     }
-                });
-                
-                // === HAPUS CLONE ===
-                document.body.removeChild(cloneCard);
-                
-                // === HAPUS CAPTURE MODE DARI CARD ASLI ===
-                calendarCard.classList.remove('capture-mode');
-                
-                // === DOWNLOAD ===
-                const link = document.createElement('a');
-                const now = new Date();
-                const fileName = 'calendar_' + now.getFullYear() + '_' + String(now.getMonth() + 1).padStart(2, '0') + '.png';
-                link.download = fileName;
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-
-                showToast('✅ Calendar downloaded!');
-
-            } catch (error) {
-                console.error('Download error:', error);
-                calendarCard.classList.remove('capture-mode');
-                showToast('❌ Failed to download calendar', true);
+                    else if (isWeekendDay && hasEvent && !hasHoliday) {
+                        dateColor = 'text-gray-700';
+                    }
+                    else if (hasHoliday) {
+                        dateColor = 'text-red-500';
+                    }
+                    
+                    let eventsHtml = '';
+                    if (dayEvents.length > 0) {
+                        eventsHtml = '<div class="calendar-events-container">';
+                        const maxEvents = 4;
+                        const displayEvents = dayEvents.slice(0, maxEvents);
+                        for (let ev of displayEvents) {
+                            let icon = '📌';
+                            if (ev.type === 'audit') icon = '🔍';
+                            else if (ev.type === 'visit') icon = '👥';
+                            else if (ev.type === 'training') icon = '📚';
+                            else if (ev.type === 'holiday') icon = '🎉';
+                            let eventClass = 'calendar-event';
+                            if (ev.type === 'holiday') eventClass += ' holiday';
+                            const tooltip = ev.title || '';
+                            let title = ev.title || '';
+                            if (title.length > 25) title = title.substring(0, 22) + '...';
+                            eventsHtml += '<div class="' + eventClass + '" title="' + (ev.title || '') + '">' + icon + ' ' + title + '</div>';
+                        }
+                        if (dayEvents.length > maxEvents) {
+                            eventsHtml += '<div class="calendar-event more-indicator">+' + (dayEvents.length - maxEvents) + ' more</div>';
+                        }
+                        eventsHtml += '</div>';
+                    }
+                    
+                    cellsHtml += '<div class="calendar-cell ' + additionalClass + '"><span class="calendar-date ' + dateColor + '">' + day + '</span>' + eventsHtml + '</div>';
+                    dayCounter++;
+                }
+            }
+            
+            if (calendarGrid) {
+                calendarGrid.style.display = 'grid';
+                calendarGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+                calendarGrid.style.gridTemplateRows = 'repeat(' + totalRows + ', 1fr)';
+                calendarGrid.innerHTML = cellsHtml;
             }
         }
 
@@ -1058,105 +1000,14 @@
             return grouped;
         }
 
-        function renderCalendar(events, groupedEvents) {
-            const calendarGrid = document.getElementById('calendar-grid');
-            const calendarMonthSpan = document.getElementById('calendar-month');
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = now.getMonth();
-            const today = now.getDate();
-            const monthName = now.toLocaleString('default', { month: 'long' });
-            
-            if (calendarMonthSpan) calendarMonthSpan.innerText = monthName + ' ' + year;
-
-            const firstDayOfMonth = new Date(year, month, 1).getDay();
-            const daysInMonth = new Date(year, month + 1, 0).getDate();
-            
-            const totalDays = firstDayOfMonth + daysInMonth;
-            const totalRows = Math.ceil(totalDays / 7);
-            const totalGridCells = totalRows * 7;
-            
-            let cellsHtml = '';
-            let dayCounter = 1;
-            
-            for (let i = 0; i < totalGridCells; i++) {
-                if (i < firstDayOfMonth) {
-                    cellsHtml += `<div class="calendar-cell empty-cell"></div>`;
-                } 
-                else if (dayCounter > daysInMonth) {
-                    cellsHtml += `<div class="calendar-cell empty-cell"></div>`;
-                }
-                else {
-                    const day = dayCounter;
-                    const fullDate = year + '-' + String(month + 1).padStart(2, "0") + '-' + String(day).padStart(2, "0");
-                    const dayEvents = groupedEvents[fullDate] || [];
-                    const isToday = (day === today);
-                    const dayOfWeek = new Date(year, month, day).getDay();
-                    const isWeekendDay = (dayOfWeek === 0 || dayOfWeek === 6);
-                    const hasHoliday = dayEvents.some(function(e) { return e.type && e.type.toLowerCase() === 'holiday'; });
-                    const hasEvent = dayEvents.length > 0;
-                    
-                    let dateColor = 'text-gray-700';
-                    let additionalClass = '';
-                    
-                    if (isToday) {
-                        additionalClass = 'today-cell';
-                        dateColor = 'text-cyan-600 font-bold';
-                    } 
-                    else if (isWeekendDay && !hasEvent) {
-                        additionalClass = 'weekend-cell';
-                        dateColor = 'text-red-500';
-                    }
-                    else if (isWeekendDay && hasEvent && !hasHoliday) {
-                        dateColor = 'text-gray-700';
-                    }
-                    else if (hasHoliday) {
-                        dateColor = 'text-red-500';
-                    }
-                    
-                    let eventsHtml = '';
-                    if (dayEvents.length > 0) {
-                        eventsHtml = '<div class="calendar-events-container">';
-                        const maxEvents = 4;
-                        const displayEvents = dayEvents.slice(0, maxEvents);
-                        for (let ev of displayEvents) {
-                            let icon = '📌';
-                            if (ev.type === 'audit') icon = '🔍';
-                            else if (ev.type === 'visit') icon = '👥';
-                            else if (ev.type === 'training') icon = '📚';
-                            else if (ev.type === 'holiday') icon = '🎉';
-                            let eventClass = 'calendar-event';
-                            if (ev.type === 'holiday') eventClass += ' holiday';
-                            const tooltip = ev.title || '';
-                            let title = ev.title || '';
-                            if (title.length > 25) title = title.substring(0, 22) + '...';
-                            eventsHtml += '<div class="' + eventClass + '" title="' + (ev.title || '') + '">' + icon + ' ' + title + '</div>';
-                        }
-                        if (dayEvents.length > maxEvents) {
-                            eventsHtml += '<div class="calendar-event more-indicator">+' + (dayEvents.length - maxEvents) + ' more</div>';
-                        }
-                        eventsHtml += '</div>';
-                    }
-                    
-                    cellsHtml += '<div class="calendar-cell ' + additionalClass + '"><span class="calendar-date ' + dateColor + '">' + day + '</span>' + eventsHtml + '</div>';
-                    dayCounter++;
-                }
-            }
-            
-            if (calendarGrid) {
-                calendarGrid.style.display = 'grid';
-                calendarGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
-                calendarGrid.style.gridTemplateRows = 'repeat(' + totalRows + ', 1fr)';
-                calendarGrid.innerHTML = cellsHtml;
-            }
-        }
-
+        // ============ LOAD DATA ============
         async function loadData() {
             try {
                 const response = await fetch(EVENT_API);
                 const events = await response.json();
-                const grouped = groupEventsByDate(events);
-                renderCalendar(events, grouped);
+                allEvents = events;
+                allGroupedEvents = groupEventsByDate(events);
+                renderCalendarFromData();
 
                 const todayDate = getTodayDate();
                 const todayEvents = events.filter(function(e) { return e.date === todayDate; });
@@ -1220,8 +1071,9 @@
                     { date: "2026-06-23", title: "VISIT LIXIL", type: "visit", pic: "Eka", time: "" },
                     { date: "2026-06-25", title: "TRAINING ISO", type: "training", pic: "Trainer", time: "" }
                 ];
-                const groupedFallback = groupEventsByDate(fallbackEvents);
-                renderCalendar(fallbackEvents, groupedFallback);
+                allEvents = fallbackEvents;
+                allGroupedEvents = groupEventsByDate(fallbackEvents);
+                renderCalendarFromData();
                 
                 const todayDate2 = getTodayDate();
                 const todayEventsFallback = fallbackEvents.filter(function(e) { return e.date === todayDate2; });
@@ -1257,6 +1109,212 @@
                         upcomingDiv2.innerHTML = '<div class="text-center text-slate-500 py-1 text-[8px]">No upcoming events</div>';
                     }
                 }
+            }
+        }
+
+        // ============ DOWNLOAD CALENDAR AS IMAGE ============
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('toastNotification');
+            toast.textContent = message || (isError ? '❌ Failed to download' : '✅ Downloading calendar...');
+            toast.style.background = isError ? '#EF4444' : '#10B981';
+            toast.classList.add('show');
+            setTimeout(function() {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        async function downloadCalendarAsImage() {
+            const calendarCard = document.getElementById('calendar-card');
+            if (!calendarCard) {
+                showToast('❌ Calendar not found', true);
+                return;
+            }
+
+            showToast('📸 Capturing calendar...');
+
+            try {
+                calendarCard.classList.add('capture-mode');
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                const cloneCard = calendarCard.cloneNode(true);
+                cloneCard.classList.remove('capture-mode');
+                
+                cloneCard.style.position = 'fixed';
+                cloneCard.style.left = '-9999px';
+                cloneCard.style.top = '0';
+                cloneCard.style.width = calendarCard.offsetWidth + 'px';
+                cloneCard.style.height = 'auto';
+                cloneCard.style.background = '#FFFFFF';
+                cloneCard.style.padding = '12px';
+                cloneCard.style.borderRadius = '12px';
+                cloneCard.style.border = '1px solid #E5E7EB';
+                cloneCard.style.zIndex = '9999';
+                cloneCard.style.overflow = 'visible';
+                cloneCard.style.boxShadow = 'none';
+                
+                const cloneCells = cloneCard.querySelectorAll('.calendar-cell');
+                cloneCells.forEach(cell => {
+                    cell.style.minHeight = '75px';
+                    cell.style.height = 'auto';
+                    cell.style.overflow = 'visible';
+                    cell.style.border = '1px solid #E5E7EB';
+                    cell.style.borderRadius = '0.4rem';
+                    cell.style.padding = '0.15rem 0.15rem 0.1rem 0.15rem';
+                    cell.style.display = 'flex';
+                    cell.style.flexDirection = 'column';
+                    cell.style.alignItems = 'stretch';
+                    cell.style.justifyContent = 'flex-start';
+                    cell.style.width = '100%';
+                    cell.style.margin = '0';
+                    
+                    if (cell.classList.contains('empty-cell')) {
+                        cell.style.background = '#F1F5F9';
+                        cell.style.opacity = '0.5';
+                    } else if (cell.classList.contains('weekend-cell')) {
+                        cell.style.background = '#FEE2E2';
+                        cell.style.borderColor = '#FCA5A5';
+                    } else if (cell.classList.contains('today-cell')) {
+                        cell.style.background = '#CFFAFE';
+                        cell.style.borderColor = '#06B6D4';
+                    } else {
+                        cell.style.background = '#F8FAFC';
+                    }
+                });
+                
+                const cloneDates = cloneCard.querySelectorAll('.calendar-date');
+                cloneDates.forEach(date => {
+                    date.style.fontSize = '0.8rem';
+                    date.style.fontWeight = 'bold';
+                    date.style.textAlign = 'center';
+                    date.style.marginBottom = '0.15rem';
+                    date.style.paddingBottom = '0.15rem';
+                    date.style.borderBottom = '1px solid #E5E7EB';
+                    date.style.width = '100%';
+                    date.style.flexShrink = '0';
+                    date.style.display = 'block';
+                    date.style.position = 'relative';
+                    date.style.top = '0';
+                });
+                
+                const cloneContainers = cloneCard.querySelectorAll('.calendar-events-container');
+                cloneContainers.forEach(container => {
+                    container.style.display = 'flex';
+                    container.style.flexDirection = 'column';
+                    container.style.gap = '0.06rem';
+                    container.style.width = '100%';
+                    container.style.overflow = 'visible';
+                    container.style.padding = '0 0.05rem';
+                    container.style.flex = '1';
+                });
+                
+                const cloneEvents = cloneCard.querySelectorAll('.calendar-event');
+                cloneEvents.forEach(event => {
+                    event.style.display = 'block';
+                    event.style.whiteSpace = 'normal';
+                    event.style.wordWrap = 'break-word';
+                    event.style.overflow = 'visible';
+                    event.style.textOverflow = 'clip';
+                    event.style.width = '100%';
+                    event.style.fontSize = '0.5rem';
+                    event.style.lineHeight = '1.3';
+                    event.style.padding = '0.05rem 0.15rem';
+                    event.style.borderRadius = '0.15rem';
+                    event.style.textAlign = 'left';
+                    event.style.fontWeight = '500';
+                    event.style.color = '#0369A1';
+                    
+                    if (event.classList.contains('holiday')) {
+                        event.style.color = '#DC2626';
+                    }
+                    if (event.classList.contains('more-indicator')) {
+                        event.style.color = '#64748B';
+                        event.style.fontSize = '0.4rem';
+                        event.style.fontStyle = 'italic';
+                    }
+                });
+                
+                const cloneGrid = cloneCard.querySelector('.calendar-grid');
+                if (cloneGrid) {
+                    cloneGrid.style.display = 'grid';
+                    cloneGrid.style.gridTemplateColumns = 'repeat(7, 1fr)';
+                    cloneGrid.style.gap = '0.25rem';
+                    cloneGrid.style.width = '100%';
+                    cloneGrid.style.height = 'auto';
+                    cloneGrid.style.flex = '1';
+                    cloneGrid.style.minHeight = '0';
+                    
+                    const originalGrid = document.querySelector('.calendar-grid');
+                    if (originalGrid) {
+                        const computedStyle = window.getComputedStyle(originalGrid);
+                        cloneGrid.style.gridTemplateRows = computedStyle.gridTemplateRows || 'repeat(5, 1fr)';
+                    }
+                }
+                
+                document.body.appendChild(cloneCard);
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                const canvas = await html2canvas(cloneCard, {
+                    scale: 2.5,
+                    backgroundColor: '#FFFFFF',
+                    logging: false,
+                    useCORS: true,
+                    allowTaint: false,
+                    width: cloneCard.scrollWidth,
+                    height: cloneCard.scrollHeight,
+                    windowWidth: cloneCard.scrollWidth,
+                    windowHeight: cloneCard.scrollHeight,
+                    onclone: function(doc) {
+                        const cells = doc.querySelectorAll('.calendar-cell');
+                        cells.forEach(cell => {
+                            cell.style.overflow = 'visible';
+                            cell.style.height = 'auto';
+                            cell.style.minHeight = '75px';
+                            cell.style.padding = '0.15rem 0.15rem 0.1rem 0.15rem';
+                            cell.style.justifyContent = 'flex-start';
+                            cell.style.alignItems = 'stretch';
+                        });
+                        const events = doc.querySelectorAll('.calendar-event');
+                        events.forEach(ev => {
+                            ev.style.whiteSpace = 'normal';
+                            ev.style.wordWrap = 'break-word';
+                            ev.style.overflow = 'visible';
+                            ev.style.textOverflow = 'clip';
+                            ev.style.padding = '0.05rem 0.15rem';
+                            ev.style.lineHeight = '1.3';
+                        });
+                        const dates = doc.querySelectorAll('.calendar-date');
+                        dates.forEach(date => {
+                            date.style.paddingBottom = '0.15rem';
+                            date.style.marginBottom = '0.15rem';
+                            date.style.borderBottom = '1px solid #E5E7EB';
+                            date.style.position = 'relative';
+                            date.style.top = '0';
+                            date.style.flexShrink = '0';
+                        });
+                        const grid = doc.querySelector('.calendar-grid');
+                        if (grid) {
+                            grid.style.height = 'auto';
+                            grid.style.gap = '0.25rem';
+                        }
+                    }
+                });
+                
+                document.body.removeChild(cloneCard);
+                calendarCard.classList.remove('capture-mode');
+                
+                const link = document.createElement('a');
+                const now = new Date();
+                const fileName = 'calendar_' + currentYear + '_' + String(currentMonth + 1).padStart(2, '0') + '.png';
+                link.download = fileName;
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+                showToast('✅ Calendar downloaded!');
+
+            } catch (error) {
+                console.error('Download error:', error);
+                calendarCard.classList.remove('capture-mode');
+                showToast('❌ Failed to download calendar', true);
             }
         }
 
