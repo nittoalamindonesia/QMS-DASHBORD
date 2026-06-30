@@ -757,33 +757,77 @@
             menuContainer.innerHTML = menuHtml;
         }
         
-        // ==================== API ENDPOINT - SHEET CLAIM_CS ====================
+        // ==================== API ENDPOINT ====================
         const CLAIM_API = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5OQDenPkOPt21YBEb_Nq7JZZMbbw1dwKt1Ucyee95eno1SzlQ-tFTU1FwvpyAp9mQg6SOEy_1kB8L/pub?gid=240494839&output=csv";
         
         let allClaims = [];
         let filteredData = [];
         
-        // ==================== PARSE CSV YANG LEBIH FLEKSIBEL ====================
+        // ==================== PARSE CSV - MENEMUKAN HEADER OTOMATIS ====================
         function parseCSV(csvText) {
-            // Pisahkan baris, hapus baris kosong
-            const lines = csvText.split(/\r?\n/).filter(line => line.trim() !== '');
-            if (lines.length < 2) return [];
-            
+            // Pisahkan baris, hapus baris kosong di awal/akhir
+            const lines = csvText.split(/\r?\n/);
             console.log('📄 Total lines:', lines.length);
-            console.log('📄 First line (headers):', lines[0].substring(0, 300));
             
-            // Ambil header dari baris pertama
-            const headers = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
-            console.log('📄 Headers:', headers);
+            // Cari baris yang mengandung header (cari kata "No" dan "Tgl Claim")
+            let headerLineIndex = -1;
+            let headers = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line === '') continue;
+                
+                // Cek apakah baris ini mengandung header yang diharapkan
+                // Dari data Anda, header adalah: No, Tgl Claim, Informasi via, dll
+                if (line.includes('No') && line.includes('Tgl') && line.includes('Claim')) {
+                    headerLineIndex = i;
+                    headers = line.split(',').map(h => h.replace(/"/g, '').trim());
+                    console.log('✅ Found headers at line', i, ':', headers);
+                    break;
+                }
+            }
+            
+            // Jika tidak ditemukan, coba cari baris dengan "No" saja
+            if (headerLineIndex === -1) {
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line === '') continue;
+                    if (line.includes('No') && !line.includes('QA')) {
+                        headerLineIndex = i;
+                        headers = line.split(',').map(h => h.replace(/"/g, '').trim());
+                        console.log('✅ Found headers at line', i, ':', headers);
+                        break;
+                    }
+                }
+            }
+            
+            // Jika tetap tidak ditemukan, gunakan baris pertama yang tidak kosong
+            if (headerLineIndex === -1) {
+                for (let i = 0; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line !== '') {
+                        headerLineIndex = i;
+                        headers = line.split(',').map(h => h.replace(/"/g, '').trim());
+                        console.log('⚠️ Using first non-empty line as headers at line', i, ':', headers);
+                        break;
+                    }
+                }
+            }
+            
+            // Jika semua header masih kosong, return empty
+            if (headerLineIndex === -1 || headers.every(h => h === '')) {
+                console.error('❌ No valid headers found!');
+                return [];
+            }
             
             const result = [];
             
-            for (let i = 1; i < lines.length; i++) {
+            for (let i = headerLineIndex + 1; i < lines.length; i++) {
                 try {
                     const line = lines[i];
                     if (line.trim() === '') continue;
                     
-                    // Parse CSV dengan menangani nilai yang memiliki koma di dalamnya
+                    // Parse CSV dengan menangani nilai yang memiliki koma
                     const values = [];
                     let current = '';
                     let inQuotes = false;
@@ -804,25 +848,29 @@
                     // Buat object dengan header sebagai key
                     const obj = {};
                     headers.forEach((h, idx) => {
-                        obj[h] = values[idx] || '';
+                        const headerKey = h.replace(/\s+/g, ' ').trim();
+                        obj[headerKey] = values[idx] || '';
+                        // Juga simpan dengan key lowercase tanpa spasi untuk akses mudah
+                        const normalizedKey = headerKey.toLowerCase().replace(/\s+/g, '_');
+                        obj[normalizedKey] = values[idx] || '';
                     });
                     
-                    // Cek apakah ini data valid (ada No atau Nama Claim)
-                    const hasNo = obj.No || obj['No'] || '';
-                    const hasNamaClaim = obj['Nama Claim'] || obj.namaClaim || '';
-                    const hasTglClaim = obj['Tgl Claim'] || obj.tglClaim || '';
+                    // Cek apakah ini data valid
+                    const hasNo = obj.No || obj['No'] || obj.no || obj['no'] || '';
+                    const hasTgl = obj['Tgl Claim'] || obj['Tgl Claim'] || obj.tgl_claim || '';
+                    const hasNama = obj['Nama Claim'] || obj['Nama Claim'] || obj.nama_claim || '';
                     
-                    // Tampung data jika ada No atau Nama Claim atau Tgl Claim
-                    if (hasNo || hasNamaClaim || hasTglClaim) {
+                    if (hasNo || hasTgl || hasNama) {
                         result.push(obj);
                     }
                 } catch(e) {
-                    console.warn('Error parsing line', i, e);
+                    console.warn('Error parsing line', i);
                 }
             }
             
             console.log('📊 Parsed Data rows:', result.length);
             if (result.length > 0) {
+                console.log('📊 Sample first row keys:', Object.keys(result[0]));
                 console.log('📊 Sample first row:', result[0]);
             }
             
@@ -902,24 +950,27 @@
             const years = new Set();
             
             allClaims.forEach(claim => {
-                const dateStr = claim['Tgl Claim'] || claim.tglClaim || claim.date || '';
+                const dateStr = claim['Tgl Claim'] || claim.tgl_claim || claim['Tgl Claim'] || '';
                 let year = '';
-                if (dateStr.includes('-')) {
-                    const parts = dateStr.split('-');
-                    if (parts.length >= 1) {
-                        year = parts[0];
-                    }
-                } else if (dateStr.includes(' ')) {
-                    const parts = dateStr.split(' ');
-                    if (parts.length >= 2) {
-                        const monthYear = parts[1] || '';
-                        if (monthYear.includes('-')) {
-                            year = '20' + monthYear.split('-')[1];
+                if (dateStr) {
+                    // Coba ambil tahun dari berbagai format
+                    if (dateStr.includes('-')) {
+                        const parts = dateStr.split('-');
+                        if (parts.length >= 1) {
+                            year = parts[0];
+                        }
+                    } else if (dateStr.includes(' ')) {
+                        const parts = dateStr.split(' ');
+                        if (parts.length >= 2) {
+                            const monthYear = parts[1] || '';
+                            if (monthYear.includes('-')) {
+                                year = '20' + monthYear.split('-')[1];
+                            }
                         }
                     }
-                }
-                if (year && year.length >= 4) {
-                    years.add(year.substring(0, 4));
+                    if (year && year.length >= 4) {
+                        years.add(year.substring(0, 4));
+                    }
                 }
             });
             
@@ -939,7 +990,7 @@
             const yearFilter = document.getElementById('filterYear').value;
             
             filteredData = allClaims.filter(claim => {
-                const dateStr = claim['Tgl Claim'] || claim.tglClaim || claim.date || '';
+                const dateStr = claim['Tgl Claim'] || claim.tgl_claim || claim['Tgl Claim'] || '';
                 let month = '';
                 let year = '';
                 
@@ -1029,11 +1080,11 @@
                 else statusColor = 'border-l-4 border-l-gray-300';
                 
                 const no = claim.No || claim.no || (index + 1);
-                const tglClaim = claim['Tgl Claim'] || claim.tglClaim || '';
+                const tglClaim = claim['Tgl Claim'] || claim.tgl_claim || '';
                 const customer = claim.Customer || claim.customer || '';
-                const namaClaim = claim['Nama Claim'] || claim.namaClaim || '';
-                const partNameNail = claim['Part Name Nail'] || claim.partNameNail || '';
-                const fotoBarangNG = claim['Foto Barang NG'] || claim.fotoBarangNG || '';
+                const namaClaim = claim['Nama Claim'] || claim.nama_claim || '';
+                const partNameNail = claim['Part Name Nail'] || claim.part_name_nail || '';
+                const fotoBarangNG = claim['Foto Barang NG'] || claim.foto_barang_ng || '';
                 
                 let formattedDate = tglClaim || '-';
                 if (formattedDate !== '-') {
@@ -1078,18 +1129,18 @@
             const modalBody = document.getElementById('modal-body');
             
             const no = claim.No || claim.no || '-';
-            const tglClaim = claim['Tgl Claim'] || claim.tglClaim || '';
+            const tglClaim = claim['Tgl Claim'] || claim.tgl_claim || '';
             const customer = claim.Customer || claim.customer || '';
-            const infoVia = claim['Informasi via'] || claim.infoVia || '';
-            const kontohasiVia = claim['Kontohasi via (tgl)'] || claim.kontohasiVia || '';
-            const partNoCustomer = claim['Part No Customer'] || claim.partNoCustomer || '';
+            const infoVia = claim['Informasi via'] || claim.informasi_via || '';
+            const kontohasiVia = claim['Kontohasi via (tgl)'] || claim.kontohasi_via_tgl || '';
+            const partNoCustomer = claim['Part No Customer'] || claim.part_no_customer || '';
             const pakir = claim.Pakir || claim.pakir || '';
-            const partNameNail = claim['Part Name Nail'] || claim.partNameNail || '';
-            const namaClaim = claim['Nama Claim'] || claim.namaClaim || '';
-            const fotoBarangNG = claim['Foto Barang NG'] || claim.fotoBarangNG || '';
+            const partNameNail = claim['Part Name Nail'] || claim.part_name_nail || '';
+            const namaClaim = claim['Nama Claim'] || claim.nama_claim || '';
+            const fotoBarangNG = claim['Foto Barang NG'] || claim.foto_barang_ng || '';
             const klasifikasi = claim.Klasifikasi || claim.klasifikasi || '';
-            const lotPacking = claim['Lot Packing'] || claim.lotPacking || '';
-            const requestSample = claim['Request Sample'] || claim.requestSample || '';
+            const lotPacking = claim['Lot Packing'] || claim.lot_packing || '';
+            const requestSample = claim['Request Sample'] || claim.request_sample || '';
             
             let formattedDate = tglClaim || '-';
             if (formattedDate !== '-') {
@@ -1219,7 +1270,12 @@
                 const data = parseCSV(csvText);
                 
                 if (data && data.length > 0) {
-                    const claimFindings = data.filter(item => item.No || item['Nama Claim'] || item.namaClaim);
+                    // Filter data yang memiliki No atau Nama Claim
+                    const claimFindings = data.filter(item => {
+                        const hasNo = item.No || item.no || '';
+                        const hasNama = item['Nama Claim'] || item.nama_claim || '';
+                        return hasNo || hasNama;
+                    });
                     console.log('📊 Valid claims:', claimFindings.length);
                     
                     if (claimFindings.length > 0) {
