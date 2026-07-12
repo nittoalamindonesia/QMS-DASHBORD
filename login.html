@@ -378,7 +378,7 @@
         function checkAlreadyLoggedIn() {
             const user = sessionStorage.getItem('currentUser');
             if (user) {
-                window.location.href = 'maindashboard.html';
+                window.location.href = 'activityschedule.html';
                 return true;
             }
             return false;
@@ -416,7 +416,7 @@
                     }));
                     
                     console.log('Login successful:', user.username, 'Role:', user.role);
-                    window.location.href = 'maindashboard.html';
+                    window.location.href = 'activityschedule.html';
                 } else {
                     showError("❌ Invalid username or password");
                     document.getElementById('password').value = '';
