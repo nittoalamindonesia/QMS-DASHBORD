@@ -16,22 +16,18 @@
             width: 100vw;
         }
         
-        /* ========== OPTIMASI KHUSUS TV 50 INCH ========== */
         html { font-size: 14px; }
         
-        /* TV 50 inch (1920x1080) */
         @media (min-width: 1920px) and (max-width: 2559px) {
             html { font-size: 16px; }
             body { transform: scale(1); }
         }
         
-        /* TV 55 inch (2560x1440) */
         @media (min-width: 2560px) and (max-width: 3839px) {
             html { font-size: 18px; }
             body { transform: scale(1); }
         }
         
-        /* Fallback untuk layar lebih kecil */
         @media (max-width: 1919px) {
             html { font-size: 12px; }
             body { transform: scale(0.95); transform-origin: top left; width: 105.26%; }
@@ -41,7 +37,6 @@
         ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
         
-        /* Stat Card */
         .stat-card { 
             background: #FFFFFF;
             transition: all 0.3s ease; 
@@ -51,7 +46,6 @@
         }
         .stat-card:hover { transform: translateY(-3px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #0284C7; }
         
-        /* ===== SIDEBAR MENU - SAMA PERSIS DENGAN ACTIVITYSCHEDULE ===== */
         .menu-overlay {
             position: fixed;
             top: 0;
@@ -190,8 +184,6 @@
             font-size: 1rem;
         }
         
-        .text-brand { color: #1A63F6; }
-        
         .dashboard-container {
             display: flex;
             flex-direction: column;
@@ -215,7 +207,6 @@
             padding: 0.6rem;
         }
         
-        /* Stats Grid - 3 card */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -240,7 +231,6 @@
             font-family: 'Courier New', monospace;
         }
         
-        /* CHART CONTAINER - LEBIH BESAR */
         .chart-container {
             background: #FFFFFF;
             border-radius: 1rem;
@@ -258,7 +248,6 @@
             width: 100%;
         }
         
-        /* Target Info Box */
         .target-info {
             position: absolute;
             top: 15px;
@@ -273,7 +262,6 @@
         .target-info .label { font-size: 10px; color: #F59E0B; font-weight: bold; }
         .target-info .value { font-size: 12px; font-weight: bold; color: #F59E0B; }
         
-        /* TV Ukuran Lebih Besar */
         @media (min-width: 1920px) {
             .stat-value { font-size: 1.4rem; }
             .stat-label { font-size: 0.7rem; }
@@ -295,6 +283,35 @@
             flex: 1;
             min-height: 0;
         }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            border-radius: 1rem;
+        }
+        .loading-overlay.hidden {
+            display: none;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0284C7;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
@@ -302,7 +319,7 @@
     <!-- OVERLAY -->
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
     
-    <!-- POP UP SIDEBAR MENU - SAMA PERSIS DENGAN ACTIVITYSCHEDULE -->
+    <!-- POP UP SIDEBAR MENU -->
     <div id="popupSidebar" class="popup-sidebar">
         <div class="logo-section">
             <div class="flex items-center gap-2">
@@ -363,25 +380,28 @@
                     <p class="text-slate-500 text-[9px]">Data penjualan per bulan - Target 20 Miliar Rupiah</p>
                 </div>
 
-                <!-- Statistik Cards (3 card) -->
+                <!-- Statistik Cards -->
                 <div class="stats-grid">
                     <div class="stat-item">
                         <div class="stat-label">Total Sales (Rp)</div>
-                        <div class="stat-value text-cyan-600" id="total-sales">0</div>
+                        <div class="stat-value text-cyan-600" id="total-sales">-</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Rata-rata per Bulan (Rp)</div>
-                        <div class="stat-value text-green-600" id="avg-sales">0</div>
+                        <div class="stat-value text-green-600" id="avg-sales">-</div>
                     </div>
                     <div class="stat-item">
                         <div class="stat-label">Penjualan Tertinggi (Rp)</div>
-                        <div class="stat-value text-yellow-600" id="max-sales">0</div>
+                        <div class="stat-value text-yellow-600" id="max-sales">-</div>
                     </div>
                 </div>
 
-                <!-- Chart Container dengan Target Info -->
+                <!-- Chart Container -->
                 <div class="chart-wrapper" style="flex:1; min-height:0;">
                     <div class="chart-container" style="height:100%;">
+                        <div class="loading-overlay" id="loadingOverlay">
+                            <div class="spinner"></div>
+                        </div>
                         <div class="target-info">
                             <div class="label">🎯 TARGET TAHUNAN</div>
                             <div class="value">Rp 20.000.000.000</div>
@@ -393,15 +413,21 @@
                 <!-- Last Update Info -->
                 <div class="text-center mt-2">
                     <p id="last-update" class="text-slate-400 text-[8px]">Last update: --:--:--</p>
-                    <p class="text-slate-400 text-[7px]">Auto refresh setiap 30 detik | Data live dari Google Sheet</p>
+                    <p class="text-slate-400 text-[7px]">Auto refresh setiap 30 detik | Data live dari Google Spreadsheet</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================== KONFIGURASI MENU BERDASARKAN USERNAME ====================
-        // ADMIN - semua menu
+        // ==================== KONFIGURASI ====================
+        // GANTI URL INI DENGAN URL GOOGLE SPREADSHEET ANDA
+        var SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5OQDenPkOPt21YBEb_Nq7JZZMbbw1dwKt1Ucyee95eno1SzlQ-tFTU1FwvpyAp9mQg6SOEy_1kB8L/pub?gid=814757349&single=true&output=csv";
+        var TARGET_SALES = 20000000000; // 20 Miliar Rupiah
+        var chart = null;
+        var SALES_DATA = [];
+
+        // ==================== KONFIGURASI MENU ====================
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
@@ -414,7 +440,6 @@
             { icon: "🔬", name: "QC", link: "qc.html", active: false }
         ];
 
-        // ENGINEERING - TANPA SALES
         const engMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
@@ -422,7 +447,6 @@
             { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
 
-        // QUALITY ASSURANCE - TANPA SALES
         const qaMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
@@ -430,7 +454,6 @@
             { icon: "✅", name: "Claim", link: "claim.html", active: false }
         ];
 
-        // MARKETING - DENGAN SALES
         const mktMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
@@ -438,7 +461,6 @@
             { icon: "📄", name: "Design Review", link: "rfq.html", active: false }
         ];
 
-        // PPIC - DENGAN SALES
         const ppicMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
@@ -448,12 +470,10 @@
             { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
 
-        // USER DEFAULT - HANYA ACTIVITY SCHEDULE
         const userDefaultMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false }
         ];
 
-        // ============ FUNGSI AMBIL MENU BERDASARKAN USERNAME ============
         function getMenusByUsername(username) {
             const user = (username || '').toLowerCase();
             switch(user) {
@@ -472,7 +492,6 @@
             }
         }
 
-        // ==================== RENDER MENU ====================
         function renderMenu() {
             const userJson = sessionStorage.getItem('currentUser');
             if (!userJson) {
@@ -503,8 +522,7 @@
             
             menuContainer.innerHTML = menuHtml;
         }
-        
-        // ==================== MENU FUNCTIONS ====================
+
         function toggleMenu() {
             var sidebar = document.getElementById('popupSidebar');
             var overlay = document.getElementById('menuOverlay');
@@ -522,8 +540,7 @@
                 }
             }
         });
-        
-        // ==================== AUTHENTICATION ====================
+
         function checkAuth() {
             var userJson = sessionStorage.getItem('currentUser');
             if (!userJson) { 
@@ -532,42 +549,36 @@
             }
             return JSON.parse(userJson);
         }
-        
+
         var currentUser = checkAuth();
         if (currentUser) {
             renderMenu();
         }
-        
+
         function logout() {
             sessionStorage.removeItem('currentUser');
             window.location.href = 'login.html';
         }
-        
+
         // ==================== CLOCK ====================
         function updateClock() {
             var now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('id-ID', { hour12: false });
         }
-        
+
         function updateLastUpdate() {
             var now = new Date();
             document.getElementById('last-update').innerHTML = 'Last update: ' + now.toLocaleTimeString('id-ID', { hour12: false });
         }
-        
-        // ==================== KONFIGURASI ====================
-        var PUBLISHED_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5OQDenPkOPt21YBEb_Nq7JZZMbbw1dwKt1Ucyee95eno1SzlQ-tFTU1FwvpyAp9mQg6SOEy_1kB8L/pubhtml";
-        var TARGET_SALES = 20000000000; // 20 Miliar Rupiah
-        var chart = null;
-        
-        // Format Rupiah ke format singkat (M, Jt, Rb)
+
+        // ==================== FORMAT FUNCTIONS ====================
         function formatRupiahShort(num) {
             if (num >= 1000000000) return (num / 1000000000).toFixed(1) + ' M';
             if (num >= 1000000) return (num / 1000000).toFixed(1) + ' Jt';
             if (num >= 1000) return (num / 1000).toFixed(0) + ' Rb';
             return num.toString();
         }
-        
-        // Format Rupiah penuh
+
         function formatRupiahFull(num) {
             return new Intl.NumberFormat('id-ID', { 
                 style: 'currency', 
@@ -576,18 +587,13 @@
                 maximumFractionDigits: 0
             }).format(num);
         }
-        
-        // Ambil data dari Google Sheet
+
+        // ==================== AMBIL DATA DARI SPREADSHEET ====================
         async function fetchSalesData() {
             try {
-                var match = PUBLISHED_SHEET_URL.match(/\/d\/e\/([^\/]+)\//);
-                if (!match) throw new Error("Invalid published URL");
-                var publishedId = match[1];
-                var csvUrl = 'https://docs.google.com/spreadsheets/d/e/' + publishedId + '/pub?gid=814757349&single=true&output=csv';
+                showLoading(true);
                 
-                console.log("Fetching data from:", csvUrl);
-                
-                var response = await fetch(csvUrl, {
+                var response = await fetch(SPREADSHEET_URL + '&t=' + Date.now(), {
                     cache: 'no-cache',
                     headers: { 'Cache-Control': 'no-cache' }
                 });
@@ -597,28 +603,36 @@
                 var csvText = await response.text();
                 var data = parseCSVToArray(csvText);
                 
-                if (data.length === 0) throw new Error("No data in CSV");
-                
-                return data;
+                if (data && data.length > 0) {
+                    SALES_DATA = data;
+                    return true;
+                }
+                return false;
             } catch(error) {
-                console.error("Error fetching:", error);
-                return null;
+                console.error("Error fetching data:", error);
+                return false;
+            } finally {
+                showLoading(false);
             }
         }
-        
-        // Parse CSV ke array object
+
+        // ==================== PARSE CSV ====================
         function parseCSVToArray(csvText) {
             var lines = csvText.trim().split(/\r?\n/);
             if (lines.length < 2) return [];
             
-            var headers = lines[0].split(',').map(function(h) { return h.replace(/"/g, '').trim().toLowerCase(); });
+            var headers = lines[0].split(',').map(function(h) { 
+                return h.replace(/"/g, '').trim().toLowerCase(); 
+            });
             
             var monthIdx = -1;
             var salesIdx = -1;
+            
             for (var i = 0; i < headers.length; i++) {
-                if (headers[i] === 'month') monthIdx = i;
-                if (headers[i] === 'sales') salesIdx = i;
+                if (headers[i] === 'month' || headers[i] === 'bulan') monthIdx = i;
+                if (headers[i] === 'sales' || headers[i] === 'penjualan') salesIdx = i;
             }
+            
             if (monthIdx === -1) monthIdx = 0;
             if (salesIdx === -1) salesIdx = 1;
             
@@ -630,17 +644,19 @@
                 
                 var month = values[monthIdx].replace(/"/g, '').trim();
                 var salesRaw = values[salesIdx].replace(/"/g, '').trim();
-                var sales = parseInt(salesRaw.replace(/\./g, '').replace(/,/g, ''));
                 
-                if (month && !isNaN(sales) && month !== '') {
+                // Bersihkan angka: hapus Rp, titik, koma
+                var cleanNumber = salesRaw.replace(/[^0-9]/g, '');
+                var sales = parseInt(cleanNumber);
+                
+                if (month && !isNaN(sales) && month !== '' && sales > 0) {
                     result.push({ month: month, sales: sales });
                 }
             }
             
             return result;
         }
-        
-        // Parse baris CSV
+
         function parseCSVLine(line) {
             var result = [];
             var inQuote = false;
@@ -660,65 +676,62 @@
             result.push(current);
             return result;
         }
-        
-        // Update semua UI
-        async function loadAndUpdateDashboard() {
-            var data = await fetchSalesData();
-            
-            if (data && data.length > 0) {
-                var months = [];
-                var salesData = [];
-                var totalSales = 0;
-                var maxSales = 0;
-                
-                for (var i = 0; i < data.length; i++) {
-                    months.push(data[i].month);
-                    salesData.push(data[i].sales);
-                    totalSales = totalSales + data[i].sales;
-                    if (data[i].sales > maxSales) maxSales = data[i].sales;
-                }
-                var avgSales = Math.round(totalSales / salesData.length);
-                
-                document.getElementById('total-sales').innerHTML = formatRupiahShort(totalSales);
-                document.getElementById('avg-sales').innerHTML = formatRupiahShort(avgSales);
-                document.getElementById('max-sales').innerHTML = formatRupiahShort(maxSales);
-                
-                renderChart(months, salesData);
+
+        // ==================== LOADING INDICATOR ====================
+        function showLoading(show) {
+            var overlay = document.getElementById('loadingOverlay');
+            if (show) {
+                overlay.classList.remove('hidden');
             } else {
-                useFallbackData();
+                overlay.classList.add('hidden');
+            }
+        }
+
+        // ==================== UPDATE DASHBOARD ====================
+        async function updateDashboard() {
+            var success = await fetchSalesData();
+            
+            if (!success || SALES_DATA.length === 0) {
+                // Tampilkan pesan error jika data gagal diambil
+                document.getElementById('total-sales').innerHTML = '⚠️ Error';
+                document.getElementById('avg-sales').innerHTML = '⚠️ Error';
+                document.getElementById('max-sales').innerHTML = '⚠️ Error';
+                updateLastUpdate();
+                return;
             }
             
-            updateLastUpdate();
-        }
-        
-        // Data fallback
-        function useFallbackData() {
-            var fallbackMonths = ['Jan-26', 'Feb-26', 'Mar-26', 'Apr-26', 'Mei-26', 'Jun-26', 'Jul-26', 'Ags-26', 'Sep-26', 'Okt-26', 'Nov-26', 'Des-26'];
-            var fallbackSales = [15000000, 25000000, 18000000, 22000000, 21000000, 23000000, 19000000, 27000000, 24000000, 26000000, 28000000, 30000000];
+            var months = [];
+            var salesData = [];
             var totalSales = 0;
-            for (var i = 0; i < fallbackSales.length; i++) {
-                totalSales = totalSales + fallbackSales[i];
+            var maxSales = 0;
+            
+            for (var i = 0; i < SALES_DATA.length; i++) {
+                months.push(SALES_DATA[i].month);
+                salesData.push(SALES_DATA[i].sales);
+                totalSales = totalSales + SALES_DATA[i].sales;
+                if (SALES_DATA[i].sales > maxSales) maxSales = SALES_DATA[i].sales;
             }
+            
+            var avgSales = Math.round(totalSales / salesData.length);
             
             document.getElementById('total-sales').innerHTML = formatRupiahShort(totalSales);
-            document.getElementById('avg-sales').innerHTML = formatRupiahShort(totalSales / 12);
-            document.getElementById('max-sales').innerHTML = formatRupiahShort(30000000);
+            document.getElementById('avg-sales').innerHTML = formatRupiahShort(avgSales);
+            document.getElementById('max-sales').innerHTML = formatRupiahShort(maxSales);
             
-            renderChart(fallbackMonths, fallbackSales);
+            renderChart(months, salesData);
+            updateLastUpdate();
         }
-        
-        // Render Chart dengan Target Line (20 Miliar)
+
+        // ==================== RENDER CHART ====================
         function renderChart(labels, salesData) {
             var ctx = document.getElementById('salesChart').getContext('2d');
             
             if (chart) chart.destroy();
             
-            // Dynamic scale: cari max dari salesData dan target
             var maxSalesValue = Math.max.apply(Math, salesData);
             var maxValue = Math.max(maxSalesValue, TARGET_SALES);
             var suggestedMax = Math.ceil(maxValue * 1.15);
             
-            // Buat data target (konstan untuk semua bulan)
             var targetData = [];
             for (var i = 0; i < labels.length; i++) {
                 targetData.push(TARGET_SALES);
@@ -730,7 +743,7 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Penjualan (Rupiah)',
+                            label: 'Penjualan / Bulan',
                             type: 'bar',
                             data: salesData,
                             backgroundColor: '#0284C7',
@@ -849,13 +862,16 @@
             };
             chart.update();
         }
-        
+
         // ==================== INITIALIZATION ====================
         updateClock();
         setInterval(updateClock, 1000);
         
-        loadAndUpdateDashboard();
-        setInterval(loadAndUpdateDashboard, 30000);
+        // Load data pertama kali
+        updateDashboard();
+        
+        // Auto refresh setiap 30 detik - ambil data terbaru dari spreadsheet
+        setInterval(updateDashboard, 30000);
     </script>
 </body>
 </html>

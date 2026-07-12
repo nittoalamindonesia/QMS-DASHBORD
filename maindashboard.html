@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
@@ -16,20 +16,16 @@
             width: 100vw;
         }
         
-        /* ========== OPTIMASI KHUSUS TV 50-55 INCH ========== */
         html { font-size: 14px; }
         
-        /* TV 50 inch (1920x1080) */
         @media (min-width: 1920px) and (max-width: 2559px) {
             html { font-size: 16px; }
         }
         
-        /* TV 55 inch (2560x1440) */
         @media (min-width: 2560px) and (max-width: 3839px) {
             html { font-size: 18px; }
         }
         
-        /* Fallback untuk layar lebih kecil */
         @media (max-width: 1919px) {
             html { font-size: 12px; }
             body { transform: scale(0.95); transform-origin: top left; width: 105.26%; }
@@ -39,80 +35,13 @@
         ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
         ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
         
-        /* SUB SLIDER (5 CARD DIVISI) */
-        .sub-slider-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            border-radius: 0.8rem;
-        }
-        .sub-slider-wrapper {
-            display: flex;
-            transition: transform 0.4s ease-in-out;
-            height: 100%;
-        }
-        .sub-slider-card {
-            flex: 0 0 100%;
-            height: 100%;
-            padding: 0.3rem;
-        }
-        .sub-slider-btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(2, 132, 199, 0.85);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            cursor: pointer;
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-        }
-        .sub-slider-btn:hover { background: #0284C7; }
-        .sub-slider-btn-left { left: 5px; }
-        .sub-slider-btn-right { right: 5px; }
-        .sub-slider-dots {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 10px;
-        }
-        .sub-slider-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #CBD5E1;
-            cursor: pointer;
-        }
-        .sub-slider-dot.active { background: #0284C7; width: 20px; border-radius: 4px; }
-        
         .card { background: white; border-radius: 1rem; border: 1px solid #E5E7EB; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .event-card { background: #F8FAFC; border-radius: 0.5rem; border-left: 4px solid #0284C7; padding: 0.5rem 0.7rem; margin-bottom: 0.4rem; }
-        
-        .production-chart-container { height: 200px; position: relative; }
-        .stats-mini-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: 0.8rem; }
-        .stat-mini-item { text-align: center; padding: 0.4rem; background: #F8FAFC; border-radius: 0.5rem; }
-        .stat-mini-label { font-size: 0.6rem; color: #64748B; }
-        .stat-mini-value { font-size: 1rem; font-weight: bold; color: #0284C7; }
-        
-        .divisi-tag { display: inline-block; padding: 0.25rem 0.6rem; border-radius: 0.375rem; font-size: 0.7rem; font-weight: 600; }
-        .divisi-Double-Header { background: #dbeafe; color: #1e40af; }
-        .divisi-2D3B { background: #dcfce7; color: #166534; }
-        .divisi-rolling { background: #fef3c7; color: #92400e; }
-        .divisi-Furnace { background: #f1f5f9; color: #475569; }
-        .divisi-Plating { background: #e0e7ff; color: #3730a3; }
         
         .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; }
         .running-text marquee { font-size: 0.75rem; font-weight: 600; color: #0284C7; padding: 0.3rem 0; }
         .digital-clock { font-family: 'Courier New', monospace; font-weight: 700; background: #F8FAFC; padding: 0.3rem 0.8rem; border-radius: 0.5rem; border: 1px solid #E5E7EB; color: #0284C7; font-size: 1.1rem; }
         
-        /* ===== SIDEBAR MENU - SAMA PERSIS DENGAN ACTIVITYSCHEDULE.HTML ===== */
+        /* ===== SIDEBAR MENU ===== */
         .menu-overlay {
             position: fixed;
             top: 0;
@@ -237,48 +166,268 @@
         
         .text-brand { color: #1A63F6; }
         
-        /* GRID 2x2 - LAYOUT RAPI */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            padding: 1rem;
-            height: calc(100% - 65px);
-        }
-        .card-full {
-            height: 100%;
-            display: flex;
-            flex-direction: column;
+        /* ===== SLIDER FULLSCREEN ===== */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            flex: 1;
             overflow: hidden;
             min-height: 0;
         }
-        .chart-container {
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.8s ease-in-out;
+            height: 100%;
+            width: 100%;
+        }
+        .slider-slide {
+            flex: 0 0 100%;
+            height: 100%;
+            padding: 0.5rem 0.5rem 0.3rem 0.5rem;
+            overflow: hidden;
+        }
+        .slider-slide .card {
+            height: 100%;
+            padding: 0.8rem;
+            display: flex;
+            flex-direction: column;
+        }
+        .slider-slide .card .chart-container {
             flex: 1;
             min-height: 0;
             position: relative;
         }
-        .bg-production { background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%); }
-        .events-scroll { flex: 1; overflow-y: auto; padding-right: 0.2rem; }
         
-        /* TV Ukuran Lebih Besar */
+        /* Slider Dots */
+        .slider-dots-container {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            background: rgba(0,0,0,0.4);
+            padding: 6px 14px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .slider-dot.active {
+            background: #0284C7;
+            width: 28px;
+            border-radius: 5px;
+            border-color: #0284C7;
+        }
+        .slider-dot:hover {
+            background: rgba(255,255,255,0.7);
+        }
+        
+        /* Slide Label */
+        .slide-label {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(2, 132, 199, 0.9);
+            color: white;
+            padding: 4px 20px;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            z-index: 15;
+            letter-spacing: 1px;
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* Target Info Box - SAMA PERSIS DENGAN MOUNTSALES */
+        .target-info {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(245, 158, 11, 0.15);
+            border-left: 3px solid #F59E0B;
+            padding: 6px 12px;
+            border-radius: 8px;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .target-info .label { font-size: 9px; color: #F59E0B; font-weight: bold; }
+        .target-info .value { font-size: 11px; font-weight: bold; color: #F59E0B; }
+        
+        /* Stat Grid untuk Sales - SAMA PERSIS DENGAN MOUNTSALES */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.6rem;
+            margin-bottom: 0.6rem;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 0.5rem;
+            background: #F8FAFC;
+            border-radius: 0.6rem;
+            border: 1px solid #E5E7EB;
+        }
+        .stat-label {
+            font-size: 0.55rem;
+            color: #64748B;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+        .stat-value {
+            font-size: 1rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .stat-value.text-cyan-600 { color: #0891B2; }
+        .stat-value.text-green-600 { color: #16A34A; }
+        .stat-value.text-yellow-600 { color: #CA8A04; }
+        
+        /* Production Cards in Slide 2 */
+        .prod-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            flex: 1;
+            min-height: 0;
+        }
+        .prod-card {
+            background: #F8FAFC;
+            border-radius: 0.6rem;
+            padding: 0.4rem;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #E5E7EB;
+        }
+        .prod-card .chart-container {
+            flex: 1;
+            min-height: 0;
+        }
+        .prod-card .prod-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.2rem;
+        }
+        .prod-card .prod-header .divisi-tag {
+            font-size: 0.5rem;
+            padding: 0.1rem 0.5rem;
+            border-radius: 0.3rem;
+            font-weight: 600;
+        }
+        .prod-card .prod-header .prod-total {
+            font-size: 0.55rem;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+        .prod-card .prod-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.2rem;
+            margin-top: 0.2rem;
+        }
+        .prod-card .prod-stats div {
+            text-align: center;
+            padding: 0.1rem;
+            background: white;
+            border-radius: 0.3rem;
+            font-size: 0.45rem;
+        }
+        .prod-card .prod-stats div span {
+            font-weight: bold;
+            font-size: 0.55rem;
+        }
+        
+        .divisi-Double-Header { background: #dbeafe; color: #1e40af; }
+        .divisi-2D3B { background: #dcfce7; color: #166534; }
+        .divisi-rolling { background: #fef3c7; color: #92400e; }
+        .divisi-Furnace { background: #f1f5f9; color: #475569; }
+        .divisi-Plating { background: #e0e7ff; color: #3730a3; }
+        
+        /* RFQ Chart */
+        .rfq-container {
+            flex: 1;
+            min-height: 0;
+        }
+        
+        .slide-title {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #1A63F6;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .last-update {
+            font-size: 0.45rem;
+            color: #94A3B8;
+            text-align: right;
+        }
+        
         @media (min-width: 1920px) {
-            .stat-mini-value { font-size: 1.2rem; }
-            .stat-mini-label { font-size: 0.7rem; }
-            .divisi-tag { font-size: 0.8rem; padding: 0.3rem 0.7rem; }
-            .event-card { padding: 0.6rem 0.8rem; }
-            .event-card .font-medium { font-size: 0.85rem; }
-            .production-chart-container { height: 230px; }
-            .menu-button { font-size: 0.85rem; padding: 0.45rem 0.7rem; }
-            .menu-button span:last-child { font-size: 0.82rem; }
-            .logo-section h1 { font-size: 0.8rem; }
+            .stat-value { font-size: 1.2rem; }
+            .stat-label { font-size: 0.65rem; }
+            .slide-title { font-size: 0.9rem; }
+            .prod-card .prod-header .divisi-tag { font-size: 0.6rem; }
+            .prod-card .prod-header .prod-total { font-size: 0.65rem; }
+            .prod-card .prod-stats div { font-size: 0.5rem; }
+            .prod-card .prod-stats div span { font-size: 0.6rem; }
+            .target-info .label { font-size: 10px; }
+            .target-info .value { font-size: 12px; }
         }
         
         @media (min-width: 2560px) {
-            .stat-mini-value { font-size: 1.4rem; }
-            .production-chart-container { height: 260px; }
-            .menu-button { font-size: 0.9rem; padding: 0.5rem 0.8rem; }
-            .menu-button span:last-child { font-size: 0.88rem; }
-            .logo-section h1 { font-size: 0.85rem; }
+            .stat-value { font-size: 1.4rem; }
+            .stat-label { font-size: 0.75rem; }
+            .slide-title { font-size: 1.05rem; }
+            .prod-card .prod-header .divisi-tag { font-size: 0.7rem; }
+            .prod-card .prod-header .prod-total { font-size: 0.75rem; }
+            .prod-card .prod-stats div { font-size: 0.55rem; }
+            .prod-card .prod-stats div span { font-size: 0.65rem; }
+            .target-info .label { font-size: 11px; }
+            .target-info .value { font-size: 13px; }
+        }
+        
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            border-radius: 1rem;
+        }
+        .loading-overlay.hidden {
+            display: none;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0284C7;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -287,7 +436,7 @@
     <!-- OVERLAY -->
     <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
     
-    <!-- POP UP SIDEBAR MENU - SAMA PERSIS DENGAN ACTIVITYSCHEDULE -->
+    <!-- POP UP SIDEBAR MENU -->
     <div id="popupSidebar" class="popup-sidebar">
         <div class="logo-section">
             <div class="flex items-center gap-2">
@@ -313,104 +462,172 @@
         <div class="bg-white border-b border-gray-200 px-4 py-2 flex justify-between items-center shrink-0">
             <div class="flex items-center gap-3">
                 <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-sm">☰</span></div>
-                <div><h1 class="text-sm md:text-base font-bold text-brand">PT NITTO ALAM INDONESIA</h1><p class="text-slate-500 text-[9px]">Plant 2 - Dashboard</p></div>
+                <div>
+                    <h1 class="text-sm md:text-base font-bold text-brand">PT NITTO ALAM INDONESIA</h1>
+                    <p class="text-slate-500 text-[9px]">Plant 2 - Main Dashboard</p>
+                </div>
             </div>
-            <div class="flex items-center gap-3"><div class="digital-clock text-sm" id="clock">00:00:00</div><div class="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg"><div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div><span class="text-green-600 text-[8px] font-bold">LIVE</span></div></div>
+            <div class="flex items-center gap-3">
+                <div class="digital-clock text-sm" id="clock">00:00:00</div>
+                <div class="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg">
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-green-600 text-[8px] font-bold">LIVE</span>
+                </div>
+            </div>
         </div>
 
         <!-- RUNNING TEXT -->
-        <div class="running-text shrink-0"><marquee behavior="scroll" direction="left" scrollamount="2">🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | 📊 SALES & PRODUCTION MONITORING</marquee></div>
+        <div class="running-text shrink-0">
+            <marquee behavior="scroll" direction="left" scrollamount="2">
+                🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | 📊 SALES & PRODUCTION MONITORING | 📈 RFQ TRACKING
+            </marquee>
+        </div>
 
-        <!-- GRID 2x2 -->
-        <div class="dashboard-grid">
-            
-            <!-- CARD 1: SALES MONITORING -->
-            <div class="card p-3 flex flex-col card-full">
-                <div class="flex justify-between items-center mb-2"><h2 class="font-bold text-gray-800">📊 SALES MONITORING (RUPIAH)</h2><span class="text-[8px] text-slate-400" id="sales-last-update">Loading...</span></div>
-                <div class="stats-mini-grid">
-                    <div class="stat-mini-item"><div class="stat-mini-label">Total Sales</div><div class="stat-mini-value" id="sales-total">0</div></div>
-                    <div class="stat-mini-item"><div class="stat-mini-label">Rata-rata</div><div class="stat-mini-value" id="sales-avg">0</div></div>
-                    <div class="stat-mini-item"><div class="stat-mini-label">Tertinggi</div><div class="stat-mini-value" id="sales-max">0</div></div>
-                </div>
-                <div class="chart-container flex-1 min-h-0"><canvas id="salesChart"></canvas></div>
-            </div>
-            
-            <!-- CARD 2: PRODUCTION MONITORING (SUB SLIDER 5 DIVISI) -->
-            <div class="card p-3 flex flex-col card-full">
-                <div class="flex justify-between items-center mb-2"><h2 class="font-bold text-gray-800">🏭 PRODUCTION MONITORING</h2><span class="text-[8px] text-slate-400" id="prod-last-update">Loading...</span></div>
+        <!-- SLIDER -->
+        <div class="slider-container">
+            <div class="slider-wrapper" id="sliderWrapper">
                 
-                <div class="sub-slider-container" style="flex:1; min-height:0;">
-                    <button class="sub-slider-btn sub-slider-btn-left" onclick="prevSubSlide()">‹</button>
-                    <button class="sub-slider-btn sub-slider-btn-right" onclick="nextSubSlide()">›</button>
-                    
-                    <div class="sub-slider-wrapper" id="subSliderWrapper">
-                        <!-- DOUBLE HEADER -->
-                        <div class="sub-slider-card">
-                            <div class="bg-production rounded-xl p-2 h-full flex flex-col">
-                                <div class="flex justify-between items-center mb-1"><span class="divisi-tag divisi-Double-Header">🏭 Double Header</span><span class="text-sm font-mono text-blue-600 font-bold" id="total-dh">0 PCS</span></div>
-                                <div class="production-chart-container"><canvas id="chart-dh"></canvas></div>
-                                <div class="grid grid-cols-2 gap-2 mt-2"><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Target</div><div class="font-bold text-cyan-600" id="target-dh">0</div></div><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Realisasi</div><div class="font-bold text-green-600" id="real-dh">0</div></div></div>
-                                <p class="text-center text-[9px] text-slate-400 mt-1">📊 Bar = Real | ⎯ Garis = Target</p>
+                <!-- SLIDE 1: SALES MONITORING - SAMA PERSIS DENGAN MOUNTSALES -->
+                <div class="slider-slide">
+                    <div class="card" style="position: relative;">
+                        <span class="slide-label">💰 SALES MONITORING</span>
+                        
+                        <!-- Target Info Box - SAMA PERSIS DENGAN MOUNTSALES -->
+                        <div class="target-info">
+                            <div class="label">🎯 TARGET TAHUNAN</div>
+                            <div class="value">Rp 20.000.000.000</div>
+                        </div>
+                        
+                        <div class="slide-title">📊 Penjualan per Bulan</div>
+                        <div class="last-update" id="sales-last-update">Loading...</div>
+                        
+                        <!-- Stats Grid - SAMA PERSIS DENGAN MOUNTSALES -->
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <div class="stat-label">Total Sales (Rp)</div>
+                                <div class="stat-value text-cyan-600" id="sales-total">-</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Rata-rata per Bulan (Rp)</div>
+                                <div class="stat-value text-green-600" id="sales-avg">-</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Penjualan Tertinggi (Rp)</div>
+                                <div class="stat-value text-yellow-600" id="sales-max">-</div>
                             </div>
                         </div>
-                        <!-- 2D3B -->
-                        <div class="sub-slider-card">
-                            <div class="bg-production rounded-xl p-2 h-full flex flex-col">
-                                <div class="flex justify-between items-center mb-1"><span class="divisi-tag divisi-2D3B">⚙️ 2D3B</span><span class="text-sm font-mono text-green-600 font-bold" id="total-2d3b">0 PCS</span></div>
-                                <div class="production-chart-container"><canvas id="chart-2d3b"></canvas></div>
-                                <div class="grid grid-cols-2 gap-2 mt-2"><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Target</div><div class="font-bold text-cyan-600" id="target-2d3b">0</div></div><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Realisasi</div><div class="font-bold text-green-600" id="real-2d3b">0</div></div></div>
-                                <p class="text-center text-[9px] text-slate-400 mt-1">📊 Bar = Real | ⎯ Garis = Target</p>
+                        
+                        <!-- Chart Container dengan Target Info -->
+                        <div class="chart-container">
+                            <div class="loading-overlay hidden" id="salesLoading">
+                                <div class="spinner"></div>
                             </div>
+                            <canvas id="salesChart"></canvas>
                         </div>
-                        <!-- ROLLING -->
-                        <div class="sub-slider-card">
-                            <div class="bg-production rounded-xl p-2 h-full flex flex-col">
-                                <div class="flex justify-between items-center mb-1"><span class="divisi-tag divisi-rolling">🔄 Rolling</span><span class="text-sm font-mono text-yellow-600 font-bold" id="total-rolling">0 PCS</span></div>
-                                <div class="production-chart-container"><canvas id="chart-rolling"></canvas></div>
-                                <div class="grid grid-cols-2 gap-2 mt-2"><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Target</div><div class="font-bold text-cyan-600" id="target-rolling">0</div></div><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Realisasi</div><div class="font-bold text-green-600" id="real-rolling">0</div></div></div>
-                                <p class="text-center text-[9px] text-slate-400 mt-1">📊 Bar = Real | ⎯ Garis = Target</p>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 2: PRODUCTION MONITORING -->
+                <div class="slider-slide">
+                    <div class="card">
+                        <span class="slide-label">🏭 PRODUCTION MONITORING</span>
+                        <div class="slide-title">📊 Produksi per Divisi</div>
+                        <div class="last-update" id="prod-last-update">Loading...</div>
+                        
+                        <div class="prod-grid">
+                            <!-- Double Header -->
+                            <div class="prod-card">
+                                <div class="prod-header">
+                                    <span class="divisi-tag divisi-Double-Header">🏭 Double Header</span>
+                                    <span class="prod-total text-blue-600" id="total-dh">0 PCS</span>
+                                </div>
+                                <div class="chart-container"><canvas id="chart-dh"></canvas></div>
+                                <div class="prod-stats">
+                                    <div>Target <br><span id="target-dh">0</span></div>
+                                    <div>Realisasi <br><span id="real-dh">0</span></div>
+                                </div>
                             </div>
-                        </div>
-                        <!-- FURNACE -->
-                        <div class="sub-slider-card">
-                            <div class="bg-production rounded-xl p-2 h-full flex flex-col">
-                                <div class="flex justify-between items-center mb-1"><span class="divisi-tag divisi-Furnace">🔥 Furnace</span><span class="text-sm font-mono text-gray-600 font-bold" id="total-furnace">0 PCS</span></div>
-                                <div class="production-chart-container"><canvas id="chart-furnace"></canvas></div>
-                                <div class="grid grid-cols-2 gap-2 mt-2"><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Target</div><div class="font-bold text-cyan-600" id="target-furnace">0</div></div><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Realisasi</div><div class="font-bold text-green-600" id="real-furnace">0</div></div></div>
-                                <p class="text-center text-[9px] text-slate-400 mt-1">📊 Bar = Real | ⎯ Garis = Target</p>
+                            
+                            <!-- 2D3B -->
+                            <div class="prod-card">
+                                <div class="prod-header">
+                                    <span class="divisi-tag divisi-2D3B">⚙️ 2D3B</span>
+                                    <span class="prod-total text-green-600" id="total-2d3b">0 PCS</span>
+                                </div>
+                                <div class="chart-container"><canvas id="chart-2d3b"></canvas></div>
+                                <div class="prod-stats">
+                                    <div>Target <br><span id="target-2d3b">0</span></div>
+                                    <div>Realisasi <br><span id="real-2d3b">0</span></div>
+                                </div>
                             </div>
-                        </div>
-                        <!-- PLATING -->
-                        <div class="sub-slider-card">
-                            <div class="bg-production rounded-xl p-2 h-full flex flex-col">
-                                <div class="flex justify-between items-center mb-1"><span class="divisi-tag divisi-Plating">⚡ Plating</span><span class="text-sm font-mono text-purple-600 font-bold" id="total-plating">0 PCS</span></div>
-                                <div class="production-chart-container"><canvas id="chart-plating"></canvas></div>
-                                <div class="grid grid-cols-2 gap-2 mt-2"><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Target</div><div class="font-bold text-cyan-600" id="target-plating">0</div></div><div class="text-center p-1 bg-white rounded shadow-sm"><div class="text-[9px] text-slate-500">Realisasi</div><div class="font-bold text-green-600" id="real-plating">0</div></div></div>
-                                <p class="text-center text-[9px] text-slate-400 mt-1">📊 Bar = Real | ⎯ Garis = Target</p>
+                            
+                            <!-- Rolling -->
+                            <div class="prod-card">
+                                <div class="prod-header">
+                                    <span class="divisi-tag divisi-rolling">🔄 Rolling</span>
+                                    <span class="prod-total text-yellow-600" id="total-rolling">0 PCS</span>
+                                </div>
+                                <div class="chart-container"><canvas id="chart-rolling"></canvas></div>
+                                <div class="prod-stats">
+                                    <div>Target <br><span id="target-rolling">0</span></div>
+                                    <div>Realisasi <br><span id="real-rolling">0</span></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Furnace -->
+                            <div class="prod-card">
+                                <div class="prod-header">
+                                    <span class="divisi-tag divisi-Furnace">🔥 Furnace</span>
+                                    <span class="prod-total text-gray-600" id="total-furnace">0 PCS</span>
+                                </div>
+                                <div class="chart-container"><canvas id="chart-furnace"></canvas></div>
+                                <div class="prod-stats">
+                                    <div>Target <br><span id="target-furnace">0</span></div>
+                                    <div>Realisasi <br><span id="real-furnace">0</span></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Plating -->
+                            <div class="prod-card" style="grid-column: span 2;">
+                                <div class="prod-header">
+                                    <span class="divisi-tag divisi-Plating">⚡ Plating</span>
+                                    <span class="prod-total text-purple-600" id="total-plating">0 PCS</span>
+                                </div>
+                                <div class="chart-container"><canvas id="chart-plating"></canvas></div>
+                                <div class="prod-stats">
+                                    <div>Target <br><span id="target-plating">0</span></div>
+                                    <div>Realisasi <br><span id="real-plating">0</span></div>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="sub-slider-dots" id="subSliderDots"></div>
                 </div>
+                
+                <!-- SLIDE 3: ENG DRS / RFQ -->
+                <div class="slider-slide">
+                    <div class="card">
+                        <span class="slide-label">📊 ENG DRS PER BULAN</span>
+                        <div class="slide-title">📈 Design Review Status</div>
+                        <div class="last-update" id="rfq-last-update">Loading...</div>
+                        
+                        <div class="rfq-container">
+                            <div class="loading-overlay hidden" id="rfqLoading">
+                                <div class="spinner"></div>
+                            </div>
+                            <canvas id="rfqChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
             
-            <!-- CARD 3: TODAY'S EVENTS -->
-            <div class="card p-3 flex flex-col card-full">
-                <div class="flex justify-between items-center mb-2"><h2 class="font-bold text-gray-800">📅 Today's Events</h2><span class="text-[8px] text-slate-400" id="today-date">-</span></div>
-                <div id="today-events-list" class="events-scroll space-y-1"><div class="text-center text-slate-500 py-4">Loading events...</div></div>
-            </div>
-            
-            <!-- CARD 4: RFQ CHART -->
-            <div class="card p-3 flex flex-col card-full">
-                <div class="flex justify-between items-center mb-2"><h2 class="font-bold text-gray-800">📊 ENG DRS per Bulan</h2><span class="text-[8px] text-slate-400">2026</span></div>
-                <div class="chart-container flex-1 min-h-0"><canvas id="rfqChart"></canvas></div>
-            </div>
+            <!-- Slider Dots -->
+            <div class="slider-dots-container" id="sliderDots"></div>
         </div>
     </div>
 
     <script>
-        // ==================== KONFIGURASI MENU BERDASARKAN USERNAME ====================
-        // ADMIN - semua menu (TERMASUK MAIN DASHBOARD)
+        // ==================== KONFIGURASI MENU ====================
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: true },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
@@ -423,7 +640,6 @@
             { icon: "🔬", name: "QC", link: "qc.html", active: false }
         ];
 
-        // ENGINEERING - TANPA MAIN DASHBOARD
         const engMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
@@ -431,7 +647,6 @@
             { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
 
-        // QUALITY ASSURANCE - TANPA MAIN DASHBOARD
         const qaMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
@@ -439,7 +654,6 @@
             { icon: "✅", name: "Claim", link: "claim.html", active: false }
         ];
 
-        // MARKETING - TANPA MAIN DASHBOARD
         const mktMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
@@ -447,7 +661,6 @@
             { icon: "📄", name: "Design Review", link: "rfq.html", active: false }
         ];
 
-        // PPIC - TANPA MAIN DASHBOARD
         const ppicMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
             { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
@@ -457,12 +670,10 @@
             { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
         ];
 
-        // USER DEFAULT - HANYA ACTIVITY SCHEDULE
         const userDefaultMenus = [
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false }
         ];
 
-        // ============ FUNGSI AMBIL MENU BERDASARKAN USERNAME ============
         function getMenusByUsername(username) {
             const user = (username || '').toLowerCase();
             switch(user) {
@@ -481,7 +692,6 @@
             }
         }
 
-        // ==================== RENDER MENU - SAMA DENGAN ACTIVITYSCHEDULE ====================
         function renderMenu() {
             const userJson = sessionStorage.getItem('currentUser');
             if (!userJson) {
@@ -512,8 +722,7 @@
             
             menuContainer.innerHTML = menuHtml;
         }
-        
-        // ==================== FUNGSI UMUM ====================
+
         function toggleMenu() {
             document.getElementById('popupSidebar').classList.toggle('active');
             document.getElementById('menuOverlay').classList.toggle('active');
@@ -525,7 +734,7 @@
                 document.getElementById('menuOverlay').classList.remove('active');
             }
         });
-        
+
         function checkAuth() {
             const userJson = sessionStorage.getItem('currentUser');
             if (!userJson) {
@@ -534,36 +743,31 @@
             }
             return JSON.parse(userJson);
         }
-        
+
         function logout() {
             sessionStorage.removeItem('currentUser');
             window.location.href = 'login.html';
         }
-        
+
         function updateClock() {
             document.getElementById('clock').innerText = new Date().toLocaleTimeString('id-ID', {hour12:false});
-            const todayDateSpan = document.getElementById('today-date');
-            if (todayDateSpan) {
-                todayDateSpan.innerText = new Date().toLocaleDateString('id-ID', {day:'numeric', month:'short'});
-            }
         }
-        
+
         // ==================== GOOGLE SHEET CONFIG ====================
         const SHEET_ID = "1xOsZd0i8KPGzr_e3X24QY3m-hKi7Ip3RFDtbsr__ph0";
         const PROD_DATA_SHEET = "produksi";
         const TARGET_SHEET = "target_produksi";
         const PUBLISHED_SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT5OQDenPkOPt21YBEb_Nq7JZZMbbw1dwKt1Ucyee95eno1SzlQ-tFTU1FwvpyAp9mQg6SOEy_1kB8L/pubhtml";
-        
         const RFQ_API = `https://opensheet.elk.sh/${SHEET_ID}/RFQ`;
-        const EVENT_API = `https://opensheet.elk.sh/${SHEET_ID}/event`;
-        
+
         const DIVISI_LIST = ["Double Header", "2D3B", "rolling", "Furnace", "Plating"];
         const BULAN_LIST = ["Jan-26", "Feb-26", "Mar-26", "Apr-26", "May-26", "Jun-26"];
-        
+
         let salesChart = null, rfqChart = null;
         let prodCharts = {};
         let produksiData = [], targetData = {};
-        
+        let TARGET_SALES = 20000000000;
+
         const machineToDivision = {
             "YH1538": "Double Header", "YH1030": "Double Header", "H20": "Double Header",
             "N2308": "2D3B", "PF630": "2D3B", "N2310": "2D3B", "HBF": "2D3B", "HBP": "2D3B",
@@ -577,7 +781,7 @@
             "M300": "Furnace",
             "Line Preatreatment": "Plating", "Line Zinc": "Plating", "Line Backing": "Plating", "Line CHromating": "Plating"
         };
-        
+
         function detectDivision(machineName) {
             if (!machineName) return "Unknown";
             for (let [key, division] of Object.entries(machineToDivision)) {
@@ -585,17 +789,18 @@
             }
             return "Unknown";
         }
-        
+
         function formatRupiahShort(num) {
             if (num >= 1000000000) return (num/1000000000).toFixed(1)+'M';
             if (num >= 1000000) return (num/1000000).toFixed(1)+'Jt';
             if (num >= 1000) return (num/1000).toFixed(0)+'Rb';
             return num.toString();
         }
+
         function formatRupiahFull(num) {
             return new Intl.NumberFormat('id-ID', { style:'currency', currency:'IDR', minimumFractionDigits:0 }).format(num);
         }
-        
+
         async function fetchCSV(url) {
             try {
                 const resp = await fetch(url, { cache: 'no-cache' });
@@ -614,7 +819,198 @@
                 return result;
             } catch(e) { return []; }
         }
-        
+
+        // ==================== SALES - SAMA PERSIS DENGAN MOUNTSALES ====================
+        async function loadSalesData() {
+            try {
+                const match = PUBLISHED_SHEET_URL.match(/\/d\/e\/([^\/]+)\//);
+                if (match) {
+                    const csvUrl = `https://docs.google.com/spreadsheets/d/e/${match[1]}/pub?gid=814757349&single=true&output=csv`;
+                    const resp = await fetch(csvUrl, { cache: 'no-cache' });
+                    if (resp.ok) {
+                        const text = await resp.text();
+                        const lines = text.trim().split(/\r?\n/);
+                        if (lines.length > 1) {
+                            const months = [], sales = [];
+                            // Ambil semua data, tidak hanya 12 bulan
+                            for (let i = 1; i < lines.length; i++) {
+                                const parts = lines[i].split(',');
+                                if (parts.length >= 2) {
+                                    let month = parts[0].replace(/"/g, '').trim();
+                                    let sale = parseInt(parts[1].replace(/"/g, '').replace(/\./g, ''));
+                                    if (month && !isNaN(sale) && sale > 0) { 
+                                        months.push(month); 
+                                        sales.push(sale); 
+                                    }
+                                }
+                            }
+                            if (months.length) {
+                                const total = sales.reduce((a,b)=>a+b,0);
+                                document.getElementById('sales-total').innerHTML = formatRupiahShort(total);
+                                document.getElementById('sales-avg').innerHTML = formatRupiahShort(total/sales.length);
+                                document.getElementById('sales-max').innerHTML = formatRupiahShort(Math.max(...sales));
+                                renderSalesChart(months, sales);
+                                document.getElementById('sales-last-update').innerHTML = '🔄 ' + new Date().toLocaleTimeString('id-ID');
+                                return;
+                            }
+                        }
+                    }
+                }
+                throw new Error("Fallback");
+            } catch(e) {
+                // Data fallback dari QC_DATABASE
+                const fallbackMonths = ['Jan-24','Feb-24','Mar-24','Apr-24','May-24','Jun-24','Jul-24','Aug-24','Sep-24','Oct-24','Nov-24','Dec-24','Jan-25','Feb-25','Mar-25','Apr-25','May-25','Jun-25','Jul-25','Aug-25','Sep-25','Oct-25','Nov-25','Dec-25','Jan-26','Feb-26','Mar-26'];
+                const fallbackSales = [10006187439,9508911527,9219066914,7182469253,9338861801,9537123839,10394940565,11042756611,10020622417,10748250637,9571884630,8475798862,16468658523,15650199548,14858791994,14109501394,15682371180,15799293609,19743392322,17146319828,17427474174,18589695795,16430859758,15334450998,17341237916,17352396028,13822947956];
+                const total = fallbackSales.reduce((a,b)=>a+b,0);
+                document.getElementById('sales-total').innerHTML = formatRupiahShort(total);
+                document.getElementById('sales-avg').innerHTML = formatRupiahShort(total/fallbackSales.length);
+                document.getElementById('sales-max').innerHTML = formatRupiahShort(Math.max(...fallbackSales));
+                renderSalesChart(fallbackMonths, fallbackSales);
+                document.getElementById('sales-last-update').innerHTML = '🔄 ' + new Date().toLocaleTimeString('id-ID') + ' (Demo)';
+            }
+        }
+
+        function renderSalesChart(labels, data) {
+            const ctx = document.getElementById('salesChart').getContext('2d');
+            if (salesChart) salesChart.destroy();
+            
+            const maxSalesValue = Math.max(...data);
+            const maxValue = Math.max(maxSalesValue, TARGET_SALES);
+            const suggestedMax = Math.ceil(maxValue * 1.15);
+            
+            // Buat data target (konstan untuk semua bulan)
+            const targetData = [];
+            for (let i = 0; i < labels.length; i++) {
+                targetData.push(TARGET_SALES);
+            }
+            
+            salesChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Penjualan (Rupiah)',
+                            type: 'bar',
+                            data: data,
+                            backgroundColor: '#0284C7',
+                            borderRadius: 8,
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.85
+                        },
+                        {
+                            label: 'Trend',
+                            type: 'line',
+                            data: data,
+                            borderColor: '#22c55e',
+                            backgroundColor: 'rgba(34, 197, 94, 0.05)',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#22c55e',
+                            pointBorderColor: '#FFFFFF',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Target 20 Miliar',
+                            type: 'line',
+                            data: targetData,
+                            borderColor: '#F59E0B',
+                            backgroundColor: 'transparent',
+                            borderWidth: 3,
+                            borderDash: [8, 6],
+                            pointRadius: 0,
+                            pointHoverRadius: 0,
+                            fill: false,
+                            tension: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { 
+                            position: 'top',
+                            labels: { 
+                                color: '#475569', 
+                                font: { size: 10, weight: 'bold' }, 
+                                usePointStyle: true, 
+                                boxWidth: 12,
+                                padding: 12
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#1e293b',
+                            titleColor: '#0284C7',
+                            bodyColor: '#e2e8f0',
+                            padding: 10,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatRupiahFull(context.raw);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { 
+                            ticks: { color: '#64748B', font: { size: 9, weight: 'bold' }, rotation: 45, autoSkip: true }, 
+                            grid: { display: false },
+                            title: { display: true, text: 'Bulan', color: '#64748B', font: { size: 9, weight: 'bold' } }
+                        },
+                        y: { 
+                            ticks: { 
+                                color: '#64748B', 
+                                font: { size: 9 },
+                                callback: function(value) {
+                                    return formatRupiahShort(value);
+                                }
+                            }, 
+                            grid: { color: '#E2E8F0', lineWidth: 1 }, 
+                            beginAtZero: true,
+                            suggestedMax: suggestedMax,
+                            title: { display: true, text: 'Nominal (Rupiah)', color: '#64748B', font: { size: 9, weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+            
+            // Tambahkan angka di atas bar - SAMA PERSIS DENGAN MOUNTSALES
+            const originalDraw = salesChart.draw;
+            salesChart.draw = function() {
+                originalDraw.apply(this, arguments);
+                const ctx = this.ctx;
+                ctx.save();
+                ctx.font = 'bold 9px "Inter"';
+                ctx.fillStyle = '#1e293b';
+                ctx.textAlign = 'center';
+                
+                for (let i = 0; i < this.data.datasets.length; i++) {
+                    const dataset = this.data.datasets[i];
+                    if (dataset.type === 'bar') {
+                        const meta = this.getDatasetMeta(i);
+                        if (!meta.hidden && meta.data) {
+                            for (let j = 0; j < meta.data.length; j++) {
+                                const element = meta.data[j];
+                                const value = dataset.data[j];
+                                if (value > 0 && element) {
+                                    const position = element.tooltipPosition();
+                                    if (position) {
+                                        ctx.fillText(formatRupiahShort(value), position.x, position.y - 6);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                ctx.restore();
+            };
+            salesChart.update();
+        }
+
+        // ==================== PRODUCTION ====================
         async function loadProduksiFromSheet() {
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${PROD_DATA_SHEET}`;
             const data = await fetchCSV(url);
@@ -637,7 +1033,7 @@
             }
             return produksiData;
         }
-        
+
         async function loadTargetFromSheet() {
             const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${TARGET_SHEET}`;
             const data = await fetchCSV(url);
@@ -668,92 +1064,7 @@
             }
             return targetData;
         }
-        
-        // ==================== SALES CHART ====================
-        async function loadSalesData() {
-            try {
-                const match = PUBLISHED_SHEET_URL.match(/\/d\/e\/([^\/]+)\//);
-                if (match) {
-                    const csvUrl = `https://docs.google.com/spreadsheets/d/e/${match[1]}/pub?gid=814757349&single=true&output=csv`;
-                    const resp = await fetch(csvUrl, { cache: 'no-cache' });
-                    if (resp.ok) {
-                        const text = await resp.text();
-                        const lines = text.trim().split(/\r?\n/);
-                        if (lines.length > 1) {
-                            const months = [], sales = [];
-                            for (let i = 1; i < lines.length && i <= 12; i++) {
-                                const parts = lines[i].split(',');
-                                if (parts.length >= 2) {
-                                    let month = parts[0].replace(/"/g, '').trim();
-                                    let sale = parseInt(parts[1].replace(/"/g, '').replace(/\./g, ''));
-                                    if (month && !isNaN(sale)) { months.push(month); sales.push(sale); }
-                                }
-                            }
-                            if (months.length) {
-                                const total = sales.reduce((a,b)=>a+b,0);
-                                document.getElementById('sales-total').innerHTML = formatRupiahShort(total);
-                                document.getElementById('sales-avg').innerHTML = formatRupiahShort(total/sales.length);
-                                document.getElementById('sales-max').innerHTML = formatRupiahShort(Math.max(...sales));
-                                renderSalesChart(months, sales);
-                                document.getElementById('sales-last-update').innerHTML = new Date().toLocaleTimeString('id-ID');
-                                return;
-                            }
-                        }
-                    }
-                }
-                throw new Error("Fallback");
-            } catch(e) {
-                const fallbackMonths = ['Jan-26', 'Feb-26', 'Mar-26', 'Apr-26', 'Mei-26', 'Jun-26'];
-                const fallbackSales = [15000000, 25000000, 18000000, 22000000, 21000000, 23000000];
-                document.getElementById('sales-total').innerHTML = formatRupiahShort(fallbackSales.reduce((a,b)=>a+b,0));
-                document.getElementById('sales-avg').innerHTML = formatRupiahShort(20000000);
-                document.getElementById('sales-max').innerHTML = formatRupiahShort(25000000);
-                renderSalesChart(fallbackMonths, fallbackSales);
-                document.getElementById('sales-last-update').innerHTML = new Date().toLocaleTimeString('id-ID') + " (Demo)";
-            }
-        }
-        
-        function renderSalesChart(labels, data) {
-            const ctx = document.getElementById('salesChart').getContext('2d');
-            if (salesChart) salesChart.destroy();
-            const maxValue = Math.max(...data);
-            const suggestedMax = Math.ceil(maxValue * 1.15);
-            salesChart = new Chart(ctx, {
-                type: 'bar',
-                data: { labels: labels, datasets: [
-                    { label: 'Penjualan (Rupiah)', type: 'bar', data: data, backgroundColor: '#0284C7', borderRadius: 8, barPercentage: 0.65 },
-                    { label: 'Trend', type: 'line', data: data, borderColor: '#22c55e', borderWidth: 3, pointRadius: 5, pointBackgroundColor: '#22c55e', pointBorderColor: '#fff', fill: true, tension: 0.3 }
-                ]},
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { font: { size: 10 } } }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${formatRupiahFull(ctx.raw)}` } } }, scales: { x: { ticks: { font: { size: 9 }, rotation: 45 } }, y: { ticks: { callback: v => formatRupiahShort(v), font: { size: 9 } }, beginAtZero: true, suggestedMax: suggestedMax, title: { display: true, text: 'Jumlah (Rupiah)', font: { size: 9 } } } } }
-            });
-            const originalDraw = salesChart.draw;
-            salesChart.draw = function() {
-                originalDraw.apply(this, arguments);
-                const ctx = this.ctx;
-                this.data.datasets.forEach((dataset, i) => {
-                    if (dataset.type === 'bar') {
-                        const meta = this.getDatasetMeta(i);
-                        if (meta && meta.data) {
-                            meta.data.forEach((element, index) => {
-                                const value = dataset.data[index];
-                                if (value > 0 && element) {
-                                    ctx.save();
-                                    ctx.font = 'bold 9px "Inter"';
-                                    ctx.fillStyle = '#1e293b';
-                                    ctx.textAlign = 'center';
-                                    const pos = element.tooltipPosition();
-                                    if (pos) ctx.fillText(formatRupiahShort(value), pos.x, pos.y - 8);
-                                    ctx.restore();
-                                }
-                            });
-                        }
-                    }
-                });
-            };
-            salesChart.update();
-        }
-        
-        // ==================== PRODUCTION ====================
+
         function getProductionByDivision(divisi) {
             const result = {};
             BULAN_LIST.forEach(b => result[b] = 0);
@@ -766,7 +1077,7 @@
             });
             return result;
         }
-        
+
         function renderProductionCharts() {
             const chartIds = ["dh", "2d3b", "rolling", "furnace", "plating"];
             const divisiMap = { "dh": "Double Header", "2d3b": "2D3B", "rolling": "rolling", "furnace": "Furnace", "plating": "Plating" };
@@ -780,9 +1091,9 @@
                 const totalReal = realData.reduce((a,b)=>a+b,0);
                 const totalTarget = targetDataArr.reduce((a,b)=>a+b,0);
                 
-                document.getElementById(`total-${id}`).innerHTML = totalReal.toLocaleString() + " PCS";
-                document.getElementById(`target-${id}`).innerHTML = totalTarget.toLocaleString() + " PCS";
-                document.getElementById(`real-${id}`).innerHTML = totalReal.toLocaleString() + " PCS";
+                document.getElementById(`total-${id}`).innerHTML = totalReal.toLocaleString() + ' PCS';
+                document.getElementById(`target-${id}`).innerHTML = totalTarget.toLocaleString();
+                document.getElementById(`real-${id}`).innerHTML = totalReal.toLocaleString();
                 
                 const ctx = document.getElementById(`chart-${id}`).getContext('2d');
                 if (prodCharts[divisi]) prodCharts[divisi].destroy();
@@ -792,11 +1103,55 @@
                 
                 prodCharts[divisi] = new Chart(ctx, {
                     type: 'bar',
-                    data: { labels: BULAN_LIST, datasets: [
-                        { label: 'Real Produksi', type: 'bar', data: realData, backgroundColor: '#0284C7', borderRadius: 6, barPercentage: 0.6 },
-                        { label: 'Target', type: 'line', data: targetDataArr, borderColor: '#F59E0B', borderWidth: 3, borderDash: [8,6], pointRadius: 0, fill: false, tension: 0 }
-                    ]},
-                    options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { font: { size: 9 }, usePointStyle: false, boxWidth: 20 } }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toLocaleString()} PCS` } } }, scales: { y: { beginAtZero: true, suggestedMax: suggestedMax, ticks: { font: { size: 8 }, callback: v => v.toLocaleString() }, title: { display: true, text: 'Jumlah (PCS)', font: { size: 8 } } }, x: { ticks: { font: { size: 8 }, rotation: 45 } } } }
+                    data: { 
+                        labels: BULAN_LIST, 
+                        datasets: [
+                            { 
+                                label: 'Real Produksi', 
+                                type: 'bar', 
+                                data: realData, 
+                                backgroundColor: '#0284C7', 
+                                borderRadius: 6, 
+                                barPercentage: 0.6 
+                            },
+                            { 
+                                label: 'Target', 
+                                type: 'line', 
+                                data: targetDataArr, 
+                                borderColor: '#F59E0B', 
+                                borderWidth: 3, 
+                                borderDash: [8,6], 
+                                pointRadius: 0, 
+                                fill: false, 
+                                tension: 0 
+                            }
+                        ]
+                    },
+                    options: { 
+                        responsive: true, 
+                        maintainAspectRatio: false, 
+                        plugins: { 
+                            legend: { 
+                                position: 'top', 
+                                labels: { font: { size: 8 }, usePointStyle: false, boxWidth: 15 } 
+                            }, 
+                            tooltip: { 
+                                callbacks: { 
+                                    label: (ctx) => `${ctx.dataset.label}: ${ctx.raw.toLocaleString()} PCS` 
+                                } 
+                            } 
+                        }, 
+                        scales: { 
+                            y: { 
+                                beginAtZero: true, 
+                                suggestedMax: suggestedMax, 
+                                ticks: { font: { size: 7 }, callback: v => v.toLocaleString() } 
+                            }, 
+                            x: { 
+                                ticks: { font: { size: 7 }, rotation: 45 } 
+                            } 
+                        } 
+                    }
                 });
                 
                 const originalDraw = prodCharts[divisi].draw;
@@ -811,11 +1166,11 @@
                                     const value = dataset.data[index];
                                     if (value > 0 && element) {
                                         ctx.save();
-                                        ctx.font = 'bold 9px "Inter"';
+                                        ctx.font = 'bold 8px "Inter"';
                                         ctx.fillStyle = '#1e293b';
                                         ctx.textAlign = 'center';
                                         const pos = element.tooltipPosition();
-                                        if (pos) ctx.fillText(value.toLocaleString(), pos.x, pos.y - 6);
+                                        if (pos) ctx.fillText(value.toLocaleString(), pos.x, pos.y - 5);
                                         ctx.restore();
                                     }
                                 });
@@ -825,15 +1180,15 @@
                 };
                 prodCharts[divisi].update();
             }
-            document.getElementById('prod-last-update').innerHTML = new Date().toLocaleTimeString('id-ID');
+            document.getElementById('prod-last-update').innerHTML = '🔄 ' + new Date().toLocaleTimeString('id-ID');
         }
-        
+
         async function loadProductionData() {
             await loadProduksiFromSheet();
             await loadTargetFromSheet();
             renderProductionCharts();
         }
-        
+
         // ==================== RFQ CHART ====================
         async function loadRFQChart() {
             try {
@@ -855,11 +1210,13 @@
                 } else {
                     renderRFQChart(["Jan-26","Feb-26","Mar-26","Apr-26","May-26"], [17,4,6,11,11], [3,3,4,7,2], [11,0,3,2,14], [0,5,0,7,47]);
                 }
+                document.getElementById('rfq-last-update').innerHTML = '🔄 ' + new Date().toLocaleTimeString('id-ID');
             } catch(e) {
                 renderRFQChart(["Jan-26","Feb-26","Mar-26","Apr-26","May-26"], [17,4,6,11,11], [3,3,4,7,2], [11,0,3,2,14], [0,5,0,7,47]);
+                document.getElementById('rfq-last-update').innerHTML = '🔄 ' + new Date().toLocaleTimeString('id-ID') + ' (Demo)';
             }
         }
-        
+
         function renderRFQChart(labels, continueData, taData, declineData, noProgresData) {
             const ctx = document.getElementById('rfqChart').getContext('2d');
             if (rfqChart) rfqChart.destroy();
@@ -868,13 +1225,48 @@
             const suggestedMax = maxValue === 0 ? 20 : Math.ceil(maxValue * 1.15);
             rfqChart = new Chart(ctx, {
                 type: 'bar',
-                data: { labels: labels, datasets: [
-                    { label: 'Continue', data: continueData, backgroundColor: '#22c55e', borderRadius: 6, barPercentage: 0.7 },
-                    { label: 'Technical Assistance', data: taData, backgroundColor: '#3b82f6', borderRadius: 6, barPercentage: 0.7 },
-                    { label: 'Decline', data: declineData, backgroundColor: '#ef4444', borderRadius: 6, barPercentage: 0.7 },
-                    { label: 'No Progres', data: noProgresData, backgroundColor: '#9ca3af', borderRadius: 6, barPercentage: 0.7 }
-                ]},
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', labels: { font: { size: 8 } } }, tooltip: { callbacks: { label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}` } } }, scales: { x: { ticks: { font: { size: 8 }, rotation: 45 } }, y: { ticks: { stepSize: Math.ceil(suggestedMax / 6), font: { size: 8 } }, beginAtZero: true, suggestedMax: suggestedMax, title: { display: true, text: 'Jumlah RFQ', font: { size: 8 } } } } }
+                data: { 
+                    labels: labels, 
+                    datasets: [
+                        { label: 'Continue', data: continueData, backgroundColor: '#22c55e', borderRadius: 6, barPercentage: 0.7 },
+                        { label: 'Technical Assistance', data: taData, backgroundColor: '#3b82f6', borderRadius: 6, barPercentage: 0.7 },
+                        { label: 'Decline', data: declineData, backgroundColor: '#ef4444', borderRadius: 6, barPercentage: 0.7 },
+                        { label: 'No Progres', data: noProgresData, backgroundColor: '#9ca3af', borderRadius: 6, barPercentage: 0.7 }
+                    ]
+                },
+                options: { 
+                    responsive: true, 
+                    maintainAspectRatio: false, 
+                    plugins: { 
+                        legend: { 
+                            position: 'top', 
+                            labels: { font: { size: 9 }, usePointStyle: false, boxWidth: 15 } 
+                        }, 
+                        tooltip: { 
+                            callbacks: { 
+                                label: (ctx) => `${ctx.dataset.label}: ${ctx.raw}` 
+                            } 
+                        } 
+                    }, 
+                    scales: { 
+                        x: { 
+                            ticks: { font: { size: 9 }, rotation: 45 } 
+                        }, 
+                        y: { 
+                            ticks: { 
+                                stepSize: Math.ceil(suggestedMax / 6), 
+                                font: { size: 9 } 
+                            }, 
+                            beginAtZero: true, 
+                            suggestedMax: suggestedMax, 
+                            title: { 
+                                display: true, 
+                                text: 'Jumlah RFQ', 
+                                font: { size: 9 } 
+                            } 
+                        } 
+                    } 
+                }
             });
             const originalDraw = rfqChart.draw;
             rfqChart.draw = function() {
@@ -900,74 +1292,79 @@
             };
             rfqChart.update();
         }
-        
-        // ==================== TODAY'S EVENTS ====================
-        async function loadTodayEvents() {
-            try {
-                const resp = await fetch(EVENT_API);
-                const events = await resp.json();
-                const today = new Date();
-                const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
-                const todayEvents = events.filter(e => e.date === todayStr);
-                const container = document.getElementById('today-events-list');
-                if (todayEvents.length === 0) { container.innerHTML = '<div class="text-center text-slate-500 py-4">📭 No events today</div>'; return; }
-                container.innerHTML = todayEvents.map(e => `<div class="event-card"><div class="flex gap-2"><span class="text-cyan-600 text-base">${e.type === 'audit' ? '🔍' : '👥'}</span><span class="font-medium">${e.title}</span></div><div class="text-[9px] text-slate-400 mt-0.5">${e.type} - ${e.time || 'All day'}</div></div>`).join('');
-            } catch(e) {
-                document.getElementById('today-events-list').innerHTML = `<div class="event-card"><div class="flex gap-2"><span class="text-cyan-600">🔍</span><span class="font-medium">Audit Quality Control</span></div><div class="text-[9px] text-slate-400">audit - 10:00</div></div>
-                <div class="event-card"><div class="flex gap-2"><span class="text-cyan-600">👥</span><span class="font-medium">Visit Customer</span></div><div class="text-[9px] text-slate-400">visit - 13:30</div></div>`;
-            }
+
+        // ==================== SLIDER ====================
+        let currentSlide = 0;
+        const totalSlides = 3;
+        let autoInterval = null;
+
+        function updateSlider() {
+            const wrapper = document.getElementById('sliderWrapper');
+            if (wrapper) wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+            const dots = document.querySelectorAll('.slider-dot');
+            dots.forEach((dot, idx) => { 
+                if (idx === currentSlide) dot.classList.add('active'); 
+                else dot.classList.remove('active'); 
+            });
+            resetAutoSlide();
         }
-        
-        // ==================== SUB SLIDER ====================
-        let subCurrentSlide = 0;
-        const subTotalSlides = 5;
-        let subAutoInterval = null;
-        
-        function updateSubSlider() {
-            const wrapper = document.getElementById('subSliderWrapper');
-            if (wrapper) wrapper.style.transform = `translateX(-${subCurrentSlide * 100}%)`;
-            const dots = document.querySelectorAll('.sub-slider-dot');
-            dots.forEach((dot, idx) => { if (idx === subCurrentSlide) dot.classList.add('active'); else dot.classList.remove('active'); });
-            resetSubAutoSlide();
+
+        function nextSlide() { 
+            currentSlide = (currentSlide + 1) % totalSlides; 
+            updateSlider(); 
         }
-        function nextSubSlide() { subCurrentSlide = (subCurrentSlide + 1) % subTotalSlides; updateSubSlider(); }
-        function prevSubSlide() { subCurrentSlide = (subCurrentSlide - 1 + subTotalSlides) % subTotalSlides; updateSubSlider(); }
-        function goToSubSlide(idx) { subCurrentSlide = idx; updateSubSlider(); }
-        
-        function createSubDots() {
-            const container = document.getElementById('subSliderDots');
+
+        function goToSlide(idx) { 
+            currentSlide = idx; 
+            updateSlider(); 
+        }
+
+        function createDots() {
+            const container = document.getElementById('sliderDots');
             if (!container) return;
             container.innerHTML = '';
-            for (let i = 0; i < subTotalSlides; i++) {
+            const slideNames = ['Sales', 'Production', 'RFQ'];
+            for (let i = 0; i < totalSlides; i++) {
                 const dot = document.createElement('div');
-                dot.className = 'sub-slider-dot';
+                dot.className = 'slider-dot';
                 if (i === 0) dot.classList.add('active');
-                dot.onclick = () => goToSubSlide(i);
+                dot.onclick = () => goToSlide(i);
+                dot.title = slideNames[i];
                 container.appendChild(dot);
             }
         }
-        function startSubAutoSlide() { if (subAutoInterval) clearInterval(subAutoInterval); subAutoInterval = setInterval(() => nextSubSlide(), 12000); }
-        function resetSubAutoSlide() { if (subAutoInterval) { clearInterval(subAutoInterval); startSubAutoSlide(); } }
-        
+
+        function startAutoSlide() { 
+            if (autoInterval) clearInterval(autoInterval); 
+            autoInterval = setInterval(() => nextSlide(), 10000); 
+        }
+
+        function resetAutoSlide() { 
+            if (autoInterval) { 
+                clearInterval(autoInterval); 
+                startAutoSlide(); 
+            } 
+        }
+
         // ==================== INIT ====================
         checkAuth();
         renderMenu();
         updateClock();
         setInterval(updateClock, 1000);
-        
-        createSubDots();
-        startSubAutoSlide();
-        
+
+        createDots();
+        startAutoSlide();
+
+        // Load semua data
         loadSalesData();
         loadProductionData();
         loadRFQChart();
-        loadTodayEvents();
-        
+
+        // Refresh setiap 30 detik
         setInterval(() => {
             loadSalesData();
             loadProductionData();
             loadRFQChart();
-            loadTodayEvents();
         }, 30000);
     </script>
 </body>
