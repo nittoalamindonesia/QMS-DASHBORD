@@ -183,10 +183,10 @@
             display: flex;
             transition: transform 0.8s ease-in-out;
             height: 100%;
-            width: 100%;
+            width: 200%;
         }
         .slider-slide {
-            flex: 0 0 100%;
+            flex: 0 0 50%;
             height: 100%;
             padding: 0.5rem 0.5rem 0.3rem 0.5rem;
             overflow: hidden;
@@ -197,6 +197,85 @@
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            border-radius: 1.2rem;
+        }
+        .slider-slide .card .chart-container {
+            flex: 1;
+            min-height: 0;
+            position: relative;
+        }
+        .slider-slide .card .chart-container canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+        }
+        
+        /* ===== LEGEND ===== */
+        .legend-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 4px 0 4px;
+            flex-shrink: 0;
+            gap: 4px;
+            border-top: 1px solid #e8eef6;
+            margin-top: 4px;
+            padding-top: 4px;
+        }
+
+        .legend-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 16px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #1b3a57;
+        }
+        .legend-item .line {
+            width: 22px;
+            height: 3px;
+            border-radius: 3px;
+        }
+        .legend-item .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .status-badge {
+            background: #e6f2e8;
+            padding: 3px 14px 3px 10px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            font-size: 0.65rem;
+            color: #1a5a3a;
+            border: 1px solid #b9d5c1;
+            white-space: nowrap;
+        }
+        .status-badge.error {
+            background: #fde8e8;
+            color: #b13e3e;
+            border-color: #f5c6c6;
+        }
+
+        .refresh-info {
+            font-size: 0.6rem;
+            color: #6a8aaa;
+            background: #eef4fc;
+            padding: 2px 10px;
+            border-radius: 30px;
+            white-space: nowrap;
         }
         
         /* Slider Dots */
@@ -231,48 +310,6 @@
         .slider-dot:hover {
             background: rgba(255,255,255,0.7);
         }
-        
-        .slide-title {
-            font-size: 0.75rem;
-            font-weight: bold;
-            color: #1A63F6;
-            margin-bottom: 0.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            flex-shrink: 0;
-        }
-        
-        .last-update {
-            font-size: 0.45rem;
-            color: #94A3B8;
-            text-align: right;
-            flex-shrink: 0;
-        }
-
-        /* IFrame Container */
-        .iframe-container {
-            flex: 1;
-            min-height: 0;
-            position: relative;
-            overflow: hidden;
-        }
-        .iframe-container iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: 0.5rem;
-            background: #fafdff;
-            display: block;
-        }
-
-        @media (min-width: 1920px) {
-            .slide-title { font-size: 0.9rem; }
-        }
-        
-        @media (min-width: 2560px) {
-            .slide-title { font-size: 1.05rem; }
-        }
 
         /* ===== LAYOUT FULL HEIGHT ===== */
         .dashboard-wrapper {
@@ -283,7 +320,6 @@
             overflow: hidden;
         }
 
-        /* TOP BAR */
         .top-bar {
             flex-shrink: 0;
             background: white;
@@ -294,12 +330,10 @@
             align-items: center;
         }
 
-        /* RUNNING TEXT */
         .running-text {
             flex-shrink: 0;
         }
 
-        /* SLIDER */
         .slider-container {
             flex: 1;
             min-height: 0;
@@ -367,10 +401,31 @@
                 <!-- SLIDE 1: Electro Cleaning (NaOH) -->
                 <div class="slider-slide">
                     <div class="card">
-                        <div class="slide-title">📊 Konsentrasi Electro Cleaning · PAKUNA-32LA (T)</div>
-                        <div class="last-update" id="cleaning-last-update">Loading...</div>
-                        <div class="iframe-container">
-                            <iframe src="fplatingelektrocleaning.html" id="iframeCleaning"></iframe>
+                        <div class="chart-container">
+                            <canvas id="chartCleaning"></canvas>
+                        </div>
+                        <div class="legend-bar">
+                            <div class="legend-group">
+                                <div class="legend-item">
+                                    <span class="line" style="background: #FDD835;"></span>
+                                    <span class="dot" style="background: #FDD835;"></span>
+                                    Shift-1
+                                </div>
+                                <div class="legend-item">
+                                    <span class="line" style="background: #1E88E5;"></span>
+                                    <span class="dot" style="background: #1E88E5;"></span>
+                                    Shift-2
+                                </div>
+                                <div class="legend-item">
+                                    <span class="line" style="background: #E53935;"></span>
+                                    <span class="dot" style="background: #E53935;"></span>
+                                    Shift-3
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <span class="refresh-info" id="cleanRefresh">🔄 30s</span>
+                                <div class="status-badge" id="cleanStatus"><i class="fas fa-info-circle"></i> <span id="cleanStatusText">Memuat...</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -378,10 +433,31 @@
                 <!-- SLIDE 2: Electro Degreasing -->
                 <div class="slider-slide">
                     <div class="card">
-                        <div class="slide-title">📊 Konsentrasi Electro Degreasing · PAKUNA-32LA (T)</div>
-                        <div class="last-update" id="degreasing-last-update">Loading...</div>
-                        <div class="iframe-container">
-                            <iframe src="fplatingelektrodegreasing.html" id="iframeDegreasing"></iframe>
+                        <div class="chart-container">
+                            <canvas id="chartDegreasing"></canvas>
+                        </div>
+                        <div class="legend-bar">
+                            <div class="legend-group">
+                                <div class="legend-item">
+                                    <span class="line" style="background: #FDD835;"></span>
+                                    <span class="dot" style="background: #FDD835;"></span>
+                                    Shift-1
+                                </div>
+                                <div class="legend-item">
+                                    <span class="line" style="background: #1E88E5;"></span>
+                                    <span class="dot" style="background: #1E88E5;"></span>
+                                    Shift-2
+                                </div>
+                                <div class="legend-item">
+                                    <span class="line" style="background: #E53935;"></span>
+                                    <span class="dot" style="background: #E53935;"></span>
+                                    Shift-3
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                                <span class="refresh-info" id="degRefresh">🔄 30s</span>
+                                <div class="status-badge" id="degStatus"><i class="fas fa-info-circle"></i> <span id="degStatusText">Memuat...</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -394,8 +470,389 @@
 
     </div>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
     <script>
-        // ==================== KONFIGURASI MENU ====================
+        // ============================================================
+        //  KONFIGURASI
+        // ============================================================
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz8TOqEK-vA1AgckOTbi0nIsTNAAUkSTQD3J15hf0PmCzkrCGkvl30SuEmkkG2osHM/exec';
+        const REFRESH_INTERVAL = 30000;
+
+        // ============================================================
+        //  DATA STATE
+        // ============================================================
+        let cleaningData = { shift1: [], shift2: [], shift3: [] };
+        let degreasingData = { shift1: [], shift2: [], shift3: [] };
+        let isLoading = false;
+
+        // ============================================================
+        //  DRAW CHART FUNCTION
+        // ============================================================
+        function drawChart(canvasId, data, config) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+
+            const rect = canvas.parentElement.getBoundingClientRect();
+            const dpr = window.devicePixelRatio || 1;
+
+            const width = rect.width || 700;
+            const height = rect.height || 340;
+
+            canvas.width = width * dpr;
+            canvas.height = height * dpr;
+            canvas.style.width = width + 'px';
+            canvas.style.height = height + 'px';
+
+            const ctx = canvas.getContext('2d');
+            ctx.scale(dpr, dpr);
+
+            const { shift1, shift2, shift3 } = data;
+            const maxLen = Math.max(shift1.length, shift2.length, shift3.length);
+            const n = maxLen;
+
+            const { yMin, yMax, lsl, mid, usl, ucl, lcl, title } = config;
+
+            const pad = { top: 32, bottom: 35, left: 48, right: 38 };
+            const chartW = width - pad.left - pad.right;
+            const chartH = height - pad.top - pad.bottom;
+
+            const mapY = (v) => pad.top + chartH - ((v - yMin) / (yMax - yMin)) * chartH;
+
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#fafdff';
+            ctx.fillRect(0, 0, width, height);
+
+            // Grid
+            ctx.strokeStyle = '#dce4ed';
+            ctx.lineWidth = 0.7;
+            ctx.setLineDash([3, 5]);
+            const stepGrid = (yMax - yMin) / 6;
+            for (let v = yMin; v <= yMax + 0.1; v += stepGrid) {
+                const yPos = mapY(v);
+                ctx.beginPath();
+                ctx.moveTo(pad.left, yPos);
+                ctx.lineTo(pad.left + chartW, yPos);
+                ctx.stroke();
+                ctx.fillStyle = '#3a5b7a';
+                ctx.font = '10px "Segoe UI", sans-serif';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(Math.round(v), pad.left - 8, yPos);
+            }
+            ctx.setLineDash([]);
+
+            // Reference lines (HITAM)
+            const drawRef = (value, label) => {
+                const yPos = mapY(value);
+                ctx.save();
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 1.6;
+                ctx.setLineDash([6, 5]);
+                ctx.beginPath();
+                ctx.moveTo(pad.left, yPos);
+                ctx.lineTo(pad.left + chartW, yPos);
+                ctx.stroke();
+                ctx.restore();
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 9px "Segoe UI", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(label, pad.left + chartW + 4, yPos);
+            };
+
+            drawRef(lsl, 'LSL ' + lsl);
+            drawRef(mid, 'MID ' + mid);
+            drawRef(usl, 'USL ' + usl);
+            drawRef(ucl, 'UCL ' + ucl);
+            drawRef(lcl, 'LCL ' + lcl);
+
+            // Zone area
+            ctx.save();
+            ctx.fillStyle = 'rgba(0,0,0,0.04)';
+            ctx.fillRect(pad.left, mapY(usl), chartW, mapY(usl + 0.5) - mapY(usl));
+            ctx.fillRect(pad.left, mapY(lsl - 0.5), chartW, mapY(lsl) - mapY(lsl - 0.5));
+            ctx.restore();
+
+            // Draw line with markers
+            function drawLineWithMarkers(dataArr, color) {
+                if (!dataArr || dataArr.length === 0) return;
+                const xStep = chartW / (Math.max(dataArr.length - 1, 1));
+
+                ctx.save();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2.2;
+                ctx.beginPath();
+                dataArr.forEach((val, idx) => {
+                    const x = pad.left + idx * xStep;
+                    const y = mapY(val);
+                    if (idx === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+                ctx.restore();
+
+                dataArr.forEach((val, idx) => {
+                    const x = pad.left + idx * xStep;
+                    const y = mapY(val);
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(0,0,0,0.10)';
+                    ctx.shadowBlur = 5;
+                    ctx.fillStyle = color;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5.5, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                    ctx.restore();
+                });
+            }
+
+            drawLineWithMarkers(shift1, '#FDD835');
+            drawLineWithMarkers(shift2, '#1E88E5');
+            drawLineWithMarkers(shift3, '#E53935');
+
+            // X-axis labels
+            if (n > 0) {
+                ctx.fillStyle = '#2f5272';
+                ctx.font = '9px "Segoe UI", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                const step = chartW / Math.max(n - 1, 1);
+                for (let i = 0; i < n; i++) {
+                    const x = pad.left + i * step;
+                    if (i % 2 === 0 || n < 15) {
+                        ctx.fillText(i + 1, x, pad.top + chartH + 6);
+                    }
+                }
+                ctx.fillStyle = '#3d5f7a';
+                ctx.font = '9px "Segoe UI", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Sampel ke-', pad.left + chartW / 2, pad.top + chartH + 20);
+            }
+
+            ctx.strokeStyle = '#b8cddf';
+            ctx.lineWidth = 0.8;
+            ctx.strokeRect(pad.left, pad.top, chartW, chartH);
+
+            // Title
+            ctx.fillStyle = '#0b2a43';
+            ctx.font = '600 13px "Segoe UI", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText(title, width / 2, 4);
+        }
+
+        // ============================================================
+        //  DRAW BOTH CHARTS
+        // ============================================================
+        function drawBothCharts() {
+            drawChart('chartCleaning', cleaningData, {
+                yMin: 55,
+                yMax: 85,
+                lsl: 60,
+                mid: 70,
+                usl: 80,
+                ucl: 77.5,
+                lcl: 62.5,
+                title: 'KONSENTRASI ELECTRO CLEANING (NaOH) · PAKUNA-32LA (T)'
+            });
+
+            drawChart('chartDegreasing', degreasingData, {
+                yMin: 35,
+                yMax: 65,
+                lsl: 40,
+                mid: 50,
+                usl: 60,
+                ucl: 57.5,
+                lcl: 42.5,
+                title: 'KONSENTRASI ELEKTRO DEGREASING PAKUNA-32LA (T)'
+            });
+        }
+
+        // ============================================================
+        //  UPDATE STATUS UI
+        // ============================================================
+        function updateStatus() {
+            const totalClean = cleaningData.shift1.length + cleaningData.shift2.length + cleaningData.shift3.length;
+            const totalDeg = degreasingData.shift1.length + degreasingData.shift2.length + degreasingData.shift3.length;
+
+            const cleanStatus = document.getElementById('cleanStatusText');
+            const cleanBadge = document.getElementById('cleanStatus');
+            const degStatus = document.getElementById('degStatusText');
+            const degBadge = document.getElementById('degStatus');
+
+            if (totalClean > 0) {
+                cleanStatus.textContent = '✅ ' + totalClean + ' data';
+                cleanBadge.className = 'status-badge';
+            } else {
+                cleanStatus.textContent = '⚠️ Belum ada data';
+                cleanBadge.className = 'status-badge error';
+            }
+
+            if (totalDeg > 0) {
+                degStatus.textContent = '✅ ' + totalDeg + ' data';
+                degBadge.className = 'status-badge';
+            } else {
+                degStatus.textContent = '⚠️ Belum ada data';
+                degBadge.className = 'status-badge error';
+            }
+
+            const now = new Date().toLocaleTimeString('id-ID');
+            document.getElementById('cleanRefresh').innerHTML = '🔄 ' + now;
+            document.getElementById('degRefresh').innerHTML = '🔄 ' + now;
+        }
+
+        // ============================================================
+        //  LOAD DATA — AMBIL DARI SPREADSHEET
+        // ============================================================
+        async function loadData() {
+            if (isLoading) return;
+            isLoading = true;
+
+            try {
+                // === LOAD CLEANING (NaOH) — KOLOM K, N, Q ===
+                try {
+                    const cleanResp = await fetch(SCRIPT_URL + '?action=get_naoh_data&t=' + Date.now());
+                    const cleanData = await cleanResp.json();
+                    console.log('📊 Cleaning data:', cleanData);
+                    
+                    if (!cleanData.error && cleanData.shift1) {
+                        cleaningData = {
+                            shift1: cleanData.shift1 || [],
+                            shift2: cleanData.shift2 || [],
+                            shift3: cleanData.shift3 || []
+                        };
+                    } else {
+                        console.warn('Cleaning error, using fallback:', cleanData.error);
+                        cleaningData = {
+                            shift1: [65, 67, 66, 68, 65, 69, 67, 66, 68, 65, 67, 66],
+                            shift2: [72, 73, 71, 74, 72, 73, 75, 71, 73, 72, 74, 73],
+                            shift3: [68, 69, 67, 70, 68, 69, 71, 67, 69, 68, 70, 69]
+                        };
+                    }
+                } catch (e) {
+                    console.warn('Cleaning fetch error:', e);
+                    cleaningData = {
+                        shift1: [65, 67, 66, 68, 65, 69, 67, 66, 68, 65, 67, 66],
+                        shift2: [72, 73, 71, 74, 72, 73, 75, 71, 73, 72, 74, 73],
+                        shift3: [68, 69, 67, 70, 68, 69, 71, 67, 69, 68, 70, 69]
+                    };
+                }
+
+                // === LOAD DEGREASING — KOLOM C, F, I ===
+                try {
+                    const degResp = await fetch(SCRIPT_URL + '?action=get_zinc_data&t=' + Date.now());
+                    const degData = await degResp.json();
+                    console.log('📊 Degreasing data:', degData);
+                    
+                    if (!degData.error && degData.shift1) {
+                        degreasingData = {
+                            shift1: degData.shift1 || [],
+                            shift2: degData.shift2 || [],
+                            shift3: degData.shift3 || []
+                        };
+                    } else {
+                        console.warn('Degreasing error, using fallback:', degData.error);
+                        degreasingData = {
+                            shift1: [56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56],
+                            shift2: [45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45],
+                            shift3: [56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56]
+                        };
+                    }
+                } catch (e) {
+                    console.warn('Degreasing fetch error:', e);
+                    degreasingData = {
+                        shift1: [56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56],
+                        shift2: [45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45, 45],
+                        shift3: [56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56, 56]
+                    };
+                }
+
+                drawBothCharts();
+                updateStatus();
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                drawBothCharts();
+                updateStatus();
+            }
+
+            isLoading = false;
+        }
+
+        // ============================================================
+        //  SLIDER
+        // ============================================================
+        let currentSlide = 0;
+        const totalSlides = 2;
+        let autoInterval = null;
+
+        function updateSlider() {
+            const wrapper = document.getElementById('sliderWrapper');
+            if (wrapper) wrapper.style.transform = `translateX(-${currentSlide * 50}%)`;
+            const dots = document.querySelectorAll('.slider-dot');
+            dots.forEach((dot, idx) => {
+                if (idx === currentSlide) dot.classList.add('active');
+                else dot.classList.remove('active');
+            });
+            resetAutoSlide();
+        }
+
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % totalSlides;
+            updateSlider();
+        }
+
+        function goToSlide(idx) {
+            currentSlide = idx;
+            updateSlider();
+        }
+
+        function createDots() {
+            const container = document.getElementById('sliderDots');
+            if (!container) return;
+            container.innerHTML = '';
+            const slideNames = ['Electro Cleaning', 'Electro Degreasing'];
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'slider-dot';
+                if (i === 0) dot.classList.add('active');
+                dot.onclick = () => goToSlide(i);
+                dot.title = slideNames[i];
+                container.appendChild(dot);
+            }
+        }
+
+        function startAutoSlide() {
+            if (autoInterval) clearInterval(autoInterval);
+            autoInterval = setInterval(() => nextSlide(), 15000);
+        }
+
+        function resetAutoSlide() {
+            if (autoInterval) {
+                clearInterval(autoInterval);
+                startAutoSlide();
+            }
+        }
+
+        // ============================================================
+        //  RESIZE HANDLER
+        // ============================================================
+        let resizeTimeout;
+
+        function handleResize() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                drawBothCharts();
+            }, 300);
+        }
+
+        // ============================================================
+        //  MENU FUNCTIONS
+        // ============================================================
         const adminMenus = [
             { icon: "📊", name: "Main Dashboard", link: "maindashboardplating.html", active: true },
             { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
@@ -444,8 +901,10 @@
 
         function getMenusByUsername(username) {
             const user = (username || '').toLowerCase();
-            switch(user) {
-                case 'admin': case 'tm': case 'habib':
+            switch (user) {
+                case 'admin':
+                case 'tm':
+                case 'habib':
                     return adminMenus;
                 case 'eng':
                     return engMenus;
@@ -466,16 +925,16 @@
                 window.location.href = 'login.html';
                 return;
             }
-            
+
             const user = JSON.parse(userJson);
             const username = user.username || '';
-            
+
             const menus = getMenusByUsername(username);
             const currentPage = window.location.pathname.split('/').pop() || 'maindashboardplating.html';
-            
+
             const menuContainer = document.getElementById('menu-container');
             let menuHtml = '';
-            
+
             menus.forEach(menu => {
                 const activeClass = menu.link === currentPage ? 'active' : '';
                 menuHtml += `
@@ -487,7 +946,7 @@
                     </div>
                 `;
             });
-            
+
             menuContainer.innerHTML = menuHtml;
         }
 
@@ -495,7 +954,7 @@
             document.getElementById('popupSidebar').classList.toggle('active');
             document.getElementById('menuOverlay').classList.toggle('active');
         }
-        
+
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 document.getElementById('popupSidebar').classList.remove('active');
@@ -518,75 +977,12 @@
         }
 
         function updateClock() {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString('id-ID', {hour12:false});
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('id-ID', { hour12: false });
         }
 
-        // ==================== SLIDER ====================
-        let currentSlide = 0;
-        const totalSlides = 2;
-        let autoInterval = null;
-
-        function updateSlider() {
-            const wrapper = document.getElementById('sliderWrapper');
-            if (wrapper) wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
-            const dots = document.querySelectorAll('.slider-dot');
-            dots.forEach((dot, idx) => { 
-                if (idx === currentSlide) dot.classList.add('active'); 
-                else dot.classList.remove('active'); 
-            });
-            resetAutoSlide();
-            
-            const now = new Date().toLocaleTimeString('id-ID');
-            document.getElementById('cleaning-last-update').innerHTML = '🔄 ' + now;
-            document.getElementById('degreasing-last-update').innerHTML = '🔄 ' + now;
-        }
-
-        function nextSlide() { 
-            currentSlide = (currentSlide + 1) % totalSlides; 
-            updateSlider(); 
-        }
-
-        function goToSlide(idx) { 
-            currentSlide = idx; 
-            updateSlider(); 
-        }
-
-        function createDots() {
-            const container = document.getElementById('sliderDots');
-            if (!container) return;
-            container.innerHTML = '';
-            const slideNames = ['Electro Cleaning', 'Electro Degreasing'];
-            for (let i = 0; i < totalSlides; i++) {
-                const dot = document.createElement('div');
-                dot.className = 'slider-dot';
-                if (i === 0) dot.classList.add('active');
-                dot.onclick = () => goToSlide(i);
-                dot.title = slideNames[i];
-                container.appendChild(dot);
-            }
-        }
-
-        function startAutoSlide() { 
-            if (autoInterval) clearInterval(autoInterval); 
-            autoInterval = setInterval(() => nextSlide(), 15000);
-        }
-
-        function resetAutoSlide() { 
-            if (autoInterval) { 
-                clearInterval(autoInterval); 
-                startAutoSlide(); 
-            } 
-        }
-
-        // ==================== REFRESH IFRAME ====================
-        function refreshIframes() {
-            const iframe1 = document.getElementById('iframeCleaning');
-            const iframe2 = document.getElementById('iframeDegreasing');
-            if (iframe1) iframe1.src = iframe1.src;
-            if (iframe2) iframe2.src = iframe2.src;
-        }
-
-        // ==================== INIT ====================
+        // ============================================================
+        //  INIT
+        // ============================================================
         checkAuth();
         renderMenu();
         updateClock();
@@ -595,10 +991,20 @@
         createDots();
         startAutoSlide();
 
-        setInterval(refreshIframes, 30000);
+        loadData();
+        setInterval(loadData, REFRESH_INTERVAL);
+
+        window.addEventListener('resize', handleResize);
+
+        if (window.ResizeObserver) {
+            const ro = new ResizeObserver(() => handleResize());
+            document.querySelectorAll('.chart-container').forEach(el => ro.observe(el));
+        }
 
         console.log('✅ Dashboard Plating siap!');
         console.log('📊 Slide berganti otomatis setiap 15 detik');
+        console.log('🔄 Data refresh setiap 30 detik');
+        console.log('📌 URL Script:', SCRIPT_URL);
     </script>
 </body>
 </html>
