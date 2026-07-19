@@ -722,51 +722,63 @@
 
     <script>
         // ============ MENU DATA PER ROLE ============
-        const adminMenus = [
-            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
-            { icon: "🏭", name: "Production", link: "production.html", active: false },
-            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
-            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false },
-            { icon: "✅", name: "Claim", link: "claim.html", active: false },
-            { icon: "🔬", name: "QC", link: "qc.html", active: false }
-        ];
+        // ============ MENU DATA PER ROLE ============
+const adminMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
+    { icon: "🏭", name: "Production", link: "production.html", active: false },
+    { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+    { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
+    { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+    { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false },
+    { icon: "✅", name: "Claim", link: "claim.html", active: false },
+    { icon: "🔬", name: "QC", link: "qc.html", active: false }
+];
 
-        const engMenus = [
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
-            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
-            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
-        ];
+const engMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
+    { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+    { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
+    { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
+];
 
-        const qaMenus = [
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
-            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "🔬", name: "QC", link: "qc.html", active: false },
-            { icon: "✅", name: "Claim", link: "claim.html", active: false }
-        ];
+const qaMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
+    { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+    { icon: "🔬", name: "QC", link: "qc.html", active: false },
+    { icon: "✅", name: "Claim", link: "claim.html", active: false }
+];
 
-        const mktMenus = [
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
-            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
-            { icon: "📄", name: "Design Review", link: "rfq.html", active: false }
-        ];
+const mktMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
+    { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+    { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+    { icon: "📄", name: "Design Review", link: "rfq.html", active: false }
+];
 
-        const ppicMenus = [
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
-            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
-            { icon: "🏭", name: "Production", link: "production.html", active: false },
-            { icon: "🔬", name: "QC", link: "qc.html", active: false },
-            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
-        ];
+const ppicMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true },
+    { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+    { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+    { icon: "🏭", name: "Production", link: "production.html", active: false },
+    { icon: "🔬", name: "QC", link: "qc.html", active: false },
+    { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
+];
 
-        const userDefaultMenus = [
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true }
-        ];
+const userDefaultMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: true }
+];
 
         function getMenusByUsername(username) {
             const user = (username || '').toLowerCase();

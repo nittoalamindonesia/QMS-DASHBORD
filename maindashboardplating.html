@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <title>Main Dashboard - PT NITTO ALAM INDONESIA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: #F1F5F9;
+            font-family: 'Inter', system-ui, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+        }
+        
+        html { 
+            font-size: 14px;
+            overflow: hidden;
+            height: 100%;
+        }
+        
+        @media (min-width: 1920px) and (max-width: 2559px) {
+            html { font-size: 16px; }
+        }
+        
+        @media (min-width: 2560px) and (max-width: 3839px) {
+            html { font-size: 18px; }
+        }
+        
+        @media (max-width: 1919px) {
+            html { font-size: 12px; }
+        }
+        
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: #E5E7EB; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #0284C7; border-radius: 10px; }
+        
+        .card { background: white; border-radius: 1rem; border: 1px solid #E5E7EB; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        
+        .running-text { background: #F8FAFC; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB; flex-shrink: 0; }
+        .running-text marquee { font-size: 0.75rem; font-weight: 600; color: #0284C7; padding: 0.3rem 0; }
+        .digital-clock { font-family: 'Courier New', monospace; font-weight: 700; background: #F8FAFC; padding: 0.3rem 0.8rem; border-radius: 0.5rem; border: 1px solid #E5E7EB; color: #0284C7; font-size: 1.1rem; }
+        
+        .text-brand { color: #1A63F6; }
+        
+        /* ===== SIDEBAR MENU ===== */
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(3px);
+            z-index: 998;
+            display: none;
+        }
+        .menu-overlay.active { display: block; }
+
+        .popup-sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100vh;
+            background: #FFFFFF;
+            border-right: 1px solid #E5E7EB;
+            z-index: 999;
+            transition: left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        .popup-sidebar.active { left: 0; }
+
+        .logo-section { 
+            padding: 0.75rem 1rem; 
+            border-bottom: 1px solid #E5E7EB; 
+        }
+        .logo-section .flex { gap: 0.5rem; }
+        .logo-section .w-7 { 
+            width: 1.75rem; 
+            height: 1.75rem; 
+        }
+        .logo-section .w-7 span { font-size: 0.65rem; }
+        .logo-section h1 { font-size: 0.75rem; font-weight: 700; }
+        .logo-section p { font-size: 0.55rem; color: #94A3B8; }
+
+        #menu-container {
+            flex: 1;
+            padding: 0.25rem 0;
+            overflow-y: auto;
+        }
+        .menu-item { 
+            margin: 0.1rem 0.5rem; 
+        }
+        .menu-button {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.4rem;
+            color: #475569;
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: all 0.15s;
+        }
+        .menu-button:hover { 
+            background: #F0F9FF; 
+            color: #0284C7; 
+            transform: translateX(3px); 
+        }
+        .menu-button.active { 
+            background: #E0F2FE; 
+            color: #0284C7; 
+            border-left: 3px solid #0284C7; 
+        }
+        .menu-icon { 
+            font-size: 1rem; 
+            min-width: 1.6rem; 
+            text-align: center; 
+        }
+        .menu-button span:last-child { 
+            font-size: 0.78rem; 
+        }
+
+        .sidebar-logout-btn {
+            margin: 0.5rem 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.4rem;
+            cursor: pointer;
+            border-top: 1px solid #E5E7EB;
+            transition: all 0.15s;
+            color: #475569;
+            font-size: 0.8rem;
+            flex-shrink: 0;
+        }
+        .sidebar-logout-btn:hover { 
+            background: #FEE2E2; 
+            color: #EF4444; 
+            transform: translateX(3px); 
+        }
+        .sidebar-logout-btn .menu-icon { 
+            font-size: 1rem; 
+            min-width: 1.6rem; 
+            text-align: center; 
+        }
+
+        .sidebar-footer { 
+            text-align: center; 
+            padding: 0.3rem; 
+            color: #94A3B8; 
+            font-size: 0.6rem; 
+            border-top: 1px solid #E5E7EB; 
+            flex-shrink: 0;
+        }
+
+        .hamburger-btn {
+            background: #F0F9FF;
+            border: 1px solid #0284C7;
+            border-radius: 0.5rem;
+            padding: 0.25rem 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .hamburger-btn:hover { background: #0284C7; }
+        .hamburger-btn:hover span { color: white; }
+        .hamburger-btn span { font-size: 0.8rem; color: #475569; }
+        
+        /* ===== SLIDER FULLSCREEN ===== */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            flex: 1;
+            overflow: hidden;
+            min-height: 0;
+        }
+        .slider-wrapper {
+            display: flex;
+            transition: transform 0.8s ease-in-out;
+            height: 100%;
+            width: 100%;
+        }
+        .slider-slide {
+            flex: 0 0 100%;
+            height: 100%;
+            padding: 0.5rem 0.5rem 0.3rem 0.5rem;
+            overflow: hidden;
+        }
+        .slider-slide .card {
+            height: 100%;
+            padding: 0.8rem;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        
+        /* Slider Dots */
+        .slider-dots-container {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 20;
+            background: rgba(0,0,0,0.4);
+            padding: 6px 14px;
+            border-radius: 20px;
+            backdrop-filter: blur(4px);
+        }
+        .slider-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        .slider-dot.active {
+            background: #0284C7;
+            width: 28px;
+            border-radius: 5px;
+            border-color: #0284C7;
+        }
+        .slider-dot:hover {
+            background: rgba(255,255,255,0.7);
+        }
+        
+        .slide-title {
+            font-size: 0.75rem;
+            font-weight: bold;
+            color: #1A63F6;
+            margin-bottom: 0.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-shrink: 0;
+        }
+        
+        .last-update {
+            font-size: 0.45rem;
+            color: #94A3B8;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        /* IFrame Container */
+        .iframe-container {
+            flex: 1;
+            min-height: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 0.5rem;
+            background: #fafdff;
+            display: block;
+        }
+
+        @media (min-width: 1920px) {
+            .slide-title { font-size: 0.9rem; }
+        }
+        
+        @media (min-width: 2560px) {
+            .slide-title { font-size: 1.05rem; }
+        }
+
+        /* ===== LAYOUT FULL HEIGHT ===== */
+        .dashboard-wrapper {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        /* TOP BAR */
+        .top-bar {
+            flex-shrink: 0;
+            background: white;
+            border-bottom: 1px solid #E5E7EB;
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* RUNNING TEXT */
+        .running-text {
+            flex-shrink: 0;
+        }
+
+        /* SLIDER */
+        .slider-container {
+            flex: 1;
+            min-height: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- OVERLAY -->
+    <div id="menuOverlay" class="menu-overlay" onclick="toggleMenu()"></div>
+    
+    <!-- POP UP SIDEBAR MENU -->
+    <div id="popupSidebar" class="popup-sidebar">
+        <div class="logo-section">
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 bg-gradient-to-br from-[#1A63F6] to-[#0284C7] rounded-lg flex items-center justify-center">
+                    <span class="text-white text-xs font-bold">NS</span>
+                </div>
+                <div>
+                    <h1 class="text-xs font-bold">NITTO SEIKO</h1>
+                    <p class="text-slate-500 text-[7px]">Plant 2</p>
+                </div>
+            </div>
+        </div>
+        <div id="menu-container"></div>
+        <div class="sidebar-logout-btn" onclick="logout()">
+            <span class="menu-icon">🚪</span>
+            <span>Logout</span>
+        </div>
+        <div class="sidebar-footer">System Online</div>
+    </div>
+
+    <!-- MAIN WRAPPER -->
+    <div class="dashboard-wrapper">
+
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <div class="flex items-center gap-3">
+                <div class="hamburger-btn" onclick="toggleMenu()"><span class="text-gray-700 text-sm">☰</span></div>
+                <div>
+                    <h1 class="text-sm md:text-base font-bold text-brand">PT NITTO ALAM INDONESIA</h1>
+                    <p class="text-slate-500 text-[9px]">Plant 2 - Main Dashboard</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-3">
+                <div class="digital-clock text-sm" id="clock">00:00:00</div>
+                <div class="flex items-center gap-1 bg-green-50 px-2 py-1 rounded-lg">
+                    <div class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <span class="text-green-600 text-[8px] font-bold">LIVE</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- RUNNING TEXT -->
+        <div class="running-text">
+            <marquee behavior="scroll" direction="left" scrollamount="2">
+                🏆 KAMI AKAN MENJADI NO.1 PERUSAHAAN LUAR NEGERI NITTO SEIKO 🏆 | 📊 ELECTRO CLEANING & DEGREASING MONITORING | 🔬 ZINC PLATING QUALITY CONTROL
+            </marquee>
+        </div>
+
+        <!-- SLIDER -->
+        <div class="slider-container">
+            <div class="slider-wrapper" id="sliderWrapper">
+                
+                <!-- SLIDE 1: Electro Cleaning (NaOH) -->
+                <div class="slider-slide">
+                    <div class="card">
+                        <div class="slide-title">📊 Konsentrasi Electro Cleaning · PAKUNA-32LA (T)</div>
+                        <div class="last-update" id="cleaning-last-update">Loading...</div>
+                        <div class="iframe-container">
+                            <iframe src="fplatingelektrocleaning.html" id="iframeCleaning"></iframe>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SLIDE 2: Electro Degreasing -->
+                <div class="slider-slide">
+                    <div class="card">
+                        <div class="slide-title">📊 Konsentrasi Electro Degreasing · PAKUNA-32LA (T)</div>
+                        <div class="last-update" id="degreasing-last-update">Loading...</div>
+                        <div class="iframe-container">
+                            <iframe src="fplatingelektrodegreasing.html" id="iframeDegreasing"></iframe>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+            
+            <!-- Slider Dots -->
+            <div class="slider-dots-container" id="sliderDots"></div>
+        </div>
+
+    </div>
+
+    <script>
+        // ==================== KONFIGURASI MENU ====================
+        const adminMenus = [
+            { icon: "📊", name: "Main Dashboard", link: "maindashboardplating.html", active: true },
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🏭", name: "Production", link: "production.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false },
+            { icon: "✅", name: "Claim", link: "claim.html", active: false },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false }
+        ];
+
+        const engMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
+        ];
+
+        const qaMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false },
+            { icon: "✅", name: "Claim", link: "claim.html", active: false }
+        ];
+
+        const mktMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "📄", name: "Design Review", link: "rfq.html", active: false }
+        ];
+
+        const ppicMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
+            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
+            { icon: "🏭", name: "Production", link: "production.html", active: false },
+            { icon: "🔬", name: "QC", link: "qc.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
+        ];
+
+        const userDefaultMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false }
+        ];
+
+        function getMenusByUsername(username) {
+            const user = (username || '').toLowerCase();
+            switch(user) {
+                case 'admin': case 'tm': case 'habib':
+                    return adminMenus;
+                case 'eng':
+                    return engMenus;
+                case 'qa':
+                    return qaMenus;
+                case 'mkt':
+                    return mktMenus;
+                case 'ppic':
+                    return ppicMenus;
+                default:
+                    return userDefaultMenus;
+            }
+        }
+
+        function renderMenu() {
+            const userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const user = JSON.parse(userJson);
+            const username = user.username || '';
+            
+            const menus = getMenusByUsername(username);
+            const currentPage = window.location.pathname.split('/').pop() || 'maindashboardplating.html';
+            
+            const menuContainer = document.getElementById('menu-container');
+            let menuHtml = '';
+            
+            menus.forEach(menu => {
+                const activeClass = menu.link === currentPage ? 'active' : '';
+                menuHtml += `
+                    <div class="menu-item">
+                        <a href="${menu.link}" class="menu-button ${activeClass}">
+                            <span class="menu-icon">${menu.icon}</span>
+                            <span>${menu.name}</span>
+                        </a>
+                    </div>
+                `;
+            });
+            
+            menuContainer.innerHTML = menuHtml;
+        }
+
+        function toggleMenu() {
+            document.getElementById('popupSidebar').classList.toggle('active');
+            document.getElementById('menuOverlay').classList.toggle('active');
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.getElementById('popupSidebar').classList.remove('active');
+                document.getElementById('menuOverlay').classList.remove('active');
+            }
+        });
+
+        function checkAuth() {
+            const userJson = sessionStorage.getItem('currentUser');
+            if (!userJson) {
+                window.location.href = 'login.html';
+                return null;
+            }
+            return JSON.parse(userJson);
+        }
+
+        function logout() {
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html';
+        }
+
+        function updateClock() {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('id-ID', {hour12:false});
+        }
+
+        // ==================== SLIDER ====================
+        let currentSlide = 0;
+        const totalSlides = 2;
+        let autoInterval = null;
+
+        function updateSlider() {
+            const wrapper = document.getElementById('sliderWrapper');
+            if (wrapper) wrapper.style.transform = `translateX(-${currentSlide * 100}%)`;
+            const dots = document.querySelectorAll('.slider-dot');
+            dots.forEach((dot, idx) => { 
+                if (idx === currentSlide) dot.classList.add('active'); 
+                else dot.classList.remove('active'); 
+            });
+            resetAutoSlide();
+            
+            const now = new Date().toLocaleTimeString('id-ID');
+            document.getElementById('cleaning-last-update').innerHTML = '🔄 ' + now;
+            document.getElementById('degreasing-last-update').innerHTML = '🔄 ' + now;
+        }
+
+        function nextSlide() { 
+            currentSlide = (currentSlide + 1) % totalSlides; 
+            updateSlider(); 
+        }
+
+        function goToSlide(idx) { 
+            currentSlide = idx; 
+            updateSlider(); 
+        }
+
+        function createDots() {
+            const container = document.getElementById('sliderDots');
+            if (!container) return;
+            container.innerHTML = '';
+            const slideNames = ['Electro Cleaning', 'Electro Degreasing'];
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'slider-dot';
+                if (i === 0) dot.classList.add('active');
+                dot.onclick = () => goToSlide(i);
+                dot.title = slideNames[i];
+                container.appendChild(dot);
+            }
+        }
+
+        function startAutoSlide() { 
+            if (autoInterval) clearInterval(autoInterval); 
+            autoInterval = setInterval(() => nextSlide(), 15000);
+        }
+
+        function resetAutoSlide() { 
+            if (autoInterval) { 
+                clearInterval(autoInterval); 
+                startAutoSlide(); 
+            } 
+        }
+
+        // ==================== REFRESH IFRAME ====================
+        function refreshIframes() {
+            const iframe1 = document.getElementById('iframeCleaning');
+            const iframe2 = document.getElementById('iframeDegreasing');
+            if (iframe1) iframe1.src = iframe1.src;
+            if (iframe2) iframe2.src = iframe2.src;
+        }
+
+        // ==================== INIT ====================
+        checkAuth();
+        renderMenu();
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        createDots();
+        startAutoSlide();
+
+        setInterval(refreshIframes, 30000);
+
+        console.log('✅ Dashboard Plating siap!');
+        console.log('📊 Slide berganti otomatis setiap 15 detik');
+    </script>
+</body>
+</html>

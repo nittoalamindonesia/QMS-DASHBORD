@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grafik Zinc Plating · Plant 2</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: #f4f7fc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            background: white;
+            border-radius: 28px;
+            box-shadow: 0 20px 40px rgba(0, 20, 40, 0.12);
+            padding: 28px 30px 32px;
+        }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #e8eef6;
+            padding-bottom: 16px;
+            margin-bottom: 20px;
+        }
+        .header-left h1 {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #0b2a43;
+            letter-spacing: -0.5px;
+        }
+        .header-left h1 i {
+            color: #2a7de1;
+            margin-right: 10px;
+        }
+        .header-left .sub-info {
+            margin-top: 4px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px 28px;
+            font-size: 0.92rem;
+            color: #2c4e6e;
+        }
+        .header-left .sub-info span {
+            background: #eef4fc;
+            padding: 2px 16px;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+        .badge-standard {
+            background: #dce8f8;
+            color: #004080;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            border: 1px solid #b6cee8;
+            white-space: nowrap;
+        }
+        .chart-box {
+            background: #fafdff;
+            border-radius: 18px;
+            padding: 16px 10px 8px 10px;
+            box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.02), 0 6px 16px rgba(0, 20, 30, 0.05);
+        }
+        #controlChart {
+            display: block;
+            width: 100% !important;
+            height: auto !important;
+            background: transparent;
+            border-radius: 14px;
+        }
+        .legend-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 18px;
+            padding: 0 6px;
+        }
+        .legend-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px 30px;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #1b3a57;
+        }
+        .legend-item .line {
+            width: 30px;
+            height: 4px;
+            border-radius: 4px;
+        }
+        .legend-item .dot {
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .status-badge {
+            background: #e6f2e8;
+            padding: 5px 18px 5px 14px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #1a5a3a;
+            border: 1px solid #b9d5c1;
+        }
+        .status-badge.error {
+            background: #fde8e8;
+            color: #b13e3e;
+            border-color: #f5c6c6;
+        }
+        .footer {
+            margin-top: 24px;
+            padding-top: 18px;
+            border-top: 1px solid #e2ebf3;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #2a4b6a;
+        }
+        .footer .periode {
+            background: #eaf1fa;
+            padding: 4px 20px;
+            border-radius: 30px;
+            font-weight: 500;
+        }
+        .refresh-info {
+            font-size: 0.8rem;
+            color: #6a8aaa;
+            background: #eef4fc;
+            padding: 4px 14px;
+            border-radius: 30px;
+        }
+        .btn-refresh {
+            background: #2a7de1;
+            color: white;
+            border: none;
+            padding: 6px 18px;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+        }
+        .btn-refresh:hover {
+            background: #1a5fb0;
+            transform: scale(1.02);
+        }
+        .btn-refresh:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        @media (max-width: 700px) {
+            .container {
+                padding: 18px;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            .badge-standard {
+                align-self: flex-start;
+            }
+            .legend-bar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <div class="header">
+            <div class="header-left">
+                <h1><i class="fas fa-chart-line"></i> Zinc Plating (Plant 2)</h1>
+                <div class="sub-info">
+                    <span><i class="far fa-calendar-alt"></i> Bulan/Thn : <strong id="bulanTahun">Memuat...</strong></span>
+                    <span><i class="fas fa-flask"></i> Standar 40 – 60 g/L</span>
+                    <span><i class="fas fa-database"></i> <span id="jumlahData">-</span> sampel</span>
+                </div>
+            </div>
+            <div class="badge-standard"><i class="fas fa-bullseye"></i> USL 60 · LSL 40</div>
+        </div>
+
+        <div class="chart-box">
+            <canvas id="controlChart" width="900" height="420"></canvas>
+
+            <div class="legend-bar">
+                <div class="legend-group">
+                    <div class="legend-item"><span class="line" style="background: #FDD835;"></span><span class="dot" style="background: #FDD835;"></span>Shift-1</div>
+                    <div class="legend-item"><span class="line" style="background: #1E88E5;"></span><span class="dot" style="background: #1E88E5;"></span>Shift-2</div>
+                    <div class="legend-item"><span class="line" style="background: #E53935;"></span><span class="dot" style="background: #E53935;"></span>Shift-3</div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                    <span class="refresh-info" id="refreshInfo">🔄 Auto-refresh: 30s</span>
+                    <div class="status-badge" id="statusBadge"><i class="fas fa-info-circle"></i> <span id="statusText">Memuat data...</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="periode"><i class="fas fa-calendar-week"></i> Periode : <span id="periodeText">-</span></div>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn-refresh" id="btnRefresh" onclick="loadData()">
+                    <i class="fas fa-sync-alt"></i> Refresh Now
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <script>
+        // ============================================================
+        //  KONFIGURASI
+        // ============================================================
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxCM-qgESBqu8883SoOiPMBzUG1s9uaZxAF_A4T33FO66IZAwUKtOmtJ3y7wz8AoHU/exec';
+        const REFRESH_INTERVAL = 30000; // 30 detik
+
+        const LSL = 40,
+            MID = 50,
+            USL = 60,
+            UCL = 57.5,
+            LCL = 42.5;
+
+        let dataShift1 = [],
+            dataShift2 = [],
+            dataShift3 = [];
+        let refreshTimer = null;
+        let isLoading = false;
+
+        // ============================================================
+        //  FUNGSI GAMBAR GRAFIK
+        // ============================================================
+        function drawChart() {
+            const canvas = document.getElementById('controlChart');
+            if (!canvas) {
+                console.error('Canvas tidak ditemukan!');
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            const width = 900,
+                height = 420;
+            canvas.width = width;
+            canvas.height = height;
+
+            const pad = { top: 30, bottom: 40, left: 50, right: 40 };
+            const chartW = width - pad.left - pad.right;
+            const chartH = height - pad.top - pad.bottom;
+
+            const maxLen = Math.max(dataShift1.length, dataShift2.length, dataShift3.length);
+            const n = maxLen;
+
+            const yMin = 35,
+                yMax = 65;
+            const mapY = (v) => pad.top + chartH - ((v - yMin) / (yMax - yMin)) * chartH;
+
+            ctx.clearRect(0, 0, width, height);
+
+            // Background
+            ctx.fillStyle = '#fafcff';
+            ctx.fillRect(pad.left, pad.top, chartW, chartH);
+
+            // Grid
+            ctx.strokeStyle = '#dce4ed';
+            ctx.lineWidth = 0.7;
+            ctx.setLineDash([3, 5]);
+            [35, 40, 45, 50, 55, 60, 65].forEach(val => {
+                const yPos = mapY(val);
+                ctx.beginPath();
+                ctx.moveTo(pad.left, yPos);
+                ctx.lineTo(pad.left + chartW, yPos);
+                ctx.stroke();
+                ctx.fillStyle = '#3a5b7a';
+                ctx.font = '11px "Segoe UI", sans-serif';
+                ctx.textAlign = 'right';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(val, pad.left - 8, yPos);
+            });
+            ctx.setLineDash([]);
+
+            // Garis referensi (HITAM)
+            const drawRef = (value, label) => {
+                const yPos = mapY(value);
+                ctx.save();
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 1.8;
+                ctx.setLineDash([6, 5]);
+                ctx.beginPath();
+                ctx.moveTo(pad.left, yPos);
+                ctx.lineTo(pad.left + chartW, yPos);
+                ctx.stroke();
+                ctx.restore();
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 10px "Segoe UI", sans-serif';
+                ctx.textAlign = 'left';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(label, pad.left + chartW + 4, yPos);
+            };
+
+            drawRef(LSL, 'LSL 40');
+            drawRef(MID, 'MID 50');
+            drawRef(USL, 'USL 60');
+            drawRef(UCL, 'UCL 57.5');
+            drawRef(LCL, 'LCL 42.5');
+
+            // Area zona
+            ctx.save();
+            ctx.fillStyle = 'rgba(0,0,0,0.04)';
+            ctx.fillRect(pad.left, mapY(USL), chartW, mapY(60.5) - mapY(USL));
+            ctx.fillRect(pad.left, mapY(39.5), chartW, mapY(LSL) - mapY(39.5));
+            ctx.restore();
+
+            // Fungsi gambar line with markers
+            function drawLineWithMarkers(data, color) {
+                if (!data || data.length === 0) return;
+                const xStep = chartW / (Math.max(data.length - 1, 1));
+
+                ctx.save();
+                ctx.strokeStyle = color;
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                data.forEach((val, idx) => {
+                    const x = pad.left + idx * xStep;
+                    const y = mapY(val);
+                    if (idx === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                });
+                ctx.stroke();
+                ctx.restore();
+
+                data.forEach((val, idx) => {
+                    const x = pad.left + idx * xStep;
+                    const y = mapY(val);
+                    ctx.save();
+                    ctx.shadowColor = 'rgba(0,0,0,0.10)';
+                    ctx.shadowBlur = 5;
+                    ctx.fillStyle = color;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                    ctx.restore();
+                });
+            }
+
+            drawLineWithMarkers(dataShift1, '#FDD835');
+            drawLineWithMarkers(dataShift2, '#1E88E5');
+            drawLineWithMarkers(dataShift3, '#E53935');
+
+            // Label sumbu X
+            if (n > 0) {
+                ctx.fillStyle = '#2f5272';
+                ctx.font = '10px "Segoe UI", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'top';
+                const step = chartW / Math.max(n - 1, 1);
+                for (let i = 0; i < n; i++) {
+                    const x = pad.left + i * step;
+                    ctx.fillText(i + 1, x, pad.top + chartH + 8);
+                }
+                ctx.fillStyle = '#3d5f7a';
+                ctx.font = '10px "Segoe UI", sans-serif';
+                ctx.textAlign = 'center';
+                ctx.fillText('Sampel ke-', pad.left + chartW / 2, pad.top + chartH + 24);
+            }
+
+            ctx.strokeStyle = '#b8cddf';
+            ctx.lineWidth = 0.8;
+            ctx.strokeRect(pad.left, pad.top, chartW, chartH);
+
+            ctx.fillStyle = '#0b2a43';
+            ctx.font = '600 14px "Segoe UI", sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+            ctx.fillText('KONSENTRASI ELEKTRO DEGREASING PAKUNA-32LA (T)', width / 2, 6);
+        }
+
+        // ============================================================
+        //  AMBIL DATA DARI SPREADSHEET
+        // ============================================================
+        async function loadData() {
+            if (isLoading) return;
+            isLoading = true;
+
+            const btn = document.getElementById('btnRefresh');
+            const statusText = document.getElementById('statusText');
+            const statusBadge = document.getElementById('statusBadge');
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
+            statusText.textContent = '⏳ Mengambil data...';
+            statusBadge.className = 'status-badge';
+
+            try {
+                const url = SCRIPT_URL + '?action=get_zinc_data&t=' + Date.now();
+                console.log('📡 Fetching:', url);
+
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status + ': ' + response.statusText);
+                }
+
+                const data = await response.json();
+                console.log('📊 Data received:', data);
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                dataShift1 = data.shift1 || [];
+                dataShift2 = data.shift2 || [];
+                dataShift3 = data.shift3 || [];
+
+                const total = dataShift1.length + dataShift2.length + dataShift3.length;
+
+                document.getElementById('jumlahData').textContent = total;
+                document.getElementById('periodeText').textContent = total > 0 ? new Date().toLocaleDateString('id-ID') : '-';
+
+                const now = new Date();
+                document.getElementById('bulanTahun').textContent = now.toLocaleDateString('id-ID', { month: 'long',
+                    year: 'numeric' });
+
+                if (total > 0) {
+                    statusText.textContent = '✅ Dalam kendali (' + total + ' data)';
+                    statusBadge.className = 'status-badge';
+                } else {
+                    statusText.textContent = '⚠️ Belum ada data';
+                    statusBadge.className = 'status-badge';
+                }
+
+                drawChart();
+                console.log('✅ Grafik berhasil digambar!');
+
+            } catch (error) {
+                console.error('❌ Error:', error);
+                statusText.textContent = '❌ ' + error.message;
+                statusBadge.className = 'status-badge error';
+                // Tetap gambar grafik dengan data yang ada (atau kosong)
+                drawChart();
+            }
+
+            isLoading = false;
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh Now';
+        }
+
+        // ============================================================
+        //  START AUTO-REFRESH
+        // ============================================================
+        function startAutoRefresh() {
+            if (refreshTimer) {
+                clearInterval(refreshTimer);
+            }
+            refreshTimer = setInterval(loadData, REFRESH_INTERVAL);
+            console.log('🔄 Auto-refresh dimulai setiap ' + (REFRESH_INTERVAL / 1000) + ' detik');
+        }
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        window.onload = function() {
+            loadData();
+            startAutoRefresh();
+        };
+    </script>
+</body>
+</html>
