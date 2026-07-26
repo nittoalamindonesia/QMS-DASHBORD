@@ -659,20 +659,61 @@
 
         // ==================== KONFIGURASI MENU ====================
         const adminMenus = [
-            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
-            { icon: "🏭", name: "Production", link: "production.html", active: false },
-            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: true },
-            { icon: "📄", name: "RFQ Monitoring", link: "rfq.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
-            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
-        ];
-        
-        const userMenus = [
-            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: false },
-            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
+    { icon: "📊", name: "Main Dashboard", link: "../maindashboard/maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "../maindashboard/maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "../menu/activityschedule.html", active: true },
+    { icon: "🏭", name: "Production", link: "../menu/production.html", active: false },
+    { icon: "🔍", name: "Audit Finding", link: "../menu/audit.html", active: false },
+    { icon: "📄", name: "Design Review", link: "../menu/rfq.html", active: false },
+    { icon: "💰", name: "Sales Monitoring", link: "../menu/mountsales.html", active: false },
+    { icon: "🔧", name: "Schedule Tooling", link: "../menu/tooling.html", active: false },
+    { icon: "✅", name: "Claim", link: "../menu/claim.html", active: false },
+    { icon: "🔬", name: "QC", link: "../menu/qc.html", active: false }
+];
+
+const engMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "../maindashboard/maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "../maindashboard/maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "../menu/activityschedule.html", active: true },
+    { icon: "🔍", name: "Audit Finding", link: "../menu/audit.html", active: false },
+    { icon: "📄", name: "Design Review", link: "../menu/rfq.html", active: false },
+    { icon: "🔧", name: "Schedule Tooling", link: "../menu/tooling.html", active: false }
+];
+
+const qaMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "../maindashboard/maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "../maindashboard/maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "../menu/activityschedule.html", active: true },
+    { icon: "🔍", name: "Audit Finding", link: "../menu/audit.html", active: false },
+    { icon: "🔬", name: "QC", link: "../menu/qc.html", active: false },
+    { icon: "✅", name: "Claim", link: "../menu/claim.html", active: false }
+];
+
+const mktMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "../maindashboard/maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "../maindashboard/maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "../menu/activityschedule.html", active: true },
+    { icon: "🔍", name: "Audit Finding", link: "../menu/audit.html", active: false },
+    { icon: "💰", name: "Sales Monitoring", link: "../menu/mountsales.html", active: false },
+    { icon: "📄", name: "Design Review", link: "../menu/rfq.html", active: false }
+];
+
+const ppicMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "../maindashboard/maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "../maindashboard/maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "../menu/activityschedule.html", active: true },
+    { icon: "🔍", name: "Audit Finding", link: "../menu/audit.html", active: false },
+    { icon: "💰", name: "Sales Monitoring", link: "../menu/mountsales.html", active: false },
+    { icon: "🏭", name: "Production", link: "../menu/production.html", active: false },
+    { icon: "🔬", name: "QC", link: "../menu/qc.html", active: false },
+    { icon: "🔧", name: "Schedule Tooling", link: "../menu/tooling.html", active: false }
+];
+
+const userDefaultMenus = [
+            { icon: "📊", name: "Main Dashboard", link: "../maindashboard/maindashboard.html", active: false },
+            { icon: "📅", name: "Activity Schedule", link: "../menu/activityschedule.html", active: false },
+            { icon: "💰", name: "Sales Monitoring", link: "../menu/mountsales.html", active: false },
+            { icon: "🔧", name: "Schedule Tooling", link: "../menu/tooling.html", active: false }
         ];
         
         function renderMenu() {
@@ -682,7 +723,7 @@
             const user = JSON.parse(userJson);
             const role = user.role || 'user';
             const menus = role === 'admin' ? adminMenus : userMenus;
-            const currentPage = window.location.pathname.split('/').pop() || 'audit.html';
+            const currentPage = window.location.pathname.split('/').pop() || '../menu/audit.html';
             
             const menuContainer = document.getElementById('menu-container');
             let menuHtml = '';
@@ -758,7 +799,7 @@
         function checkAuth() {
             const userJson = sessionStorage.getItem('currentUser');
             if (!userJson) { 
-                window.location.href = 'login.html'; 
+                window.location.href = '../entry/login.html'; 
                 return null; 
             }
             return JSON.parse(userJson);
@@ -768,7 +809,7 @@
         
         function logout() {
             sessionStorage.removeItem('currentUser');
-            window.location.href = 'login.html';
+            window.location.href = '../entry/login.html';
         }
         
         function updateClock() {

@@ -429,49 +429,58 @@
 
         // ==================== KONFIGURASI MENU ====================
         const adminMenus = [
-            { icon: "📊", name: "Main Dashboard", link: "maindashboard.html", active: false },
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
-            { icon: "🏭", name: "Production", link: "production.html", active: false },
-            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: true },
-            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false },
-            { icon: "✅", name: "Claim", link: "claim.html", active: false },
-            { icon: "🔬", name: "QC", link: "qc.html", active: false }
-        ];
+    { icon: "📊", name: "Main Dashboard", link: "../maindashboard/maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "../maindashboard/maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "../menu/activityschedule.html", active: true },
+    { icon: "🏭", name: "Production", link: "../menu/production.html", active: false },
+    { icon: "🔍", name: "Audit Finding", link: "../menu/audit.html", active: false },
+    { icon: "📄", name: "Design Review", link: "../menu/rfq.html", active: false },
+    { icon: "💰", name: "Sales Monitoring", link: "../menu/mountsales.html", active: false },
+    { icon: "🔧", name: "Schedule Tooling", link: "../menu/tooling.html", active: false },
+    { icon: "✅", name: "Claim", link: "../menu/claim.html", active: false },
+    { icon: "🔬", name: "QC", link: "../menu/qc.html", active: false }
+];
 
-        const engMenus = [
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
-            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "📄", name: "Design Review", link: "rfq.html", active: false },
-            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
-        ];
+const engMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "../maindashboard/maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "../maindashboard/maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "../menu/activityschedule.html", active: true },
+    { icon: "🔍", name: "Audit Finding", link: "../menu/audit.html", active: false },
+    { icon: "📄", name: "Design Review", link: "../menu/rfq.html", active: false },
+    { icon: "🔧", name: "Schedule Tooling", link: "../menu/tooling.html", active: false }
+];
 
-        const qaMenus = [
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
-            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "🔬", name: "QC", link: "qc.html", active: false },
-            { icon: "✅", name: "Claim", link: "claim.html", active: false }
-        ];
+const qaMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "../maindashboard/maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "../maindashboard/maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "../menu/activityschedule.html", active: true },
+    { icon: "🔍", name: "Audit Finding", link: "../menu/audit.html", active: false },
+    { icon: "🔬", name: "QC", link: "../menu/qc.html", active: false },
+    { icon: "✅", name: "Claim", link: "../menu/claim.html", active: false }
+];
 
-        const mktMenus = [
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
-            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: true },
-            { icon: "📄", name: "Design Review", link: "rfq.html", active: false }
-        ];
+const mktMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "../maindashboard/maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "../maindashboard/maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "../menu/activityschedule.html", active: true },
+    { icon: "🔍", name: "Audit Finding", link: "../menu/audit.html", active: false },
+    { icon: "💰", name: "Sales Monitoring", link: "../menu/mountsales.html", active: false },
+    { icon: "📄", name: "Design Review", link: "../menu/rfq.html", active: false }
+];
 
-        const ppicMenus = [
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false },
-            { icon: "🔍", name: "Audit Finding", link: "audit.html", active: false },
-            { icon: "💰", name: "Sales Monitoring", link: "mountsales.html", active: true },
-            { icon: "🏭", name: "Production", link: "production.html", active: false },
-            { icon: "🔬", name: "QC", link: "qc.html", active: false },
-            { icon: "🔧", name: "Schedule Tooling", link: "tooling.html", active: false }
-        ];
+const ppicMenus = [
+    { icon: "📊", name: "Main Dashboard", link: "../maindashboard/maindashboard.html", active: false },
+    { icon: "🧪", name: "Main Dashboard Plating", link: "../maindashboard/maindashboardplating.html", active: false },
+    { icon: "📅", name: "Activity Schedule", link: "../menu/activityschedule.html", active: true },
+    { icon: "🔍", name: "Audit Finding", link: "../menu/audit.html", active: false },
+    { icon: "💰", name: "Sales Monitoring", link: "../menu/mountsales.html", active: false },
+    { icon: "🏭", name: "Production", link: "../menu/production.html", active: false },
+    { icon: "🔬", name: "QC", link: "../menu/qc.html", active: false },
+    { icon: "🔧", name: "Schedule Tooling", link: "../menu/tooling.html", active: false }
+];
 
-        const userDefaultMenus = [
-            { icon: "📅", name: "Activity Schedule", link: "activityschedule.html", active: false }
+const userDefaultMenus = [
+            { icon: "📅", name: "Activity Schedule", link: "../menu/activityschedule.html", active: false }
         ];
 
         function getMenusByUsername(username) {
@@ -495,7 +504,7 @@
         function renderMenu() {
             const userJson = sessionStorage.getItem('currentUser');
             if (!userJson) {
-                window.location.href = 'login.html';
+                window.location.href = '../entry/login.html';
                 return;
             }
             
@@ -503,7 +512,7 @@
             const username = user.username || '';
             
             const menus = getMenusByUsername(username);
-            const currentPage = window.location.pathname.split('/').pop() || 'mountsales.html';
+            const currentPage = window.location.pathname.split('/').pop() || '../menu/mountsales.html';
             
             const menuContainer = document.getElementById('menu-container');
             let menuHtml = '';
@@ -544,7 +553,7 @@
         function checkAuth() {
             var userJson = sessionStorage.getItem('currentUser');
             if (!userJson) { 
-                window.location.href = 'login.html'; 
+                window.location.href = '../entry/login.html'; 
                 return null; 
             }
             return JSON.parse(userJson);
@@ -557,7 +566,7 @@
 
         function logout() {
             sessionStorage.removeItem('currentUser');
-            window.location.href = 'login.html';
+            window.location.href = '../entry/login.html';
         }
 
         // ==================== CLOCK ====================
