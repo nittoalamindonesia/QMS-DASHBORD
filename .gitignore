@@ -1,0 +1,7 @@
+node_modules/
+wa-bot/node_modules/
+wa-bot/.wwebjs_auth/
+wa-bot/.wwebjs_cache/
+wa-bot/firebaseAdmin.js
+wa-bot/serviceAccountKey.json
+.env

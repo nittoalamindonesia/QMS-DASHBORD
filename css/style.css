@@ -1,0 +1,127 @@
+/* Container Utama Card Grid */
+#tooling-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+  padding: 20px 0;
+}
+
+/* Card Base Styling */
+.tooling-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border-left: 6px solid #94a3b8; /* Default Border Color */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.tooling-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Status Class Borders (Color Indicator) */
+.tooling-card.status-danger {
+  border-left-color: #ef4444; /* Merah: <= 3 hari / Terlambat */
+}
+
+.tooling-card.status-warning {
+  border-left-color: #f59e0b; /* Kuning: 4 - 7 hari */
+}
+
+.tooling-card.status-safe {
+  border-left-color: #10b981; /* Hijau: > 7 hari */
+}
+
+/* Card Header */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.card-type-badge {
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 600;
+}
+
+/* Card Body / Info */
+.card-body {
+  margin-bottom: 15px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  margin-bottom: 6px;
+  color: #475569;
+}
+
+.info-row .label {
+  color: #64748b;
+}
+
+/* Card Footer */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.countdown-pill {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: 20px;
+}
+
+/* Color Pills */
+.status-danger .countdown-pill { background: #fee2e2; color: #dc2626; }
+.status-warning .countdown-pill { background: #fef3c7; color: #d97706; }
+.status-safe .countdown-pill { background: #d1fae5; color: #059669; }
+
+/* Delete Button */
+.btn-delete-card {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 4px 8px;
+  border-radius: 6px;
+  transition: background 0.2s;
+}
+
+.btn-delete-card:hover {
+  background: #fee2e2;
+}
+
+/* Empty State */
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  background: #f8fafc;
+  border-radius: 12px;
+  color: #64748b;
+}
