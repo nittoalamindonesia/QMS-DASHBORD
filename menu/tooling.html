@@ -214,14 +214,6 @@
             console.error("Gagal mengambil data Firestore:", error);
             document.getElementById('square-card-container').innerHTML = `<p class="col-span-full text-red-500 text-center py-4">Gagal mengambil data dari Firestore!</p>`;
         });
-
-            // Menyimpan urutan persis dari snapshot Database
-            window.toolingData = list;
-            renderSquareCards();
-        }, (error) => {
-            console.error("Gagal mengambil data Firestore:", error);
-            document.getElementById('square-card-container').innerHTML = `<p class="col-span-full text-red-500 text-center py-4">Gagal mengambil data dari Firestore!</p>`;
-        });
     </script>
 
     <!-- UI & EXPANDABLE CARD LOGIC -->
