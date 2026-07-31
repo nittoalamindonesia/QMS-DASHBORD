@@ -185,6 +185,7 @@
                 const item = doc.data();
                 const po = item.order_date || (item.created_at ? item.created_at.split('T')[0] : '');
                 
+                // Prioritaskan ETA asli dari database, jika tidak ada baru hitung +60 hari dari PO
                 let eta = item.eta_date || item.eta || '';
                 if (!eta && po) {
                     const d = new Date(po);
@@ -205,6 +206,14 @@
                     createdVia: item.created_via || 'WhatsApp'
                 });
             });
+
+            // Menyimpan urutan persis dari snapshot Database
+            window.toolingData = list;
+            renderSquareCards();
+        }, (error) => {
+            console.error("Gagal mengambil data Firestore:", error);
+            document.getElementById('square-card-container').innerHTML = `<p class="col-span-full text-red-500 text-center py-4">Gagal mengambil data dari Firestore!</p>`;
+        });
 
             // Menyimpan urutan persis dari snapshot Database
             window.toolingData = list;
